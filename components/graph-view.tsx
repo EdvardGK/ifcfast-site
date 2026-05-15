@@ -84,11 +84,23 @@ export function GraphView({ src }: { src: string }) {
     return false;
   }
 
+  function ensureExpanded(id: string) {
+    setExpanded(s => (s.has(id) ? s : new Set(s).add(id)));
+  }
+
   function onNodeClick(n: TreeNode, e: React.MouseEvent) {
     e.stopPropagation();
-    if (n.kind === "type" && n.entity) toggleEntity(n.entity, n.storey_guid, n.storey_label);
-    else if (n.kind === "storey" && n.storey_guid) toggleStorey(n.storey_guid, n.label);
-    else toggleNode(n.id);
+    // Row clicks on storey/type both filter AND drill in. Chevron click
+    // (in the Row component) still toggles expansion on its own.
+    if (n.kind === "type" && n.entity) {
+      toggleEntity(n.entity, n.storey_guid, n.storey_label);
+      ensureExpanded(n.id);
+    } else if (n.kind === "storey" && n.storey_guid) {
+      toggleStorey(n.storey_guid, n.label);
+      ensureExpanded(n.id);
+    } else {
+      toggleNode(n.id);
+    }
   }
 
   function toggleNode(id: string) {
@@ -268,7 +280,7 @@ function buildTree(d: Graph): TreeNode {
         entity,
         storey_guid: s.guid,
         storey_label: s.name ?? undefined,
-        children: prods.slice(0, 50).map(p => ({
+        children: prods.map(p => ({
           id: `prod:${p.guid}`,
           label: p.name || p.guid,
           kind: "product",

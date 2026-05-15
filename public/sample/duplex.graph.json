@@ -4128,5 +4128,246 @@
       "storey_guid": "1xS3BCk291UvhgP2dvNtSE",
       "building_guid": "1xS3BCk291UvhgP2a6eflK"
     }
-  ]
+  ],
+  "material_layer_sets": {
+    "Basic Wall:Exterior - Brick on Block": {
+      "layers": [
+        {
+          "material": "Masonry - Brick",
+          "thickness_mm": 92.0
+        },
+        {
+          "material": "Misc. Air Layers - Air Space",
+          "thickness_mm": 25.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Rigid insulation",
+          "thickness_mm": 50.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 417.0
+    },
+    "Basic Wall:Interior - Partition (92mm Stud)": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 92.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 124.0
+    },
+    "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Misc. Air Layers - Air Space",
+          "thickness_mm": 50.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 550.0
+    },
+    "Basic Wall:Foundation - Concrete (417mm)": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 417.0
+        }
+      ],
+      "total_thickness_mm": 417.0
+    },
+    "Basic Wall:Foundation - Concrete (435mm)": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 435.0
+        }
+      ],
+      "total_thickness_mm": 435.0
+    },
+    "Floor:127mm Slab on Grade": {
+      "layers": [
+        {
+          "material": "Concrete",
+          "thickness_mm": 127.0
+        }
+      ],
+      "total_thickness_mm": 127.0
+    },
+    "Basic Wall:Interior - Plumbing (152mm Stud)": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 152.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 184.0
+    },
+    "Floor:Residential - Wood Joist with Subflooring": {
+      "layers": [
+        {
+          "material": "Wood - Sheathing - plywood",
+          "thickness_mm": 19.0
+        },
+        {
+          "material": "Wood - Dimensional Lumber",
+          "thickness_mm": 286.0
+        }
+      ],
+      "total_thickness_mm": 305.0
+    },
+    "Floor:Finish Floor - Wood": {
+      "layers": [
+        {
+          "material": "Wood - Flooring",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Semi-rigid insulation",
+          "thickness_mm": 3.0
+        }
+      ],
+      "total_thickness_mm": 19.0
+    },
+    "Floor:Finish Floor - Ceramic Tile": {
+      "layers": [
+        {
+          "material": "Ceramic Tile",
+          "thickness_mm": 10.0
+        },
+        {
+          "material": "Masonry - Grout",
+          "thickness_mm": 3.0
+        }
+      ],
+      "total_thickness_mm": 13.0
+    },
+    "Basic Roof:Live Roof over Wood Joist Flat Roof": {
+      "layers": [
+        {
+          "material": "Site - Grass",
+          "thickness_mm": 64.0
+        },
+        {
+          "material": "Roofing - Barrier",
+          "thickness_mm": 6.0
+        },
+        {
+          "material": "Roofing - EPDM Membrane",
+          "thickness_mm": 6.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Rigid insulation",
+          "thickness_mm": 76.0
+        },
+        {
+          "material": "Wood - Sheathing - plywood",
+          "thickness_mm": 19.0
+        },
+        {
+          "material": "Wood - Dimensional Lumber",
+          "thickness_mm": 286.0
+        }
+      ],
+      "total_thickness_mm": 457.0
+    },
+    "Compound Ceiling:Gypsum Board": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 45.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 12.0
+        }
+      ],
+      "total_thickness_mm": 57.0
+    },
+    "Basic Wall:Interior - Furring (152 mm Stud)": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 136.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 152.0
+    },
+    "Floor:150mm Exterior Slab on Grade": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 150.0
+        }
+      ],
+      "total_thickness_mm": 150.0
+    },
+    "Basic Wall:Interior - Furring (38 mm Stud)": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 38.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 54.0
+    }
+  }
 }

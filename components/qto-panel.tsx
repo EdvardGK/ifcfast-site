@@ -15,9 +15,15 @@ type Product = {
   layer_set?: string | null;
 };
 
+type LayerSetDef = {
+  layers: { material: string; thickness_mm: number }[];
+  total_thickness_mm: number;
+};
+
 type Graph = {
   products: Product[];
   storeys: { guid: string; name: string | null }[];
+  material_layer_sets?: Record<string, LayerSetDef>;
 };
 
 type Mode = "type" | "untyped" | "material" | "layer_set";
@@ -25,6 +31,7 @@ type Mode = "type" | "untyped" | "material" | "layer_set";
 export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string }) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [mode, setMode] = useState<Mode>("type");
+  const [expandedSets, setExpandedSets] = useState<Set<string>>(() => new Set());
   const { selection, toggleType, toggleMaterial, toggleLayerSet, toggleEntity, clear } = useSelection();
 
   useEffect(() => {
@@ -270,23 +277,70 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
                   {g.rows.map(r => {
                     const isSel = selVal === r.value;
                     const isDim = selVal !== null && !isSel;
+                    const lsDef =
+                      mode === "layer_set"
+                        ? graph.material_layer_sets?.[r.value]
+                        : undefined;
+                    const isExpanded = mode === "layer_set" && expandedSets.has(r.value);
+                    const detail =
+                      lsDef
+                        ? `${lsDef.layers.length} layers · ${lsDef.total_thickness_mm.toFixed(0)} mm`
+                        : null;
                     return (
-                      <tr
-                        key={`${g.entity}::${r.value}`}
-                        onClick={() => handleRowClick(r.value)}
-                        className={`cursor-pointer transition-colors ${
-                          isSel
-                            ? "bg-accent-soft text-fg"
-                            : isDim
-                            ? "opacity-35 hover:opacity-100 hover:bg-bg/60"
-                            : "hover:bg-bg/60"
-                        }`}
-                      >
-                        <td className={`pl-8 pr-4 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
-                          <span className="truncate inline-block max-w-full align-middle">{r.value}</span>
-                        </td>
-                        <td className="px-4 py-1.5 text-right tabular-nums">{r.count}</td>
-                      </tr>
+                      <Fragment key={`${g.entity}::${r.value}`}>
+                        <tr
+                          onClick={() => handleRowClick(r.value)}
+                          className={`cursor-pointer transition-colors ${
+                            isSel
+                              ? "bg-accent-soft text-fg"
+                              : isDim
+                              ? "opacity-35 hover:opacity-100 hover:bg-bg/60"
+                              : "hover:bg-bg/60"
+                          }`}
+                        >
+                          <td className={`pl-8 pr-4 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
+                            <span className="flex items-center gap-2 min-w-0">
+                              {lsDef && (
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    setExpandedSets(s => {
+                                      const n = new Set(s);
+                                      if (n.has(r.value)) n.delete(r.value);
+                                      else n.add(r.value);
+                                      return n;
+                                    });
+                                  }}
+                                  className="text-muted hover:text-fg flex-none w-3 text-center"
+                                  aria-label={isExpanded ? "Collapse layers" : "Expand layers"}
+                                >
+                                  {isExpanded ? "▾" : "▸"}
+                                </button>
+                              )}
+                              <span className="truncate">{r.value}</span>
+                              {detail && (
+                                <span className="ml-auto pl-3 text-[10px] text-muted whitespace-nowrap flex-none">
+                                  {detail}
+                                </span>
+                              )}
+                            </span>
+                          </td>
+                          <td className="px-4 py-1.5 text-right tabular-nums">{r.count}</td>
+                        </tr>
+                        {isExpanded && lsDef && lsDef.layers.map((ly, i) => (
+                          <tr key={`${g.entity}::${r.value}::layer-${i}`} className="bg-bg/30">
+                            <td className="pl-16 pr-4 py-1 font-mono text-[11px] text-muted">
+                              <span className="flex items-center gap-2">
+                                <span className="tabular-nums w-12 text-right text-fg/70">
+                                  {ly.thickness_mm.toFixed(0)} mm
+                                </span>
+                                <span className="truncate">{ly.material}</span>
+                              </span>
+                            </td>
+                            <td className="px-4 py-1"></td>
+                          </tr>
+                        ))}
+                      </Fragment>
                     );
                   })}
                 </Fragment>
