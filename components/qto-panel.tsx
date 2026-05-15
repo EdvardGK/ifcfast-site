@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSelection } from "./selection-context";
 
 type Product = {
@@ -19,12 +19,12 @@ type Graph = {
   storeys: { guid: string; name: string | null }[];
 };
 
-type Mode = "type" | "material";
+type Mode = "type" | "untyped" | "material";
 
 export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string }) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [mode, setMode] = useState<Mode>("type");
-  const { selection, toggleType, toggleMaterial, clear } = useSelection();
+  const { selection, toggleType, toggleMaterial, toggleEntity, clear } = useSelection();
 
   useEffect(() => {
     if (!metaSrc) return;
@@ -48,30 +48,71 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
       : graph.products;
   }, [graph, scopeStorey]);
 
-  // Per-mode aggregation: type-name → count + entity hint + type_source.
-  // For materials, count instances that reference each material (one product
-  // can carry several materials — e.g. wall layer sets — and contributes
-  // one tick to each material it touches).
-  const typeRows = useMemo(() => {
-    type T = { type_name: string; count: number; entity: string; source: string };
-    const acc = new Map<string, T>();
-    for (const p of scopedProducts) {
-      const k = p.type_name && p.type_name !== "" ? p.type_name : "—";
-      const cur = acc.get(k);
-      if (cur) { cur.count += 1; }
-      else acc.set(k, { type_name: k, count: 1, entity: p.entity, source: p.type_source ?? "none" });
+  // Per-mode aggregation. Type and Untyped split products by whether
+  // an IfcRelDefinesByType link exists — that's the IFC-formal distinction.
+  //   - Type:     products with type_source === "ifctype". Row key = IfcTypeObject.Name.
+  //   - Untyped:  products with type_source !== "ifctype". Row key = ObjectType
+  //               string (Revit's "type-by-name only" pattern); falls back to
+  //               the entity class when even that's missing.
+  // Materials: one product can carry several materials (e.g. wall layer sets);
+  // it contributes one tick to each material it touches.
+  // Each row is keyed by (entity, value). Rows are then grouped by entity
+  // and rendered under an entity heading. The entity heading itself is
+  // clickable — it selects all products of that entity class.
+  type Row = { entity: string; value: string; count: number };
+  type Group = { entity: string; total: number; rows: Row[] };
+
+  function groupRows(rows: Row[]): Group[] {
+    const byEnt = new Map<string, Group>();
+    for (const r of rows) {
+      const g = byEnt.get(r.entity)
+        ?? (byEnt.set(r.entity, { entity: r.entity, total: 0, rows: [] }), byEnt.get(r.entity)!);
+      g.rows.push(r);
+      g.total += r.count;
     }
-    return [...acc.values()].sort((a, b) => b.count - a.count);
+    for (const g of byEnt.values()) g.rows.sort((a, b) => b.count - a.count);
+    return [...byEnt.values()].sort((a, b) => b.total - a.total);
+  }
+
+  const typeGroups = useMemo(() => {
+    const acc = new Map<string, Row>();
+    for (const p of scopedProducts) {
+      if ((p.type_source ?? "none") !== "ifctype") continue;
+      const v = p.type_name && p.type_name !== "" ? p.type_name : "—";
+      const key = `${p.entity}::${v}`;
+      const cur = acc.get(key);
+      if (cur) cur.count += 1;
+      else acc.set(key, { entity: p.entity, value: v, count: 1 });
+    }
+    return groupRows([...acc.values()]);
   }, [scopedProducts]);
 
-  const materialRows = useMemo(() => {
-    const acc = new Map<string, number>();
+  const untypedGroups = useMemo(() => {
+    const acc = new Map<string, Row>();
     for (const p of scopedProducts) {
-      for (const m of p.materials ?? []) acc.set(m, (acc.get(m) ?? 0) + 1);
+      if ((p.type_source ?? "none") === "ifctype") continue;
+      const v = p.type_name && p.type_name !== "" && p.type_name !== "—"
+        ? p.type_name
+        : "(no name)";
+      const key = `${p.entity}::${v}`;
+      const cur = acc.get(key);
+      if (cur) cur.count += 1;
+      else acc.set(key, { entity: p.entity, value: v, count: 1 });
     }
-    return [...acc.entries()]
-      .map(([material, count]) => ({ material, count }))
-      .sort((a, b) => b.count - a.count);
+    return groupRows([...acc.values()]);
+  }, [scopedProducts]);
+
+  const materialGroups = useMemo(() => {
+    const acc = new Map<string, Row>();
+    for (const p of scopedProducts) {
+      for (const m of p.materials ?? []) {
+        const key = `${p.entity}::${m}`;
+        const cur = acc.get(key);
+        if (cur) cur.count += 1;
+        else acc.set(key, { entity: p.entity, value: m, count: 1 });
+      }
+    }
+    return groupRows([...acc.values()]);
   }, [scopedProducts]);
 
   if (!graph) return <Loading />;
@@ -82,20 +123,30 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
       ?? "storey"
     : null;
 
-  const rowCount = mode === "type" ? typeRows.length : materialRows.length;
-  const productsWithoutMaterial = scopedProducts.length - new Set(
-    scopedProducts.filter(p => (p.materials?.length ?? 0) > 0).map(p => p.guid)
-  ).size;
+  const activeGroups =
+    mode === "type" ? typeGroups
+    : mode === "untyped" ? untypedGroups
+    : materialGroups;
+  const rowCount = activeGroups.reduce((s, g) => s + g.rows.length, 0);
+  const itemLabel =
+    mode === "type" ? "types"
+    : mode === "untyped" ? "untyped"
+    : "materials";
+  const selectedEntity = selection?.kind === "entity" ? selection.value : null;
 
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="px-5 py-3 border-b border-line flex items-baseline justify-between">
         <div>
           <div className="text-xs font-mono text-muted uppercase tracking-wider">
-            {mode === "type" ? "m.type_summary()" : "m.materials"}
+            {mode === "type" ? "m.type_summary()"
+              : mode === "untyped" ? "m.objects[~m.is_typed]"
+              : "m.materials"}
           </div>
           <div className="text-sm font-medium">
-            {mode === "type" ? "Types" : "Materials"}
+            {mode === "type" ? "Types"
+              : mode === "untyped" ? "Untyped"
+              : "Materials"}
             {scopeLabel && (
               <span className="ml-2 text-xs font-mono text-accent">
                 · {scopeLabel}
@@ -109,21 +160,27 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
           </button>
         ) : (
           <div className="font-mono text-xs text-muted tabular-nums">
-            {rowCount} {mode === "type" ? "types" : "materials"}
+            {rowCount} {itemLabel}
           </div>
         )}
       </div>
       <div className="px-5 py-2 border-b border-line bg-bg/40 flex items-center gap-1 text-[11px] font-mono">
         <ModeTab label="Type" active={mode === "type"} onClick={() => setMode("type")} />
+        <ModeTab label="Untyped" active={mode === "untyped"} onClick={() => setMode("untyped")} />
         <ModeTab label="Material" active={mode === "material"} onClick={() => setMode("material")} />
-        <span className="ml-auto text-muted">
-          {mode === "type"
-            ? <span title="IfcTypeObject when present, ObjectType string otherwise. Dot indicates type source.">
-                ● IfcType · ○ name-only
-              </span>
-            : <span title="Products with no IfcRelAssociatesMaterial association.">
-                {productsWithoutMaterial} w/o material
-              </span>}
+        <span
+          className="ml-auto text-muted truncate"
+          title={
+            mode === "type"
+              ? "Products with an IfcRelDefinesByType link to an IfcTypeObject."
+              : mode === "untyped"
+              ? "Products without IfcRelDefinesByType. Rows show the ObjectType string when present (Revit's type-by-name pattern)."
+              : "Products with an IfcRelAssociatesMaterial. One product can show under several materials (layer-sets, profile-sets)."
+          }
+        >
+          {mode === "type" ? "linked to IfcTypeObject"
+            : mode === "untyped" ? "ObjectType name only"
+            : "via IfcRelAssociatesMaterial"}
         </span>
       </div>
       <div className="flex-1 overflow-auto scroll-thin">
@@ -131,77 +188,69 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
           <thead className="sticky top-0 bg-card border-b border-line">
             <tr className="text-[10px] font-mono text-muted uppercase tracking-wider">
               <th className="text-left font-normal px-4 py-2">
-                {mode === "type" ? "type" : "material"}
+                {mode === "material" ? "material" : "name"}
               </th>
               <th className="text-right font-normal px-4 py-2 w-16">count</th>
-              <th className="text-left font-normal px-4 py-2 w-28 text-muted/70">
-                {mode === "type" ? "entity" : ""}
-              </th>
             </tr>
           </thead>
           <tbody>
-            {mode === "type" && typeRows.map(r => {
-              const isSel = selectedType === r.type_name;
-              const isDim = selectedType !== null && !isSel;
-              const dotClass = r.source === "ifctype" ? "bg-fg" : "bg-transparent border border-muted";
-              return (
-                <tr
-                  key={r.type_name}
-                  onClick={() => toggleType(r.type_name)}
-                  className={`border-b border-line/60 cursor-pointer transition-colors ${
-                    isSel
-                      ? "bg-accent-soft text-fg"
-                      : isDim
-                      ? "opacity-35 hover:opacity-100 hover:bg-bg/60"
-                      : "hover:bg-bg/60"
-                  }`}
-                  title={
-                    r.source === "ifctype"
-                      ? "Linked to an IfcTypeObject via IfcRelDefinesByType"
-                      : r.source === "objecttype"
-                      ? "Type-by-name only — IFC's ObjectType string, no IfcTypeObject"
-                      : "No type info"
-                  }
-                >
-                  <td className={`px-4 py-2 font-mono text-[12px] flex items-center gap-2 ${isSel ? "text-accent font-medium" : ""}`}>
-                    <span className={`inline-block w-1.5 h-1.5 rounded-full flex-none ${dotClass}`}></span>
-                    <span className="truncate">{r.type_name}</span>
-                  </td>
-                  <td className="px-4 py-2 text-right tabular-nums">{r.count}</td>
-                  <td className="px-4 py-2 font-mono text-[11px] text-muted truncate">{r.entity}</td>
-                </tr>
-              );
-            })}
-            {mode === "material" && materialRows.map(r => {
-              const isSel = selectedMaterial === r.material;
-              const isDim = selectedMaterial !== null && !isSel;
-              return (
-                <tr
-                  key={r.material}
-                  onClick={() => toggleMaterial(r.material)}
-                  className={`border-b border-line/60 cursor-pointer transition-colors ${
-                    isSel
-                      ? "bg-accent-soft text-fg"
-                      : isDim
-                      ? "opacity-35 hover:opacity-100 hover:bg-bg/60"
-                      : "hover:bg-bg/60"
-                  }`}
-                >
-                  <td className={`px-4 py-2 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
-                    {r.material}
-                  </td>
-                  <td className="px-4 py-2 text-right tabular-nums">{r.count}</td>
-                  <td className="px-4 py-2"></td>
-                </tr>
-              );
-            })}
-            {mode === "material" && materialRows.length === 0 && (
+            {activeGroups.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-muted text-[12px] font-mono">
-                  no materials in this scope
+                <td colSpan={2} className="px-4 py-6 text-center text-muted text-[12px] font-mono">
+                  nothing in this scope
                 </td>
               </tr>
             )}
+            {activeGroups.map(g => {
+              const isEntSel = selectedEntity === g.entity;
+              return (
+                <Fragment key={g.entity}>
+                  <tr
+                    onClick={() => toggleEntity(g.entity)}
+                    className={`sticky top-0 cursor-pointer transition-colors border-b border-line/80 ${
+                      isEntSel ? "bg-accent-soft" : "bg-bg/60 hover:bg-bg/80"
+                    }`}
+                    title={`Click to filter every ${g.entity} across panels`}
+                  >
+                    <td className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider ${isEntSel ? "text-accent font-medium" : "text-muted"}`}>
+                      {g.entity}
+                    </td>
+                    <td className={`px-4 py-1.5 text-right tabular-nums text-[11px] font-mono ${isEntSel ? "text-accent" : "text-muted"}`}>
+                      {g.total}
+                    </td>
+                  </tr>
+                  {g.rows.map(r => {
+                    const isSel =
+                      mode === "material"
+                        ? selectedMaterial === r.value
+                        : selectedType === r.value;
+                    const isDim =
+                      (mode === "material" && selectedMaterial !== null && !isSel)
+                      || (mode !== "material" && selectedType !== null && !isSel);
+                    return (
+                      <tr
+                        key={`${g.entity}::${r.value}`}
+                        onClick={() =>
+                          mode === "material" ? toggleMaterial(r.value) : toggleType(r.value)
+                        }
+                        className={`border-b border-line/40 cursor-pointer transition-colors ${
+                          isSel
+                            ? "bg-accent-soft text-fg"
+                            : isDim
+                            ? "opacity-35 hover:opacity-100 hover:bg-bg/60"
+                            : "hover:bg-bg/60"
+                        }`}
+                      >
+                        <td className={`pl-8 pr-4 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
+                          <span className="truncate inline-block max-w-full align-middle">{r.value}</span>
+                        </td>
+                        <td className="px-4 py-1.5 text-right tabular-nums">{r.count}</td>
+                      </tr>
+                    );
+                  })}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>
