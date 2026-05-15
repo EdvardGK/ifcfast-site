@@ -42,35 +42,37 @@ type Link = d3.SimulationLinkDatum<Node> & {
   kind: "agg" | "cont";
 };
 
-// Palette adapted from edkjo's graph-viewer template. Containers (project /
-// site / building / storey / space) keep distinct hues; element classes share
-// a green-to-blue family so they read as "stuff inside" without competing.
+// Muted, theme-aligned palette. The site is warm cream (#fafaf7) with rust
+// accent (#e07c2f) reserved for selection state — so the graph stays earthy
+// and low-saturation: container hierarchy in deepening browns, element
+// classes in a cool gray-green family, accent reserved for the selected
+// node's stroke.
 const PALETTE: Record<string, string> = {
-  IfcProject: "#fbbf24",
-  IfcSite: "#f59e0b",
-  IfcBuilding: "#ef4444",
-  IfcBuildingStorey: "#ec4899",
-  IfcSpace: "#a78bfa",
-  IfcElementAssembly: "#22d3ee",
-  IfcSlab: "#10b981",
-  IfcWall: "#34d399",
-  IfcWallStandardCase: "#34d399",
-  IfcBeam: "#84cc16",
-  IfcColumn: "#3b82f6",
-  IfcMember: "#0ea5e9",
-  IfcPlate: "#06b6d4",
-  IfcDoor: "#fde047",
-  IfcWindow: "#7dd3fc",
-  IfcCovering: "#fcd34d",
-  IfcRailing: "#94a3b8",
-  IfcStairFlight: "#fda4af",
-  IfcStair: "#fda4af",
-  IfcFooting: "#a3a3a3",
-  IfcRoof: "#fb923c",
-  IfcOpeningElement: "#fb923c",
-  IfcFurnishingElement: "#d4a373",
+  IfcProject:           "#4a3a2a",   // deep walnut — root
+  IfcSite:              "#6b5640",   // dark brown
+  IfcBuilding:          "#8a7257",   // mid bronze
+  IfcBuildingStorey:    "#a6896b",   // clay
+  IfcSpace:             "#a89c8c",   // taupe
+  IfcElementAssembly:   "#6c7670",   // pewter
+  IfcSlab:              "#7a7d72",   // sage gray
+  IfcCovering:          "#9c9684",   // sandstone
+  IfcWall:              "#8a8478",   // warm stone
+  IfcWallStandardCase:  "#8a8478",
+  IfcRoof:              "#a06550",   // muted terracotta
+  IfcDoor:              "#7a5c44",   // wood
+  IfcWindow:            "#8aa3ad",   // muted slate-blue
+  IfcBeam:              "#5e6770",   // steel
+  IfcColumn:            "#525a62",   // dark steel
+  IfcMember:            "#5e6770",
+  IfcPlate:             "#6a737c",
+  IfcRailing:           "#65615b",   // charcoal-warm
+  IfcStair:             "#7a6f60",
+  IfcStairFlight:       "#7a6f60",
+  IfcFooting:           "#4d4944",   // dark earth
+  IfcOpeningElement:    "#b8a896",   // light warm gray
+  IfcFurnishingElement: "#a08566",   // tan
 };
-const colorFor = (e: string) => PALETTE[e] ?? "#6b7280";
+const colorFor = (e: string) => PALETTE[e] ?? "#7a7975";
 
 const RADIUS: Record<string, number> = {
   IfcProject: 14, IfcSite: 12, IfcBuilding: 10, IfcBuildingStorey: 8,
@@ -133,18 +135,23 @@ export function VectorGraph({ src }: { src: string }) {
     const link = root.append("g").selectAll("line")
       .data(links).join("line")
       .attr("class", d => "ifcfast-link " + d.kind)
-      .attr("stroke", d => d.kind === "agg" ? "#475569" : "#1f2937")
+      // Both link kinds use the theme's line colour family; aggregation is
+      // a touch darker than containment so the spatial structure reads
+      // first. Dashed = product → storey containment, solid = aggregation.
+      .attr("stroke", d => d.kind === "agg" ? "#9a948b" : "#bdb6ab")
       .attr("stroke-dasharray", d => d.kind === "cont" ? "2 3" : "")
       .attr("stroke-width", d => d.kind === "agg" ? 1.0 : 0.7)
-      .attr("stroke-opacity", 0.65);
+      .attr("stroke-opacity", 0.75);
 
     const node = root.append("g").selectAll<SVGCircleElement, Node>("circle")
       .data(nodes).join("circle")
       .attr("class", "ifcfast-node")
       .attr("r", d => radiusFor(d.entity))
       .attr("fill", d => colorFor(d.entity))
-      .attr("stroke", "#0e1116")
-      .attr("stroke-width", 1)
+      // Subtle warm-dark stroke instead of pure black — lets the cream
+      // background read as a paper-like field rather than a hard contrast.
+      .attr("stroke", "rgba(13,13,12,0.45)")
+      .attr("stroke-width", 0.8)
       .style("cursor", "pointer")
       .on("mouseenter", (e, d) => {
         const tip = wrap.querySelector(".ifcfast-tip") as HTMLDivElement | null;
@@ -182,7 +189,7 @@ export function VectorGraph({ src }: { src: string }) {
       .attr("text-anchor", "middle")
       .attr("font-family", "ui-monospace, monospace")
       .attr("font-size", 9)
-      .attr("fill", "#cbd5e1")
+      .attr("fill", "#3d3a35")
       .attr("pointer-events", "none");
 
     const sim = d3.forceSimulation<Node>(nodes)
@@ -214,12 +221,14 @@ export function VectorGraph({ src }: { src: string }) {
     const applySelection = () => {
       const sel = selectionRef.current;
       node
-        .attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.12)
-        .attr("stroke", n => isExact(n, sel) ? "#fbbf24" : "#0e1116")
-        .attr("stroke-width", n => isExact(n, sel) ? 2.5 : 1);
+        .attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.15)
+        // Selected node gets the rust accent stroke; everything else keeps
+        // its soft warm-dark default.
+        .attr("stroke", n => isExact(n, sel) ? "#e07c2f" : "rgba(13,13,12,0.45)")
+        .attr("stroke-width", n => isExact(n, sel) ? 2.2 : 0.8);
       link.attr("opacity", l => {
         const s = l.source as Node, t = l.target as Node;
-        return (isMatch(s, sel) && isMatch(t, sel)) ? 0.65 : 0.06;
+        return (isMatch(s, sel) && isMatch(t, sel)) ? 0.75 : 0.08;
       });
       label.attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.2);
     };
