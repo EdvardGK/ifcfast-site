@@ -21,6 +21,9 @@ import { McpInstall } from "@/components/mcp-install";
 import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
 import { GraphView } from "@/components/graph-view";
+import { VectorGraph } from "@/components/vector-graph";
+import { DataTabs } from "@/components/data-tabs";
+import { SelectionProvider } from "@/components/selection-context";
 
 export default function Home() {
   return (
@@ -43,71 +46,85 @@ function ThreeLensSection() {
       <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
         <div className="max-w-2xl mb-10">
           <div className="text-xs uppercase tracking-wider text-muted mb-2">
-            Same model. Three lenses.
+            One parse, every lens.
           </div>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            One parse,
+            See it. Count it.
             <br />
-            <span className="text-muted">everything you need.</span>
+            <span className="text-muted">Trace it.</span>
           </h2>
           <p className="mt-4 text-muted leading-relaxed max-w-xl">
-            A public-license IFC opened with{" "}
+            A public-license IFC opened once with{" "}
             <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              ifcfast.open(path)
-            </code>{" "}
-            — rendered geometry from{" "}
-            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              ifcfast-mesh
+              ifcfast.open()
             </code>
-            , a QTO rollup from{" "}
-            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              m.type_summary()
-            </code>
-            , and the spatial hierarchy from{" "}
-            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              m.aggregates
-            </code>{" "}
-            +{" "}
-            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              m.contained_in
-            </code>
-            . All from a single 1.5 MB Python wheel.
+            . Click anything in the data panel — the model dims,
+            the graph highlights the path. Three lenses, one model,
+            cross-filtered.
           </p>
         </div>
-        <div className="grid lg:grid-cols-3 gap-px bg-line rounded-xl overflow-hidden border border-line">
-          <div className="bg-card h-[360px] lg:h-[440px] relative">
-            <div className="absolute top-0 left-0 right-0 px-5 py-3 border-b border-line bg-card/95 backdrop-blur z-10">
-              <div className="text-xs font-mono text-muted uppercase tracking-wider">
-                ifcfast-mesh → glTF
+        <SelectionProvider>
+          <div className="grid lg:grid-cols-12 gap-px bg-line rounded-xl overflow-hidden border border-line h-[460px] sm:h-[520px]">
+            <div className="lg:col-span-7 bg-card relative">
+              <div className="absolute top-0 left-0 right-0 px-5 py-3 border-b border-line bg-card/95 backdrop-blur z-10">
+                <div className="text-xs font-mono text-muted uppercase tracking-wider">
+                  ifcfast-mesh → glTF
+                </div>
+                <div className="text-sm font-medium">3D viewer</div>
               </div>
-              <div className="text-sm font-medium">3D viewer</div>
+              <div className="pt-[60px] h-full">
+                <ModelViewer
+                  src="/sample/duplex.glb"
+                  metaSrc="/sample/duplex.graph.json"
+                  alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+                />
+              </div>
             </div>
-            <div className="pt-[60px] h-full">
-              <ModelViewer
-                src="/sample/duplex.glb"
-                alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-              />
+            <div className="lg:col-span-5 bg-card min-h-0">
+              <DataTabs
+                labels={[
+                  { id: "qto", label: "QTO" },
+                  { id: "spatial", label: "Spatial" },
+                  { id: "vector", label: "Vector" },
+                ]}
+              >
+                <QtoPanel src="/sample/duplex.qto.json" metaSrc="/sample/duplex.graph.json" />
+                <GraphView src="/sample/duplex.graph.json" />
+                <VectorGraph src="/sample/duplex.graph.json" />
+              </DataTabs>
             </div>
           </div>
-          <div className="bg-card h-[360px] lg:h-[440px]">
-            <QtoPanel src="/sample/duplex.qto.json" />
-          </div>
-          <div className="bg-card h-[360px] lg:h-[440px]">
-            <GraphView src="/sample/duplex.graph.json" />
-          </div>
+        </SelectionProvider>
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 text-xs text-muted">
+          <span>
+            Source IFC:{" "}
+            <a
+              href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-fg"
+            >
+              buildingSMART community sample — Duplex Apartment
+            </a>{" "}
+            (CC BY 4.0).
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+            <span>
+              IfcRoof + IfcStair appear in QTO but the source IFC ships
+              no body representation for them, so they don&apos;t render — see{" "}
+              <a
+                href="https://github.com/EdvardGK/ifcfast/issues/5"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-fg font-mono"
+              >
+                #5
+              </a>
+              . QTO + graph data are complete.
+            </span>
+          </span>
         </div>
-        <p className="mt-6 text-xs text-muted">
-          Source IFC:{" "}
-          <a
-            href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
-            target="_blank"
-            rel="noreferrer"
-            className="underline hover:text-fg"
-          >
-            buildingSMART community sample — Duplex Apartment
-          </a>{" "}
-          (CC BY 4.0).
-        </p>
       </div>
     </section>
   );

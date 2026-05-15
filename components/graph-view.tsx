@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { ChevronRight } from "lucide-react";
+import { useSelection } from "./selection-context";
 
 type Graph = {
   project_name: string | null;
@@ -12,21 +14,38 @@ type Graph = {
   projects: { guid: string; name: string }[];
 };
 
-type Node = {
-  guid: string;
+type TreeNode = {
+  id: string;
   label: string;
-  kind: "project" | "site" | "building" | "storey" | "product";
+  kind: "project" | "site" | "building" | "storey" | "type" | "product";
   count?: number;
+  meta?: string;
+  children?: TreeNode[];
+  entity?: string;        // for type nodes — drives cross-filter
+  storey_guid?: string;   // for storey + type nodes — type nodes inherit
+                          //   their parent storey so an entity click scopes
+                          //   to that storey instead of all storeys
+  storey_label?: string;  // human-readable storey name for type nodes
 };
 
 export function GraphView({ src }: { src: string }) {
   const [data, setData] = useState<Graph | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+  const { selection, toggleEntity, toggleStorey, clear } = useSelection();
 
   useEffect(() => {
-    fetch(src).then(r => r.json()).then(setData).catch(() => setData(null));
+    fetch(src).then(r => r.json()).then((d: Graph) => {
+      setData(d);
+      // Default-expand project + site + building + first storey.
+      const next = new Set<string>();
+      if (d.projects[0]) next.add("p:" + d.projects[0].guid);
+      if (d.sites[0]) next.add("s:" + d.sites[0].guid);
+      if (d.buildings[0]) next.add("b:" + d.buildings[0].guid);
+      setExpanded(next);
+    }).catch(() => setData(null));
   }, [src]);
 
-  const tree = useMemo(() => (data ? build(data) : null), [data]);
+  const tree = useMemo(() => (data ? buildTree(data) : null), [data]);
 
   if (!data || !tree) {
     return (
@@ -35,6 +54,52 @@ export function GraphView({ src }: { src: string }) {
       </div>
     );
   }
+
+  function isMatch(n: TreeNode): boolean {
+    if (!selection) return true;
+    if (selection.kind === "entity") {
+      if (!collectEntities(n).has(selection.value.toLowerCase())) return false;
+      // Storey-scoped entity selection: also require the storey to match.
+      if (selection.storey_guid) return collectStoreys(n).has(selection.storey_guid);
+      return true;
+    }
+    if (selection.kind === "storey") {
+      return collectStoreys(n).has(selection.value);
+    }
+    return true;
+  }
+
+  function isExact(n: TreeNode): boolean {
+    if (!selection) return false;
+    if (selection.kind === "entity" && n.kind === "type") {
+      if ((n.entity ?? "").toLowerCase() !== selection.value.toLowerCase()) return false;
+      // Only the type node under the matching storey is "exact"; same
+      // entity under other storeys is just an entity-name match.
+      if (selection.storey_guid) return n.storey_guid === selection.storey_guid;
+      return true;
+    }
+    if (selection.kind === "storey" && n.kind === "storey") {
+      return n.storey_guid === selection.value;
+    }
+    return false;
+  }
+
+  function onNodeClick(n: TreeNode, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (n.kind === "type" && n.entity) toggleEntity(n.entity, n.storey_guid, n.storey_label);
+    else if (n.kind === "storey" && n.storey_guid) toggleStorey(n.storey_guid, n.label);
+    else toggleNode(n.id);
+  }
+
+  function toggleNode(id: string) {
+    setExpanded(s => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  }
+
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="px-5 py-3 border-b border-line flex items-baseline justify-between">
@@ -42,137 +107,230 @@ export function GraphView({ src }: { src: string }) {
           <div className="text-xs font-mono text-muted uppercase tracking-wider">
             m.aggregates + m.contained_in
           </div>
-          <div className="text-sm font-medium">Spatial graph</div>
+          <div className="text-sm font-medium">Model tree</div>
         </div>
-        <div className="font-mono text-xs text-muted tabular-nums">
-          {data.products.length} products
-        </div>
+        {selection ? (
+          <button onClick={clear} className="font-mono text-xs text-accent hover:underline">
+            clear
+          </button>
+        ) : (
+          <div className="font-mono text-xs text-muted tabular-nums">
+            {data.storeys.length} storeys · {data.products.length} products
+          </div>
+        )}
       </div>
-      <div className="flex-1 overflow-auto scroll-thin p-4">
-        <NodeView node={tree} depth={0} />
+      <div className="flex-1 overflow-auto scroll-thin py-2">
+        <Row
+          node={tree}
+          depth={0}
+          expanded={expanded}
+          onToggleExpand={toggleNode}
+          onNodeClick={onNodeClick}
+          isMatch={isMatch}
+          isExact={isExact}
+          hasSelection={!!selection}
+        />
+      </div>
+      <div className="border-t border-line px-5 py-2 bg-bg/40 text-[11px] font-mono text-muted">
+        click an entity or storey to cross-filter
       </div>
     </div>
   );
 }
 
-function build(d: Graph): Node & { children: Node[] } {
-  // Aggregate counts: storey → number of products contained.
-  const productsByStorey = new Map<string, number>();
-  const productsByEntity = new Map<string, Map<string, number>>();
-  for (const p of d.products) {
-    if (!p.storey_guid) continue;
-    productsByStorey.set(p.storey_guid, (productsByStorey.get(p.storey_guid) ?? 0) + 1);
-    if (!productsByEntity.has(p.storey_guid)) {
-      productsByEntity.set(p.storey_guid, new Map());
-    }
-    const m = productsByEntity.get(p.storey_guid)!;
-    m.set(p.entity, (m.get(p.entity) ?? 0) + 1);
-  }
-
-  const storeysByBuilding = new Map<string, typeof d.storeys>();
-  for (const s of d.storeys) {
-    if (!s.building_guid) continue;
-    if (!storeysByBuilding.has(s.building_guid)) {
-      storeysByBuilding.set(s.building_guid, []);
-    }
-    storeysByBuilding.get(s.building_guid)!.push(s);
-  }
-
-  const project = d.projects[0];
-  const site = d.sites[0];
-  const building = d.buildings[0];
-
-  const buildingNode: Node & { children: Node[] } = {
-    guid: building?.guid ?? "no-building",
-    label: building?.name ?? "Building",
-    kind: "building",
-    count: storeysByBuilding.get(building?.guid ?? "")?.length ?? 0,
-    children: (storeysByBuilding.get(building?.guid ?? "") ?? [])
-      .sort((a, b) => (b.elevation ?? 0) - (a.elevation ?? 0))
-      .map(s => {
-        const entities = productsByEntity.get(s.guid);
-        const entityNodes: Node[] = entities
-          ? Array.from(entities.entries())
-              .sort((a, b) => b[1] - a[1])
-              .map(([entity, count]) => ({
-                guid: `${s.guid}::${entity}`,
-                label: entity,
-                kind: "product",
-                count,
-              }))
-          : [];
-        return {
-          guid: s.guid,
-          label: `${s.name ?? "Storey"}${s.elevation !== null ? `  (${s.elevation.toFixed(1)} m)` : ""}`,
-          kind: "storey",
-          count: productsByStorey.get(s.guid) ?? 0,
-          children: entityNodes,
-        };
-      }),
-  };
-
-  const siteNode: Node & { children: Node[] } = {
-    guid: site?.guid ?? "no-site",
-    label: site?.name ?? "Site",
-    kind: "site",
-    children: [buildingNode],
-  };
-
-  const projectNode: Node & { children: Node[] } = {
-    guid: project?.guid ?? "no-project",
-    label: d.project_name ?? project?.name ?? "Project",
-    kind: "project",
-    children: [siteNode],
-  };
-
-  return projectNode;
-}
-
-function NodeView({
-  node, depth,
+function Row({
+  node, depth, expanded, onToggleExpand, onNodeClick, isMatch, isExact, hasSelection,
 }: {
-  node: Node & { children?: Node[] };
+  node: TreeNode;
   depth: number;
+  expanded: Set<string>;
+  onToggleExpand: (id: string) => void;
+  onNodeClick: (n: TreeNode, e: React.MouseEvent) => void;
+  isMatch: (n: TreeNode) => boolean;
+  isExact: (n: TreeNode) => boolean;
+  hasSelection: boolean;
 }) {
-  const indent = depth * 16;
-  const KIND_COLOR: Record<Node["kind"], string> = {
+  const hasChildren = !!(node.children && node.children.length);
+  const isOpen = expanded.has(node.id);
+  const dimmed = hasSelection && !isMatch(node);
+  const exact = isExact(node);
+  const KIND_DOT: Record<TreeNode["kind"], string> = {
     project: "bg-accent",
     site: "bg-fg",
-    building: "bg-muted",
-    storey: "bg-line",
-    product: "bg-line/60",
+    building: "bg-fg",
+    storey: "bg-fg",
+    type: "bg-muted",
+    product: "bg-line",
   };
+
+  const KIND_TEXT_WEIGHT: Record<TreeNode["kind"], string> = {
+    project: "font-semibold",
+    site: "font-medium",
+    building: "font-medium",
+    storey: "font-medium",
+    type: "font-mono text-[13px]",
+    product: "font-mono text-[12px] text-muted",
+  };
+
   return (
-    <div>
+    <>
       <div
-        style={{ paddingLeft: indent }}
-        className="flex items-center gap-2 py-1.5 group hover:bg-bg/50 -mx-2 px-2 rounded"
+        onClick={e => {
+          if (hasChildren && node.kind !== "type" && node.kind !== "storey") {
+            onToggleExpand(node.id);
+          } else {
+            onNodeClick(node, e);
+          }
+        }}
+        style={{ paddingLeft: 12 + depth * 14 }}
+        className={`group flex items-center gap-1.5 py-1 pr-3 cursor-pointer transition-opacity ${
+          dimmed ? "opacity-20 hover:opacity-100" : ""
+        } ${exact ? "bg-accent-soft" : "hover:bg-bg/50"}`}
       >
-        <span className={`w-1.5 h-1.5 rounded-full ${KIND_COLOR[node.kind]}`}></span>
-        <span
-          className={`text-sm ${
-            node.kind === "product"
-              ? "font-mono text-[13px] text-muted"
-              : node.kind === "storey"
-              ? "font-medium"
-              : ""
-          }`}
-        >
+        {hasChildren ? (
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              onToggleExpand(node.id);
+            }}
+            className="-ml-1 p-0.5 rounded hover:bg-line"
+            aria-label={isOpen ? "Collapse" : "Expand"}
+          >
+            <ChevronRight
+              size={12}
+              className={`transition-transform ${isOpen ? "rotate-90" : ""} text-muted`}
+            />
+          </button>
+        ) : (
+          <span className="w-[16px] inline-block" />
+        )}
+        <span className={`w-1.5 h-1.5 rounded-full flex-none ${exact ? "bg-accent" : KIND_DOT[node.kind]}`}></span>
+        <span className={`text-sm ${KIND_TEXT_WEIGHT[node.kind]} ${exact ? "text-accent" : ""}`}>
           {node.label}
         </span>
+        {node.meta && (
+          <span className="text-[11px] font-mono text-muted ml-1">{node.meta}</span>
+        )}
         {typeof node.count === "number" && (
           <span className="font-mono text-[11px] text-muted ml-auto tabular-nums">
             {node.count}
           </span>
         )}
       </div>
-      {node.children?.map(c => (
-        <NodeView
-          key={c.guid}
-          node={c as Node & { children?: Node[] }}
-          depth={depth + 1}
-        />
-      ))}
-    </div>
+      {hasChildren && isOpen &&
+        node.children!.map(c => (
+          <Row
+            key={c.id}
+            node={c}
+            depth={depth + 1}
+            expanded={expanded}
+            onToggleExpand={onToggleExpand}
+            onNodeClick={onNodeClick}
+            isMatch={isMatch}
+            isExact={isExact}
+            hasSelection={hasSelection}
+          />
+        ))
+      }
+    </>
   );
+}
+
+// ----------------------------------------------------------------------
+// Build the hierarchical tree
+// ----------------------------------------------------------------------
+
+function buildTree(d: Graph): TreeNode {
+  const productsByStorey = new Map<string, typeof d.products>();
+  for (const p of d.products) {
+    if (!p.storey_guid) continue;
+    if (!productsByStorey.has(p.storey_guid)) productsByStorey.set(p.storey_guid, []);
+    productsByStorey.get(p.storey_guid)!.push(p);
+  }
+  const storeysSorted = [...d.storeys].sort(
+    (a, b) => (b.elevation ?? 0) - (a.elevation ?? 0)
+  );
+  const storeyNodes: TreeNode[] = storeysSorted.map(s => {
+    const products = productsByStorey.get(s.guid) ?? [];
+    // Group products by entity type.
+    const byEntity = new Map<string, typeof d.products>();
+    for (const p of products) {
+      if (!byEntity.has(p.entity)) byEntity.set(p.entity, []);
+      byEntity.get(p.entity)!.push(p);
+    }
+    const typeChildren: TreeNode[] = [...byEntity.entries()]
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([entity, prods]) => ({
+        id: `t:${s.guid}::${entity}`,
+        label: entity,
+        kind: "type",
+        count: prods.length,
+        entity,
+        storey_guid: s.guid,
+        storey_label: s.name ?? undefined,
+        children: prods.slice(0, 50).map(p => ({
+          id: `prod:${p.guid}`,
+          label: p.name || p.guid,
+          kind: "product",
+        })),
+      }));
+    return {
+      id: "st:" + s.guid,
+      label: s.name || "Storey",
+      kind: "storey",
+      meta: s.elevation !== null ? `${s.elevation.toFixed(1)} m` : undefined,
+      count: products.length,
+      storey_guid: s.guid,
+      children: typeChildren,
+    };
+  });
+
+  const building = d.buildings[0];
+  const site = d.sites[0];
+  const project = d.projects[0];
+
+  const buildingNode: TreeNode = {
+    id: "b:" + (building?.guid ?? "none"),
+    label: building?.name ?? "Building",
+    kind: "building",
+    count: storeyNodes.length,
+    children: storeyNodes,
+  };
+  const siteNode: TreeNode = {
+    id: "s:" + (site?.guid ?? "none"),
+    label: site?.name ?? "Site",
+    kind: "site",
+    children: [buildingNode],
+  };
+  const projectNode: TreeNode = {
+    id: "p:" + (project?.guid ?? "none"),
+    label: d.project_name ?? "Project",
+    kind: "project",
+    children: [siteNode],
+  };
+  return projectNode;
+}
+
+// ----------------------------------------------------------------------
+// Filter helpers
+// ----------------------------------------------------------------------
+
+function collectEntities(n: TreeNode): Set<string> {
+  const out = new Set<string>();
+  function walk(nn: TreeNode) {
+    if (nn.kind === "type" && nn.entity) out.add(nn.entity.toLowerCase());
+    nn.children?.forEach(walk);
+  }
+  walk(n);
+  return out;
+}
+
+function collectStoreys(n: TreeNode): Set<string> {
+  const out = new Set<string>();
+  function walk(nn: TreeNode) {
+    if (nn.kind === "storey" && nn.storey_guid) out.add(nn.storey_guid);
+    nn.children?.forEach(walk);
+  }
+  walk(n);
+  return out;
 }

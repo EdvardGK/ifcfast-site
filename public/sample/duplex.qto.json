@@ -1,186 +1,273 @@
-[
-  {
-    "entity": "IfcFurnishingElement",
-    "count": 61,
-    "storeys": [],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcWallStandardCase",
-    "count": 56,
-    "storeys": [
-      "Level 1",
-      "Level 2",
-      "Roof",
-      "T/FDN"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcOpeningElement",
-    "count": 50,
-    "storeys": [],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcWindow",
-    "count": 24,
-    "storeys": [
-      "Level 1",
-      "Level 2",
-      "Roof"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcSlab",
-    "count": 21,
-    "storeys": [
-      "Level 1",
-      "Level 2"
-    ],
-    "predefined_types": [
-      "FLOOR",
-      "ROOF"
-    ],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcSpace",
-    "count": 21,
-    "storeys": [],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": 422.05,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcDoor",
-    "count": 14,
-    "storeys": [
-      "Level 1",
-      "Level 2"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcCovering",
-    "count": 13,
-    "storeys": [
-      "Level 1",
-      "Level 2"
-    ],
-    "predefined_types": [
-      "CEILING"
-    ],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcBeam",
-    "count": 8,
-    "storeys": [
-      "Level 1",
-      "Level 2"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcFooting",
-    "count": 7,
-    "storeys": [
-      "T/FDN"
-    ],
-    "predefined_types": [
-      "STRIP_FOOTING"
-    ],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcMember",
-    "count": 4,
-    "storeys": [],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcRailing",
-    "count": 4,
-    "storeys": [],
-    "predefined_types": [
-      "NOTDEFINED"
-    ],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcStair",
-    "count": 2,
-    "storeys": [
-      "Level 1"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcStairFlight",
-    "count": 2,
-    "storeys": [],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcRoof",
-    "count": 1,
-    "storeys": [
-      "Roof"
-    ],
-    "predefined_types": [
-      "NOTDEFINED"
-    ],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
-  },
-  {
-    "entity": "IfcWall",
-    "count": 1,
-    "storeys": [
-      "Level 2"
-    ],
-    "predefined_types": [],
-    "materials": [],
-    "area_m2": null,
-    "volume_m3": null
+{
+  "schema": "IFC2X3",
+  "products": 268,
+  "rows": [
+    {
+      "entity": "IfcFurnishingElement",
+      "count": 61,
+      "storeys": 0,
+      "predefined": "\u2014",
+      "area_m2": 59.9,
+      "volume_m3": 0.95,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcWallStandardCase",
+      "count": 56,
+      "storeys": 4,
+      "predefined": "\u2014",
+      "area_m2": 1449.7,
+      "volume_m3": 198.5,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcOpeningElement",
+      "count": 50,
+      "storeys": 0,
+      "predefined": "\u2014",
+      "area_m2": 334.3,
+      "volume_m3": 45.98,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcWindow",
+      "count": 24,
+      "storeys": 3,
+      "predefined": "\u2014",
+      "area_m2": 257.7,
+      "volume_m3": 39.53,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcSlab",
+      "count": 21,
+      "storeys": 2,
+      "predefined": "FLOOR, ROOF",
+      "area_m2": 1420.9,
+      "volume_m3": 126.35,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcSpace",
+      "count": 21,
+      "storeys": 4,
+      "predefined": "\u2014",
+      "area_m2": 422.0,
+      "volume_m3": null,
+      "source": "authored"
+    },
+    {
+      "entity": "IfcDoor",
+      "count": 14,
+      "storeys": 2,
+      "predefined": "\u2014",
+      "area_m2": 85.8,
+      "volume_m3": 1.56,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcCovering",
+      "count": 13,
+      "storeys": 2,
+      "predefined": "CEILING",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    },
+    {
+      "entity": "IfcBeam",
+      "count": 8,
+      "storeys": 2,
+      "predefined": "\u2014",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    },
+    {
+      "entity": "IfcFooting",
+      "count": 7,
+      "storeys": 1,
+      "predefined": "STRIP_FOOTING",
+      "area_m2": 150.7,
+      "volume_m3": 16.53,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcMember",
+      "count": 4,
+      "storeys": 0,
+      "predefined": "\u2014",
+      "area_m2": 16.8,
+      "volume_m3": 0.37,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcRailing",
+      "count": 4,
+      "storeys": 0,
+      "predefined": "NOTDEFINED",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    },
+    {
+      "entity": "IfcStair",
+      "count": 2,
+      "storeys": 1,
+      "predefined": "\u2014",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    },
+    {
+      "entity": "IfcStairFlight",
+      "count": 2,
+      "storeys": 0,
+      "predefined": "\u2014",
+      "area_m2": 12.0,
+      "volume_m3": 0.07,
+      "source": "mesh"
+    },
+    {
+      "entity": "IfcRoof",
+      "count": 1,
+      "storeys": 1,
+      "predefined": "NOTDEFINED",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    },
+    {
+      "entity": "IfcWall",
+      "count": 1,
+      "storeys": 1,
+      "predefined": "\u2014",
+      "area_m2": null,
+      "volume_m3": null,
+      "source": "\u2014"
+    }
+  ],
+  "materials": [
+    "Ceramic Tile",
+    "Concrete",
+    "Concrete - Cast In Situ",
+    "Insulation / Thermal Barriers - Rigid insulation",
+    "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "Masonry - Brick",
+    "Masonry - Concrete Block",
+    "Masonry - Grout",
+    "Metal - Steel - 345 MPa",
+    "Metal - Stud Layer",
+    "Misc. Air Layers - Air Space",
+    "Plasterboard",
+    "Roofing - Barrier",
+    "Roofing - EPDM Membrane",
+    "Site - Grass",
+    "Wood - Dimensional Lumber",
+    "Wood - Flooring",
+    "Wood - Sheathing - plywood"
+  ],
+  "quality_flags": [
+    {
+      "entity": "IfcFurnishingElement",
+      "total": 61,
+      "no_geometry": 0,
+      "untyped": 0
+    },
+    {
+      "entity": "IfcWallStandardCase",
+      "total": 56,
+      "no_geometry": 0,
+      "untyped": 56
+    },
+    {
+      "entity": "IfcOpeningElement",
+      "total": 50,
+      "no_geometry": 0,
+      "untyped": 50
+    },
+    {
+      "entity": "IfcWindow",
+      "total": 24,
+      "no_geometry": 0,
+      "untyped": 0
+    },
+    {
+      "entity": "IfcSlab",
+      "total": 21,
+      "no_geometry": 0,
+      "untyped": 21
+    },
+    {
+      "entity": "IfcSpace",
+      "total": 21,
+      "no_geometry": 0,
+      "untyped": 21
+    },
+    {
+      "entity": "IfcDoor",
+      "total": 14,
+      "no_geometry": 0,
+      "untyped": 0
+    },
+    {
+      "entity": "IfcCovering",
+      "total": 13,
+      "no_geometry": 0,
+      "untyped": 13
+    },
+    {
+      "entity": "IfcBeam",
+      "total": 8,
+      "no_geometry": 0,
+      "untyped": 8
+    },
+    {
+      "entity": "IfcFooting",
+      "total": 7,
+      "no_geometry": 0,
+      "untyped": 7
+    },
+    {
+      "entity": "IfcMember",
+      "total": 4,
+      "no_geometry": 0,
+      "untyped": 4
+    },
+    {
+      "entity": "IfcRailing",
+      "total": 4,
+      "no_geometry": 0,
+      "untyped": 4
+    },
+    {
+      "entity": "IfcStair",
+      "total": 2,
+      "no_geometry": 2,
+      "untyped": 2
+    },
+    {
+      "entity": "IfcStairFlight",
+      "total": 2,
+      "no_geometry": 0,
+      "untyped": 2
+    },
+    {
+      "entity": "IfcRoof",
+      "total": 1,
+      "no_geometry": 1,
+      "untyped": 1
+    },
+    {
+      "entity": "IfcWall",
+      "total": 1,
+      "no_geometry": 0,
+      "untyped": 1
+    }
+  ],
+  "quality_summary": {
+    "products": 295,
+    "no_geometry": 3,
+    "untyped": 190
   }
-]
+}
