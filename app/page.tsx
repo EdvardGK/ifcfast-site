@@ -18,6 +18,9 @@ function Github({ size = 16 }: { size?: number }) {
 import { HeroTerminal } from "@/components/terminal";
 import { Benchmark } from "@/components/benchmark";
 import { McpInstall } from "@/components/mcp-install";
+import { ModelViewer } from "@/components/viewer";
+import { QtoPanel } from "@/components/qto-panel";
+import { GraphView } from "@/components/graph-view";
 
 export default function Home() {
   return (
@@ -25,11 +28,88 @@ export default function Home() {
       <Header />
       <Hero />
       <Why />
+      <ThreeLensSection />
       <BenchmarkSection />
       <McpSection />
       <CodeShowcase />
       <Footer />
     </div>
+  );
+}
+
+function ThreeLensSection() {
+  return (
+    <section className="border-b border-line">
+      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
+        <div className="max-w-2xl mb-10">
+          <div className="text-xs uppercase tracking-wider text-muted mb-2">
+            Same model. Three lenses.
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+            One parse,
+            <br />
+            <span className="text-muted">everything you need.</span>
+          </h2>
+          <p className="mt-4 text-muted leading-relaxed max-w-xl">
+            A public-license IFC opened with{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              ifcfast.open(path)
+            </code>{" "}
+            — rendered geometry from{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              ifcfast-mesh
+            </code>
+            , a QTO rollup from{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              m.type_summary()
+            </code>
+            , and the spatial hierarchy from{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              m.aggregates
+            </code>{" "}
+            +{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              m.contained_in
+            </code>
+            . All from a single 1.5 MB Python wheel.
+          </p>
+        </div>
+        <div className="grid lg:grid-cols-3 gap-px bg-line rounded-xl overflow-hidden border border-line">
+          <div className="bg-card h-[360px] lg:h-[440px] relative">
+            <div className="absolute top-0 left-0 right-0 px-5 py-3 border-b border-line bg-card/95 backdrop-blur z-10">
+              <div className="text-xs font-mono text-muted uppercase tracking-wider">
+                ifcfast-mesh → glTF
+              </div>
+              <div className="text-sm font-medium">3D viewer</div>
+            </div>
+            <div className="pt-[60px] h-full">
+              <ModelViewer
+                src="/sample/duplex.glb"
+                alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+              />
+            </div>
+          </div>
+          <div className="bg-card h-[360px] lg:h-[440px]">
+            <QtoPanel src="/sample/duplex.qto.json" />
+          </div>
+          <div className="bg-card h-[360px] lg:h-[440px]">
+            <GraphView src="/sample/duplex.graph.json" />
+          </div>
+        </div>
+        <p className="mt-6 text-xs text-muted">
+          Source IFC:{" "}
+          <a
+            href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
+            target="_blank"
+            rel="noreferrer"
+            className="underline hover:text-fg"
+          >
+            buildingSMART community sample — Duplex Apartment
+          </a>{" "}
+          (CC BY 4.0).
+        </p>
+      </div>
+    </section>
   );
 }
 
