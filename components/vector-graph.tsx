@@ -1,244 +1,276 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { Minus, Plus, Maximize2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import * as d3 from "d3";
 import { useSelection } from "./selection-context";
+
+type Product = {
+  guid: string;
+  entity: string;
+  name: string | null;
+  storey_guid: string | null;
+  type_name?: string;
+};
+type Storey = { guid: string; name: string | null; elevation?: number | null };
+type Building = { guid: string; name: string };
+type Site = { guid: string; name: string };
+type Project = { guid: string; name: string };
 
 type Graph = {
   project_name: string | null;
-  products: { guid: string; entity: string; storey_guid: string | null }[];
-  storeys: { guid: string; name: string | null; elevation: number | null }[];
-  buildings: { guid: string; name: string }[];
-  sites: { guid: string; name: string }[];
-  projects: { guid: string; name: string }[];
+  products: Product[];
+  storeys: Storey[];
+  buildings: Building[];
+  sites: Site[];
+  projects: Project[];
+  contained_in: { product_guid: string; storey_guid: string }[];
+  aggregates: { child_guid: string; parent_guid: string; parent_kind: string }[];
+  storey_building: { storey_guid: string; building_guid: string }[];
 };
 
-type Kind = "project" | "site" | "building" | "storey" | "type" | "product";
-type N = {
+type NodeKind = "project" | "site" | "building" | "storey" | "product";
+
+type Node = d3.SimulationNodeDatum & {
   id: string;
-  label?: string;
-  kind: Kind;
-  x: number;
-  y: number;
-  r: number;
-  count?: number;
-  entity?: string;
-  storey_guid?: string;
-};
-type E = { from: string; to: string; weak?: boolean };
-
-const FILL: Record<Kind, string> = {
-  project: "var(--color-accent)",
-  site: "var(--color-fg)",
-  building: "var(--color-fg)",
-  storey: "var(--color-fg)",
-  type: "var(--color-muted)",
-  product: "var(--color-muted)",
-};
-const SIZE: Record<Kind, number> = {
-  project: 11, site: 8, building: 8, storey: 7, type: 5, product: 1.8,
+  kind: NodeKind;
+  entity: string;
+  name: string;
+  storey_guid: string | null;
 };
 
-const CANVAS = 540;
-const C = CANVAS / 2;
+type Link = d3.SimulationLinkDatum<Node> & {
+  kind: "agg" | "cont";
+};
+
+// Palette adapted from edkjo's graph-viewer template. Containers (project /
+// site / building / storey / space) keep distinct hues; element classes share
+// a green-to-blue family so they read as "stuff inside" without competing.
+const PALETTE: Record<string, string> = {
+  IfcProject: "#fbbf24",
+  IfcSite: "#f59e0b",
+  IfcBuilding: "#ef4444",
+  IfcBuildingStorey: "#ec4899",
+  IfcSpace: "#a78bfa",
+  IfcElementAssembly: "#22d3ee",
+  IfcSlab: "#10b981",
+  IfcWall: "#34d399",
+  IfcWallStandardCase: "#34d399",
+  IfcBeam: "#84cc16",
+  IfcColumn: "#3b82f6",
+  IfcMember: "#0ea5e9",
+  IfcPlate: "#06b6d4",
+  IfcDoor: "#fde047",
+  IfcWindow: "#7dd3fc",
+  IfcCovering: "#fcd34d",
+  IfcRailing: "#94a3b8",
+  IfcStairFlight: "#fda4af",
+  IfcStair: "#fda4af",
+  IfcFooting: "#a3a3a3",
+  IfcRoof: "#fb923c",
+  IfcOpeningElement: "#fb923c",
+  IfcFurnishingElement: "#d4a373",
+};
+const colorFor = (e: string) => PALETTE[e] ?? "#6b7280";
+
+const RADIUS: Record<string, number> = {
+  IfcProject: 14, IfcSite: 12, IfcBuilding: 10, IfcBuildingStorey: 8,
+  IfcSpace: 6, IfcElementAssembly: 5,
+};
+const radiusFor = (e: string) => RADIUS[e] ?? 3;
+
+const LABEL_ENTITIES = new Set(["IfcProject", "IfcSite", "IfcBuilding", "IfcBuildingStorey"]);
 
 export function VectorGraph({ src }: { src: string }) {
   const [data, setData] = useState<Graph | null>(null);
-  const [hover, setHover] = useState<string | null>(null);
-  const { selection, toggleEntity, toggleStorey, clear } = useSelection();
-  const svgRef = useRef<SVGSVGElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const { selection, toggleEntity, toggleStorey, clear } = useSelection();
+  // We need the live selection inside d3 callbacks without re-binding the
+  // simulation on every selection change — keep a ref.
+  const selectionRef = useRef(selection);
+  useEffect(() => { selectionRef.current = selection; }, [selection]);
 
   useEffect(() => {
     fetch(src).then(r => r.json()).then(setData).catch(() => setData(null));
   }, [src]);
 
-  // Compute the initial layout ONCE per data load. After that, nodes live in
-  // state so the user can drag them around without the layout resetting on
-  // every selection change.
-  const initial = useMemo(() => (data ? buildLayout(data) : null), [data]);
-  const [nodePos, setNodePos] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const built = useMemo(() => (data ? buildGraph(data) : null), [data]);
 
+  // Force simulation: built once per data load. Re-renders driven by ticks
+  // mutate node x/y in place — React doesn't re-render those.
   useEffect(() => {
-    if (!initial) return;
-    const m = new Map<string, { x: number; y: number }>();
-    for (const n of initial.nodes) m.set(n.id, { x: n.x, y: n.y });
-    setNodePos(m);
-  }, [initial]);
+    if (!built || !wrapRef.current || !svgRef.current) return;
+    const { nodes, links } = built;
 
-  // viewBox state — pan + zoom over an effectively infinite plane.
-  const [viewBox, setViewBox] = useState({ x: 0, y: 0, w: CANVAS, h: CANVAS });
-  const dragBg = useRef<{ x: number; y: number; vbX: number; vbY: number } | null>(null);
-  const dragNode = useRef<{ id: string; startX: number; startY: number; offX: number; offY: number; moved: boolean } | null>(null);
-
-  const resetView = useCallback(() => setViewBox({ x: 0, y: 0, w: CANVAS, h: CANVAS }), []);
-
-  const zoomBy = useCallback((factor: number) => {
-    setViewBox(vb => {
-      const newW = Math.max(40, Math.min(CANVAS * 8, vb.w * factor));
-      const newH = (newW / vb.w) * vb.h;
-      const cx = vb.x + vb.w / 2;
-      const cy = vb.y + vb.h / 2;
-      const k = newW / vb.w;
-      return { x: cx - (cx - vb.x) * k, y: cy - (cy - vb.y) * k, w: newW, h: newH };
-    });
-  }, []);
-
-  // Wheel zoom around cursor. We bind on the wrapper div with a
-  // non-passive listener so the browser doesn't scroll the page while
-  // we're zooming the canvas.
-  useEffect(() => {
     const wrap = wrapRef.current;
-    if (!wrap) return;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const rect = wrap.getBoundingClientRect();
-      const nx = (e.clientX - rect.left) / rect.width;
-      const ny = (e.clientY - rect.top) / rect.height;
-      const factor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
-      setViewBox(vb => {
-        const cx = vb.x + nx * vb.w;
-        const cy = vb.y + ny * vb.h;
-        const newW = Math.max(40, Math.min(CANVAS * 8, vb.w * factor));
-        const newH = (newW / vb.w) * vb.h;
-        const k = newW / vb.w;
-        return { x: cx - (cx - vb.x) * k, y: cy - (cy - vb.y) * k, w: newW, h: newH };
+    const svgEl = svgRef.current;
+
+    // DataTabs hides inactive tabs with display:none, which means the wrap
+    // can have zero width/height at mount. Fall back to a sane default so
+    // the sim has a centre to settle around; a ResizeObserver below
+    // re-centres once the tab actually shows.
+    const sizeOf = () => {
+      const r = wrap.getBoundingClientRect();
+      return { w: Math.max(r.width, 400), h: Math.max(r.height, 400) };
+    };
+    let { w: W, h: H } = sizeOf();
+
+    // Let the SVG fill the wrapper via CSS; we only need width/height
+    // numerically for the sim's centre force.
+    const svg = d3.select(svgEl)
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", `0 0 ${W} ${H}`);
+    svg.selectAll("*").remove();
+    const root = svg.append("g");
+
+    // Pan / zoom.
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 8])
+      .on("zoom", (e) => root.attr("transform", e.transform.toString()));
+    svg.call(zoom);
+
+    const link = root.append("g").selectAll("line")
+      .data(links).join("line")
+      .attr("class", d => "ifcfast-link " + d.kind)
+      .attr("stroke", d => d.kind === "agg" ? "#475569" : "#1f2937")
+      .attr("stroke-dasharray", d => d.kind === "cont" ? "2 3" : "")
+      .attr("stroke-width", d => d.kind === "agg" ? 1.0 : 0.7)
+      .attr("stroke-opacity", 0.65);
+
+    const node = root.append("g").selectAll<SVGCircleElement, Node>("circle")
+      .data(nodes).join("circle")
+      .attr("class", "ifcfast-node")
+      .attr("r", d => radiusFor(d.entity))
+      .attr("fill", d => colorFor(d.entity))
+      .attr("stroke", "#0e1116")
+      .attr("stroke-width", 1)
+      .style("cursor", "pointer")
+      .on("mouseenter", (e, d) => {
+        const tip = wrap.querySelector(".ifcfast-tip") as HTMLDivElement | null;
+        if (!tip) return;
+        tip.style.display = "block";
+        tip.textContent = `${d.entity} · ${d.name}`;
+      })
+      .on("mousemove", (e) => {
+        const tip = wrap.querySelector(".ifcfast-tip") as HTMLDivElement | null;
+        if (!tip) return;
+        const wr = wrap.getBoundingClientRect();
+        tip.style.left = (e.clientX - wr.left + 12) + "px";
+        tip.style.top = (e.clientY - wr.top + 12) + "px";
+      })
+      .on("mouseleave", () => {
+        const tip = wrap.querySelector(".ifcfast-tip") as HTMLDivElement | null;
+        if (tip) tip.style.display = "none";
+      })
+      .on("click", (e, d) => {
+        e.stopPropagation();
+        if (d.kind === "storey") toggleStorey(d.id, d.name);
+        else if (d.kind === "product") toggleEntity(d.entity, d.storey_guid ?? undefined);
+        // project / site / building click clears.
+        else clear();
       });
-    };
-    wrap.addEventListener("wheel", onWheel, { passive: false });
-    return () => wrap.removeEventListener("wheel", onWheel);
-  }, []);
 
-  function screenToLayout(clientX: number, clientY: number): { x: number; y: number } {
-    const svg = svgRef.current!;
-    const rect = svg.getBoundingClientRect();
-    return {
-      x: viewBox.x + ((clientX - rect.left) / rect.width) * viewBox.w,
-      y: viewBox.y + ((clientY - rect.top) / rect.height) * viewBox.h,
-    };
-  }
+    // Empty-canvas click clears any selection.
+    svg.on("click", () => clear());
 
-  // ---- background pan -------------------------------------------------
-  function onBgPointerDown(e: React.PointerEvent<SVGSVGElement>) {
-    // Only start bg pan if the target wasn't a node (we tag with data-node-id).
-    const node = (e.target as Element).closest("[data-node-id]");
-    if (node) return;
-    (e.currentTarget as Element).setPointerCapture(e.pointerId);
-    dragBg.current = { x: e.clientX, y: e.clientY, vbX: viewBox.x, vbY: viewBox.y };
-  }
-  function onBgPointerMove(e: React.PointerEvent<SVGSVGElement>) {
-    const svg = svgRef.current!;
-    const rect = svg.getBoundingClientRect();
-    if (dragNode.current) {
-      const cur = screenToLayout(e.clientX, e.clientY);
-      const node = dragNode.current;
-      const newX = cur.x - node.offX;
-      const newY = cur.y - node.offY;
-      const dx = newX - node.startX;
-      const dy = newY - node.startY;
-      if (Math.hypot(dx, dy) > 3) node.moved = true;
-      setNodePos(prev => {
-        const next = new Map(prev);
-        next.set(node.id, { x: newX, y: newY });
-        return next;
+    const label = root.append("g").selectAll<SVGTextElement, Node>("text")
+      .data(nodes.filter(n => LABEL_ENTITIES.has(n.entity)))
+      .join("text")
+      .text(d => d.name || d.entity)
+      .attr("dy", -10)
+      .attr("text-anchor", "middle")
+      .attr("font-family", "ui-monospace, monospace")
+      .attr("font-size", 9)
+      .attr("fill", "#cbd5e1")
+      .attr("pointer-events", "none");
+
+    const sim = d3.forceSimulation<Node>(nodes)
+      .force("link", d3.forceLink<Node, Link>(links).id(d => d.id)
+        .distance(d => d.kind === "agg" ? 22 : 32).strength(0.55))
+      .force("charge", d3.forceManyBody<Node>().strength(-22))
+      .force("center", d3.forceCenter(W / 2, H / 2))
+      .force("collide", d3.forceCollide<Node>().radius(d => radiusFor(d.entity) + 2))
+      .alphaDecay(0.025)
+      .on("tick", () => {
+        link
+          .attr("x1", d => (d.source as Node).x ?? 0)
+          .attr("y1", d => (d.source as Node).y ?? 0)
+          .attr("x2", d => (d.target as Node).x ?? 0)
+          .attr("y2", d => (d.target as Node).y ?? 0);
+        node.attr("cx", d => d.x ?? 0).attr("cy", d => d.y ?? 0);
+        label.attr("x", d => d.x ?? 0).attr("y", d => d.y ?? 0);
       });
-      return;
-    }
-    if (dragBg.current) {
-      const dxPx = e.clientX - dragBg.current.x;
-      const dyPx = e.clientY - dragBg.current.y;
-      const dx = (dxPx / rect.width) * viewBox.w;
-      const dy = (dyPx / rect.height) * viewBox.h;
-      setViewBox(vb => ({ ...vb, x: dragBg.current!.vbX - dx, y: dragBg.current!.vbY - dy }));
-    }
-  }
-  function onBgPointerUp() {
-    dragBg.current = null;
-    // dragNode is finalized in the node-level handler
-  }
 
-  function onNodePointerDown(e: React.PointerEvent, n: { id: string }) {
-    e.stopPropagation();
-    (e.currentTarget as Element).setPointerCapture(e.pointerId);
-    const cur = screenToLayout(e.clientX, e.clientY);
-    const pos = nodePos.get(n.id);
-    if (!pos) return;
-    dragNode.current = {
-      id: n.id,
-      startX: pos.x,
-      startY: pos.y,
-      offX: cur.x - pos.x,
-      offY: cur.y - pos.y,
-      moved: false,
+    node.call(
+      d3.drag<SVGCircleElement, Node>()
+        .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+        .on("drag",  (e, d) => { d.fx = e.x; d.fy = e.y; })
+        .on("end",   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+    );
+
+    // Apply current selection on initial mount, and react to changes by
+    // updating opacities/strokes without rebuilding the simulation.
+    const applySelection = () => {
+      const sel = selectionRef.current;
+      node
+        .attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.12)
+        .attr("stroke", n => isExact(n, sel) ? "#fbbf24" : "#0e1116")
+        .attr("stroke-width", n => isExact(n, sel) ? 2.5 : 1);
+      link.attr("opacity", l => {
+        const s = l.source as Node, t = l.target as Node;
+        return (isMatch(s, sel) && isMatch(t, sel)) ? 0.65 : 0.06;
+      });
+      label.attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.2);
     };
-  }
-  function onNodePointerUp(e: React.PointerEvent, n: N) {
-    if (!dragNode.current || dragNode.current.id !== n.id) return;
-    const wasDrag = dragNode.current.moved;
-    dragNode.current = null;
-    if (wasDrag) return; // a real drag — don't fire click
-    // Treat as click → cross-filter.
-    if (n.kind === "type" && n.entity) toggleEntity(n.entity);
-    else if (n.kind === "storey" && n.storey_guid) toggleStorey(n.storey_guid, n.label);
-  }
+    applySelection();
 
-  if (!data || !initial) {
+    // Re-apply on selection change without restarting the sim.
+    const obs = new MutationObserver(applySelection);
+    // Cheap proxy: tag a hidden attribute on wrap whenever selection changes
+    // (set below in an effect). Observe attribute changes only.
+    obs.observe(wrap, { attributes: true, attributeFilter: ["data-selection-key"] });
+
+    const onResize = () => {
+      const s = sizeOf();
+      W = s.w; H = s.h;
+      svg.attr("viewBox", `0 0 ${W} ${H}`);
+      sim.force("center", d3.forceCenter(W / 2, H / 2)).alpha(0.3).restart();
+    };
+    // Both window resize AND DataTabs reveal — the latter is what bites us
+    // when the tab is hidden at mount (zero dims) and then shown.
+    window.addEventListener("resize", onResize);
+    const ro = new ResizeObserver(onResize);
+    ro.observe(wrap);
+
+    return () => {
+      sim.stop();
+      obs.disconnect();
+      ro.disconnect();
+      window.removeEventListener("resize", onResize);
+    };
+  }, [built, toggleEntity, toggleStorey, clear]);
+
+  // Push selection changes to the d3 layer via a data attribute (the
+  // MutationObserver inside the d3 effect re-applies styles). This avoids
+  // rebuilding the simulation on every selection change.
+  useEffect(() => {
+    if (!wrapRef.current) return;
+    wrapRef.current.setAttribute(
+      "data-selection-key",
+      selection
+        ? `${selection.kind}::${"value" in selection ? selection.value : ""}::${"storey_guid" in selection ? selection.storey_guid ?? "" : ""}`
+        : "none"
+    );
+  }, [selection]);
+
+  if (!data || !built) {
     return (
       <div className="h-full flex items-center justify-center text-xs font-mono text-muted">
         loading...
       </div>
     );
   }
-  const { edges } = initial;
-  const allNodes = initial.nodes.map(n => {
-    const p = nodePos.get(n.id);
-    return p ? { ...n, x: p.x, y: p.y } : n;
-  });
-
-  // Compute highlight set from hover + selection.
-  const highlight = new Set<string>();
-  let hasFilter = false;
-  if (hover) {
-    hasFilter = true;
-    highlight.add(hover);
-    for (const e of edges) {
-      if (e.from === hover) highlight.add(e.to);
-      if (e.to === hover) highlight.add(e.from);
-    }
-  }
-  if (selection?.kind === "entity") {
-    hasFilter = true;
-    for (const n of allNodes) {
-      const isMatch =
-        (n.kind === "type" && (n.entity ?? "").toLowerCase() === selection.value.toLowerCase()) ||
-        (n.kind === "product" && (n.entity ?? "").toLowerCase() === selection.value.toLowerCase());
-      if (isMatch) {
-        highlight.add(n.id);
-        for (const e of edges) {
-          if (e.from === n.id) highlight.add(e.to);
-          if (e.to === n.id) highlight.add(e.from);
-        }
-      }
-    }
-  }
-  if (selection?.kind === "storey") {
-    hasFilter = true;
-    for (const n of allNodes) {
-      const isMatch =
-        (n.kind === "storey" && n.storey_guid === selection.value) ||
-        (n.kind === "type" && n.id.startsWith(`t:${selection.value}::`)) ||
-        (n.kind === "product" && n.storey_guid === selection.value);
-      if (isMatch) {
-        highlight.add(n.id);
-        for (const e of edges) {
-          if (e.from === n.id) highlight.add(e.to);
-          if (e.to === n.id) highlight.add(e.from);
-        }
-      }
-    }
-  }
-  const zoomPct = Math.round((CANVAS / viewBox.w) * 100);
 
   return (
     <div className="h-full flex flex-col bg-card">
@@ -247,202 +279,91 @@ export function VectorGraph({ src }: { src: string }) {
           <div className="text-xs font-mono text-muted uppercase tracking-wider">
             m.aggregates ∪ m.contained_in
           </div>
-          <div className="text-sm font-medium">Relationship canvas</div>
+          <div className="text-sm font-medium">Spatial graph</div>
         </div>
         {selection ? (
           <button onClick={clear} className="font-mono text-xs text-accent hover:underline">
-            clear filter
+            clear
           </button>
         ) : (
-          <div className="font-mono text-xs text-muted">
-            {allNodes.length}n · {edges.length}e
+          <div className="font-mono text-xs text-muted tabular-nums">
+            {built.nodes.length} nodes · {built.links.length} edges
           </div>
         )}
       </div>
-      <div
-        ref={wrapRef}
-        className="flex-1 overflow-hidden relative"
-        style={{ background: "radial-gradient(ellipse at center, #f5f3ec 0%, #e9e6dc 100%)" }}
-      >
-        <div className="absolute top-2 right-2 z-10 flex flex-col gap-px bg-card/85 backdrop-blur border border-line rounded-md overflow-hidden">
-          <button onClick={() => zoomBy(1 / 1.25)} className="p-1.5 hover:bg-bg/70 text-muted hover:text-fg" title="Zoom in">
-            <Plus size={12} />
-          </button>
-          <button onClick={() => zoomBy(1.25)} className="p-1.5 hover:bg-bg/70 text-muted hover:text-fg border-t border-line" title="Zoom out">
-            <Minus size={12} />
-          </button>
-          <button onClick={resetView} className="p-1.5 hover:bg-bg/70 text-muted hover:text-fg border-t border-line" title="Reset view">
-            <Maximize2 size={12} />
-          </button>
-        </div>
-        <div className="absolute bottom-2 right-2 z-10 text-[10px] font-mono text-muted tabular-nums bg-card/70 backdrop-blur border border-line rounded px-1.5 py-0.5">
-          {zoomPct}%
-        </div>
-        <svg
-          ref={svgRef}
-          viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
-          width="100%"
-          height="100%"
-          onPointerDown={onBgPointerDown}
-          onPointerMove={onBgPointerMove}
-          onPointerUp={onBgPointerUp}
-          onPointerCancel={onBgPointerUp}
-          style={{ cursor: dragBg.current ? "grabbing" : "grab", touchAction: "none", display: "block" }}
-        >
-          {edges.map((e, i) => {
-            const a = allNodes.find(n => n.id === e.from)!;
-            const b = allNodes.find(n => n.id === e.to)!;
-            const isLit = !hasFilter || (highlight.has(e.from) && highlight.has(e.to));
-            return (
-              <line
-                key={i}
-                x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                stroke={isLit ? (e.weak ? "var(--color-muted)" : "var(--color-fg)") : "var(--color-line)"}
-                strokeWidth={isLit ? (e.weak ? 0.5 : 1.1) : 0.4}
-                opacity={isLit ? (e.weak ? 0.35 : 0.65) : 0.1}
-                style={{ transition: "stroke 100ms, opacity 100ms" }}
-              />
-            );
-          })}
-          {allNodes.map(n => {
-            const isLit = !hasFilter || highlight.has(n.id);
-            const labelDx = (n.x > viewBox.x + viewBox.w / 2) ? n.r + 6 : -(n.r + 6);
-            const showLabel = (n.kind !== "product" || isLit) && n.label;
-            return (
-              <g
-                key={n.id}
-                data-node-id={n.id}
-                onPointerDown={(e) => onNodePointerDown(e, n)}
-                onPointerUp={(e) => onNodePointerUp(e, n)}
-                onMouseEnter={() => setHover(n.id)}
-                onMouseLeave={() => setHover(null)}
-                style={{ cursor: n.kind === "type" || n.kind === "storey" ? "pointer" : "grab" }}
-              >
-                <circle
-                  cx={n.x} cy={n.y} r={n.r}
-                  fill={FILL[n.kind]}
-                  opacity={isLit ? 1 : 0.12}
-                  style={{ transition: "opacity 120ms" }}
-                />
-                {showLabel && (
-                  <text
-                    x={n.x + labelDx} y={n.y + 3}
-                    textAnchor={labelDx > 0 ? "start" : "end"}
-                    fontSize={n.kind === "type" ? "9" : "10"}
-                    fontFamily="var(--font-mono)"
-                    fill="var(--color-fg)"
-                    opacity={isLit ? 1 : 0.4}
-                    style={{ pointerEvents: "none", transition: "opacity 120ms" }}
-                  >
-                    {n.label}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
+      <div ref={wrapRef} className="relative flex-1 min-h-0 bg-bg overflow-hidden">
+        <svg ref={svgRef} className="block w-full h-full" />
+        <div
+          className="ifcfast-tip pointer-events-none absolute z-10 bg-card/95 border border-line rounded px-2 py-1 text-[11px] font-mono text-fg"
+          style={{ display: "none" }}
+        />
       </div>
       <div className="border-t border-line px-5 py-2 bg-bg/40 text-[11px] font-mono text-muted">
-        {hover && allNodes.find(n => n.id === hover)?.label ? (
-          <span>{allNodes.find(n => n.id === hover)!.label}</span>
-        ) : (
-          <span>drag bg to pan · wheel to zoom · drag a node to move it · click a type or storey to filter</span>
-        )}
+        scroll = zoom · drag bg = pan · drag node = move · click = filter
       </div>
     </div>
   );
 }
 
-// ----------------------------------------------------------------------
-// Layout (computed once — node positions then live in state)
-// ----------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-function buildLayout(d: Graph): { nodes: N[]; edges: E[]; size: number } {
-  const nodes: N[] = [];
-  const edges: E[] = [];
-  const project = d.projects[0];
-  const site = d.sites[0];
-  const building = d.buildings[0];
+function buildGraph(d: Graph): { nodes: Node[]; links: Link[] } {
+  const nodes: Node[] = [];
+  const seen = new Set<string>();
+  const push = (n: Node) => {
+    if (seen.has(n.id)) return;
+    seen.add(n.id);
+    nodes.push(n);
+  };
 
-  if (project) nodes.push({ id: "p:" + project.guid, label: d.project_name || "Project", kind: "project", x: C, y: C, r: SIZE.project });
-  if (site) {
-    nodes.push({ id: "s:" + site.guid, label: site.name || "Site", kind: "site", x: C, y: C - 48, r: SIZE.site });
-    if (project) edges.push({ from: "p:" + project.guid, to: "s:" + site.guid });
-  }
-  if (building) {
-    nodes.push({ id: "b:" + building.guid, label: building.name || "Building", kind: "building", x: C, y: C - 80, r: SIZE.building });
-    if (site) edges.push({ from: "s:" + site.guid, to: "b:" + building.guid });
-  }
-
-  const storeys = [...d.storeys].sort((a, b) => (b.elevation ?? 0) - (a.elevation ?? 0));
-  const storeyArc = 0.85 * Math.PI;
-  storeys.forEach((s, i) => {
-    const angle = -Math.PI / 2 + (i + 0.5 - storeys.length / 2) * (storeyArc / Math.max(storeys.length, 1));
-    nodes.push({
-      id: "st:" + s.guid,
-      label: s.name || "Storey",
-      kind: "storey",
-      x: C + Math.cos(angle) * 140,
-      y: C + Math.sin(angle) * 140,
-      r: SIZE.storey,
-      storey_guid: s.guid,
-    });
-    if (building) edges.push({ from: "b:" + building.guid, to: "st:" + s.guid });
+  for (const p of d.projects) push({ id: p.guid, kind: "project", entity: "IfcProject", name: p.name, storey_guid: null });
+  for (const s of d.sites) push({ id: s.guid, kind: "site", entity: "IfcSite", name: s.name, storey_guid: null });
+  for (const b of d.buildings) push({ id: b.guid, kind: "building", entity: "IfcBuilding", name: b.name, storey_guid: null });
+  for (const s of d.storeys) push({ id: s.guid, kind: "storey", entity: "IfcBuildingStorey", name: s.name ?? "Storey", storey_guid: s.guid });
+  for (const p of d.products) push({
+    id: p.guid, kind: "product", entity: p.entity,
+    name: p.name ?? p.guid, storey_guid: p.storey_guid,
   });
 
-  const productsByStorey = new Map<string, typeof d.products>();
-  for (const p of d.products) {
-    if (!p.storey_guid) continue;
-    if (!productsByStorey.has(p.storey_guid)) productsByStorey.set(p.storey_guid, []);
-    productsByStorey.get(p.storey_guid)!.push(p);
-  }
-  storeys.forEach((s) => {
-    const stNode = nodes.find(n => n.id === "st:" + s.guid);
-    if (!stNode) return;
-    const baseAngle = Math.atan2(stNode.y - C, stNode.x - C);
-    const products = productsByStorey.get(s.guid) ?? [];
-    const byEntity = new Map<string, typeof d.products>();
-    for (const p of products) {
-      if (!byEntity.has(p.entity)) byEntity.set(p.entity, []);
-      byEntity.get(p.entity)!.push(p);
+  const links: Link[] = [];
+  for (const e of d.contained_in) {
+    if (seen.has(e.product_guid) && seen.has(e.storey_guid)) {
+      links.push({ source: e.product_guid, target: e.storey_guid, kind: "cont" });
     }
-    const typeEntries = [...byEntity.entries()].sort((a, b) => b[1].length - a[1].length);
-    const typeArc = Math.PI / 2.8;
-    typeEntries.forEach(([entity, prods], ti) => {
-      const offset = (ti + 0.5 - typeEntries.length / 2) * (typeArc / Math.max(typeEntries.length, 1));
-      const tAngle = baseAngle + offset;
-      const typeId = `t:${s.guid}::${entity}`;
-      nodes.push({
-        id: typeId,
-        label: entity.replace(/^Ifc/, ""),
-        kind: "type",
-        x: C + Math.cos(tAngle) * 200,
-        y: C + Math.sin(tAngle) * 200,
-        r: SIZE.type + Math.min(prods.length / 6, 3),
-        count: prods.length,
-        entity,
-      });
-      edges.push({ from: "st:" + s.guid, to: typeId });
-      const prodArc = (typeArc / typeEntries.length) * 0.78;
-      prods.forEach((p, pi) => {
-        const pOffset = prods.length > 1
-          ? (pi + 0.5 - prods.length / 2) * (prodArc / prods.length)
-          : 0;
-        const pAngle = tAngle + pOffset;
-        const pid = `prod:${p.guid}`;
-        nodes.push({
-          id: pid,
-          kind: "product",
-          x: C + Math.cos(pAngle) * 250,
-          y: C + Math.sin(pAngle) * 250,
-          r: SIZE.product,
-          entity: p.entity,
-          storey_guid: s.guid,
-        });
-        edges.push({ from: typeId, to: pid, weak: true });
-      });
-    });
-  });
+  }
+  for (const e of d.aggregates) {
+    if (seen.has(e.child_guid) && seen.has(e.parent_guid)) {
+      links.push({ source: e.child_guid, target: e.parent_guid, kind: "agg" });
+    }
+  }
+  for (const e of d.storey_building) {
+    if (seen.has(e.storey_guid) && seen.has(e.building_guid)) {
+      links.push({ source: e.storey_guid, target: e.building_guid, kind: "agg" });
+    }
+  }
+  return { nodes, links };
+}
 
-  return { nodes, edges, size: CANVAS };
+import type { Selection } from "./selection-context";
+
+function isMatch(n: Node, sel: Selection): boolean {
+  if (!sel) return true;
+  if (sel.kind === "entity") {
+    if (n.entity.toLowerCase() !== sel.value.toLowerCase()) return false;
+    if (sel.storey_guid) return n.storey_guid === sel.storey_guid;
+    return true;
+  }
+  if (sel.kind === "storey") {
+    return n.id === sel.value || n.storey_guid === sel.value;
+  }
+  // type/material/layer_set/untyped don't propagate into the spatial graph
+  // (those are kind-level filters that need per-product type/material data
+  // we haven't wired into the graph yet). For now: leave everything visible.
+  return true;
+}
+
+function isExact(n: Node, sel: Selection): boolean {
+  if (!sel) return false;
+  if (sel.kind === "storey") return n.kind === "storey" && n.id === sel.value;
+  return false;
 }
