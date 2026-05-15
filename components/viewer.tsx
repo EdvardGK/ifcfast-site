@@ -59,7 +59,13 @@ export function ModelViewer({
   const originals = useRef<
     Map<string, { color: [number, number, number, number]; alphaMode: string }>
   >(new Map());
-  const guidLookup = useRef<Map<string, { entity: string; storey_guid: string | null; typed?: boolean }>>(new Map());
+  const guidLookup = useRef<Map<string, {
+    entity: string;
+    storey_guid: string | null;
+    typed?: boolean;
+    type_name?: string;
+    materials?: string[];
+  }>>(new Map());
   const { selection } = useSelection();
   // When on, non-matching products fade to ~invisible. When off, they keep
   // their original colours and only the selected ones recolour to accent.
@@ -75,9 +81,18 @@ export function ModelViewer({
     if (!metaSrc) return;
     fetch(metaSrc)
       .then(r => r.json())
-      .then((g: { products: { guid: string; entity: string; storey_guid: string | null; typed?: boolean }[] }) => {
-        const m = new Map<string, { entity: string; storey_guid: string | null; typed?: boolean }>();
-        for (const p of g.products) m.set(p.guid, { entity: p.entity, storey_guid: p.storey_guid, typed: p.typed });
+      .then((g: { products: {
+        guid: string; entity: string; storey_guid: string | null;
+        typed?: boolean; type_name?: string; materials?: string[];
+      }[] }) => {
+        const m = new Map<string, {
+          entity: string; storey_guid: string | null;
+          typed?: boolean; type_name?: string; materials?: string[];
+        }>();
+        for (const p of g.products) m.set(p.guid, {
+          entity: p.entity, storey_guid: p.storey_guid,
+          typed: p.typed, type_name: p.type_name, materials: p.materials,
+        });
         guidLookup.current = m;
         applySelection();
       })
@@ -147,6 +162,10 @@ export function ModelViewer({
         }
       } else if (selection?.kind === "storey" && meta) {
         isMatch = meta.storey_guid === selection.value;
+      } else if (selection?.kind === "type" && meta) {
+        isMatch = (meta.type_name ?? "—") === selection.value;
+      } else if (selection?.kind === "material" && meta) {
+        isMatch = (meta.materials ?? []).includes(selection.value);
       } else if (selection?.kind === "untyped" && meta) {
         isMatch = meta.typed === false;
       }

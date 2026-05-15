@@ -8,6 +8,8 @@ import {
 export type Selection =
   | { kind: "entity"; value: string; storey_guid?: string; storey_label?: string }
   | { kind: "storey"; value: string; label?: string }
+  | { kind: "type"; value: string }
+  | { kind: "material"; value: string }
   | { kind: "untyped" }
   | null;
 
@@ -15,6 +17,8 @@ type Ctx = {
   selection: Selection;
   toggleEntity: (entity: string, storey_guid?: string, storey_label?: string) => void;
   toggleStorey: (storey_guid: string, label?: string) => void;
+  toggleType: (type_name: string) => void;
+  toggleMaterial: (material: string) => void;
   toggleUntyped: () => void;
   clear: () => void;
 };
@@ -40,14 +44,28 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         : { kind: "storey", value: storey_guid, label }
     );
   }, []);
+  const toggleType = useCallback((type_name: string) => {
+    setSelection(cur =>
+      cur && cur.kind === "type" && cur.value === type_name
+        ? null
+        : { kind: "type", value: type_name }
+    );
+  }, []);
+  const toggleMaterial = useCallback((material: string) => {
+    setSelection(cur =>
+      cur && cur.kind === "material" && cur.value === material
+        ? null
+        : { kind: "material", value: material }
+    );
+  }, []);
   const toggleUntyped = useCallback(() => {
     setSelection(cur => (cur && cur.kind === "untyped" ? null : { kind: "untyped" }));
   }, []);
   const clear = useCallback(() => setSelection(null), []);
 
   const value = useMemo(
-    () => ({ selection, toggleEntity, toggleStorey, toggleUntyped, clear }),
-    [selection, toggleEntity, toggleStorey, toggleUntyped, clear]
+    () => ({ selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleUntyped, clear }),
+    [selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleUntyped, clear]
   );
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
 }
