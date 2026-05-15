@@ -12,6 +12,7 @@ type Product = {
   type_name?: string;
   type_source?: "ifctype" | "objecttype" | "none";
   materials?: string[];
+  layer_set?: string | null;
 };
 
 type Graph = {
@@ -19,12 +20,12 @@ type Graph = {
   storeys: { guid: string; name: string | null }[];
 };
 
-type Mode = "type" | "untyped" | "material";
+type Mode = "type" | "untyped" | "material" | "layer_set";
 
 export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string }) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [mode, setMode] = useState<Mode>("type");
-  const { selection, toggleType, toggleMaterial, toggleEntity, clear } = useSelection();
+  const { selection, toggleType, toggleMaterial, toggleLayerSet, toggleEntity, clear } = useSelection();
 
   useEffect(() => {
     if (!metaSrc) return;
@@ -33,6 +34,7 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
 
   const selectedType = selection?.kind === "type" ? selection.value : null;
   const selectedMaterial = selection?.kind === "material" ? selection.value : null;
+  const selectedLayerSet = selection?.kind === "layer_set" ? selection.value : null;
   const selectedStorey = selection?.kind === "storey" ? selection.value : null;
   const selectedEntityStorey =
     selection?.kind === "entity" ? selection.storey_guid ?? null : null;
@@ -115,6 +117,18 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
     return groupRows([...acc.values()]);
   }, [scopedProducts]);
 
+  const layerSetGroups = useMemo(() => {
+    const acc = new Map<string, Row>();
+    for (const p of scopedProducts) {
+      if (!p.layer_set) continue;
+      const key = `${p.entity}::${p.layer_set}`;
+      const cur = acc.get(key);
+      if (cur) cur.count += 1;
+      else acc.set(key, { entity: p.entity, value: p.layer_set, count: 1 });
+    }
+    return groupRows([...acc.values()]);
+  }, [scopedProducts]);
+
   if (!graph) return <Loading />;
 
   const scopeLabel = scopeStorey
@@ -126,13 +140,26 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
   const activeGroups =
     mode === "type" ? typeGroups
     : mode === "untyped" ? untypedGroups
-    : materialGroups;
+    : mode === "material" ? materialGroups
+    : layerSetGroups;
   const rowCount = activeGroups.reduce((s, g) => s + g.rows.length, 0);
   const itemLabel =
     mode === "type" ? "types"
-    : mode === "untyped" ? "untyped"
-    : "materials";
+    : mode === "untyped" ? "kinds"
+    : mode === "material" ? "materials"
+    : "layer sets";
   const selectedEntity = selection?.kind === "entity" ? selection.value : null;
+
+  function handleRowClick(value: string) {
+    if (mode === "material") return toggleMaterial(value);
+    if (mode === "layer_set") return toggleLayerSet(value);
+    return toggleType(value);
+  }
+  function rowSelectedValue(): string | null {
+    if (mode === "material") return selectedMaterial;
+    if (mode === "layer_set") return selectedLayerSet;
+    return selectedType;
+  }
 
   return (
     <div className="h-full flex flex-col bg-card">
@@ -141,12 +168,14 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
           <div className="text-xs font-mono text-muted uppercase tracking-wider">
             {mode === "type" ? "m.type_summary()"
               : mode === "untyped" ? "m.objects[~m.is_typed]"
-              : "m.materials"}
+              : mode === "material" ? "m.materials"
+              : "m.material_layer_sets"}
           </div>
           <div className="text-sm font-medium">
             {mode === "type" ? "Types"
               : mode === "untyped" ? "Untyped"
-              : "Materials"}
+              : mode === "material" ? "Materials"
+              : "Layer sets"}
             {scopeLabel && (
               <span className="ml-2 text-xs font-mono text-accent">
                 · {scopeLabel}
@@ -164,33 +193,41 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
           </div>
         )}
       </div>
-      <div className="px-5 py-2 border-b border-line bg-bg/40 flex items-center gap-1 text-[11px] font-mono">
-        <ModeTab label="Type" active={mode === "type"} onClick={() => setMode("type")} />
+      <div className="px-5 py-2 border-b border-line bg-bg/40 flex flex-wrap items-center gap-1 text-[11px] font-mono">
+        <ModeTab label="Types" active={mode === "type"} onClick={() => setMode("type")} />
         <ModeTab label="Untyped" active={mode === "untyped"} onClick={() => setMode("untyped")} />
-        <ModeTab label="Material" active={mode === "material"} onClick={() => setMode("material")} />
+        <ModeTab label="Materials" active={mode === "material"} onClick={() => setMode("material")} />
+        <ModeTab label="Layer sets" active={mode === "layer_set"} onClick={() => setMode("layer_set")} />
         <span
           className="ml-auto text-muted truncate"
           title={
             mode === "type"
-              ? "Products with an IfcRelDefinesByType link to an IfcTypeObject."
+              ? "Products with an IfcRelDefinesByType link to an IfcTypeObject — the formal IFC type."
               : mode === "untyped"
-              ? "Products without IfcRelDefinesByType. Rows show the ObjectType string when present (Revit's type-by-name pattern)."
-              : "Products with an IfcRelAssociatesMaterial. One product can show under several materials (layer-sets, profile-sets)."
+              ? "Not related to an IfcTypeObject. Rows show the IfcXxx.ObjectType string instead (Revit's type-by-name export pattern)."
+              : mode === "material"
+              ? "Linked to an IfcMaterial via IfcRelAssociatesMaterial (single material, layer-set, profile-set, or constituent-set). A product can appear under several materials."
+              : "Grouped by IfcMaterialLayerSet name — the named construction stack a wall/floor/roof carries (e.g. \"Basic Wall:Interior - Partition\")."
           }
         >
           {mode === "type" ? "linked to IfcTypeObject"
-            : mode === "untyped" ? "ObjectType name only"
-            : "via IfcRelAssociatesMaterial"}
+            : mode === "untyped" ? "not related to an IfcTypeObject"
+            : mode === "material" ? "via IfcRelAssociatesMaterial"
+            : "IfcMaterialLayerSet"}
         </span>
       </div>
       <div className="flex-1 overflow-auto scroll-thin">
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-card border-b border-line">
+        <table className="w-full text-sm border-separate border-spacing-0">
+          <thead>
             <tr className="text-[10px] font-mono text-muted uppercase tracking-wider">
-              <th className="text-left font-normal px-4 py-2">
-                {mode === "material" ? "material" : "name"}
+              <th className="text-left font-normal px-4 py-2 sticky top-0 z-30 bg-card border-b border-line">
+                {mode === "material" ? "material"
+                  : mode === "layer_set" ? "layer set"
+                  : "name"}
               </th>
-              <th className="text-right font-normal px-4 py-2 w-16">count</th>
+              <th className="text-right font-normal px-4 py-2 w-16 sticky top-0 z-30 bg-card border-b border-line">
+                count
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -203,37 +240,41 @@ export function QtoPanel({ src: _src, metaSrc }: { src: string; metaSrc?: string
             )}
             {activeGroups.map(g => {
               const isEntSel = selectedEntity === g.entity;
+              const selVal = rowSelectedValue();
               return (
                 <Fragment key={g.entity}>
                   <tr
                     onClick={() => toggleEntity(g.entity)}
-                    className={`sticky top-0 cursor-pointer transition-colors border-b border-line/80 ${
-                      isEntSel ? "bg-accent-soft" : "bg-bg/60 hover:bg-bg/80"
+                    className={`cursor-pointer transition-colors ${
+                      isEntSel
+                        ? "bg-accent-soft"
+                        : "bg-bg hover:bg-bg/80"
                     }`}
                     title={`Click to filter every ${g.entity} across panels`}
                   >
-                    <td className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider ${isEntSel ? "text-accent font-medium" : "text-muted"}`}>
+                    <td
+                      className={`px-3 pt-2 pb-1 font-mono text-[11px] uppercase tracking-wider border-t border-line ${
+                        isEntSel ? "text-accent font-medium" : "text-fg"
+                      }`}
+                    >
                       {g.entity}
                     </td>
-                    <td className={`px-4 py-1.5 text-right tabular-nums text-[11px] font-mono ${isEntSel ? "text-accent" : "text-muted"}`}>
+                    <td
+                      className={`px-4 pt-2 pb-1 text-right tabular-nums text-[11px] font-mono border-t border-line ${
+                        isEntSel ? "text-accent" : "text-muted"
+                      }`}
+                    >
                       {g.total}
                     </td>
                   </tr>
                   {g.rows.map(r => {
-                    const isSel =
-                      mode === "material"
-                        ? selectedMaterial === r.value
-                        : selectedType === r.value;
-                    const isDim =
-                      (mode === "material" && selectedMaterial !== null && !isSel)
-                      || (mode !== "material" && selectedType !== null && !isSel);
+                    const isSel = selVal === r.value;
+                    const isDim = selVal !== null && !isSel;
                     return (
                       <tr
                         key={`${g.entity}::${r.value}`}
-                        onClick={() =>
-                          mode === "material" ? toggleMaterial(r.value) : toggleType(r.value)
-                        }
-                        className={`border-b border-line/40 cursor-pointer transition-colors ${
+                        onClick={() => handleRowClick(r.value)}
+                        className={`cursor-pointer transition-colors ${
                           isSel
                             ? "bg-accent-soft text-fg"
                             : isDim

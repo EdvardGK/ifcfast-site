@@ -65,6 +65,7 @@ export function ModelViewer({
     typed?: boolean;
     type_name?: string;
     materials?: string[];
+    layer_set?: string | null;
   }>>(new Map());
   const { selection } = useSelection();
   // When on, non-matching products fade to ~invisible. When off, they keep
@@ -83,15 +84,18 @@ export function ModelViewer({
       .then(r => r.json())
       .then((g: { products: {
         guid: string; entity: string; storey_guid: string | null;
-        typed?: boolean; type_name?: string; materials?: string[];
+        typed?: boolean; type_name?: string;
+        materials?: string[]; layer_set?: string | null;
       }[] }) => {
         const m = new Map<string, {
           entity: string; storey_guid: string | null;
-          typed?: boolean; type_name?: string; materials?: string[];
+          typed?: boolean; type_name?: string;
+          materials?: string[]; layer_set?: string | null;
         }>();
         for (const p of g.products) m.set(p.guid, {
           entity: p.entity, storey_guid: p.storey_guid,
-          typed: p.typed, type_name: p.type_name, materials: p.materials,
+          typed: p.typed, type_name: p.type_name,
+          materials: p.materials, layer_set: p.layer_set,
         });
         guidLookup.current = m;
         applySelection();
@@ -166,6 +170,8 @@ export function ModelViewer({
         isMatch = (meta.type_name ?? "—") === selection.value;
       } else if (selection?.kind === "material" && meta) {
         isMatch = (meta.materials ?? []).includes(selection.value);
+      } else if (selection?.kind === "layer_set" && meta) {
+        isMatch = meta.layer_set === selection.value;
       } else if (selection?.kind === "untyped" && meta) {
         isMatch = meta.typed === false;
       }

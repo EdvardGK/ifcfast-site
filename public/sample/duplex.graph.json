@@ -13,7 +13,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -28,7 +29,8 @@
         "Metal - Stud Layer",
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
-      ]
+      ],
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -43,7 +45,8 @@
         "Metal - Stud Layer",
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
-      ]
+      ],
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -58,7 +61,8 @@
         "Metal - Stud Layer",
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
-      ]
+      ],
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
@@ -71,7 +75,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
@@ -84,7 +89,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK80",
@@ -96,7 +102,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK9N",
@@ -108,7 +115,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKEr",
@@ -120,7 +128,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKE5",
@@ -132,7 +141,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK3E",
@@ -144,7 +154,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK04",
@@ -156,7 +167,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK1b",
@@ -168,7 +180,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK4F",
@@ -180,7 +193,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete"
-      ]
+      ],
+      "layer_set": "Floor:127mm Slab on Grade"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKcz",
@@ -192,7 +206,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete"
-      ]
+      ],
+      "layer_set": "Floor:127mm Slab on Grade"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -207,7 +222,8 @@
         "Metal - Stud Layer",
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
-      ]
+      ],
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
@@ -220,7 +236,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
@@ -233,7 +250,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
@@ -246,7 +264,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
@@ -259,7 +278,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRqU",
@@ -272,7 +292,8 @@
       "materials": [
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
-      ]
+      ],
+      "layer_set": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRrM",
@@ -285,7 +306,8 @@
       "materials": [
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
-      ]
+      ],
+      "layer_set": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrrP",
@@ -295,7 +317,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlR72",
@@ -305,7 +328,8 @@
       "typed": true,
       "type_name": "4835mm x 2420mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrv5",
@@ -315,7 +339,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRBU",
@@ -325,7 +350,8 @@
       "typed": true,
       "type_name": "4835mm x 2420mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrY1",
@@ -335,7 +361,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRGQ",
@@ -345,7 +372,8 @@
       "typed": true,
       "type_name": "1250mm x 2010mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrZJ",
@@ -355,7 +383,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRH8",
@@ -365,7 +394,8 @@
       "typed": true,
       "type_name": "1250mm x 2010mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -382,7 +412,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrdW",
@@ -392,7 +423,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRLx",
@@ -402,7 +434,8 @@
       "typed": true,
       "type_name": "750mm x 2200mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -419,7 +452,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNrfE",
@@ -429,7 +463,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRRL",
@@ -439,7 +474,8 @@
       "typed": true,
       "type_name": "750mm x 2200mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNoJ3",
@@ -449,7 +485,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSXO",
@@ -459,7 +496,8 @@
       "typed": true,
       "type_name": "2800mm x 2410mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNoO$",
@@ -469,7 +507,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSga",
@@ -479,7 +518,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNo1Q",
@@ -489,7 +529,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSp1",
@@ -499,7 +540,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -516,7 +558,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNo3N",
@@ -526,7 +569,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSnC",
@@ -536,7 +580,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNoCx",
@@ -546,7 +591,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS_W",
@@ -556,7 +602,8 @@
       "typed": true,
       "type_name": "2800mm x 2410mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNom4",
@@ -566,7 +613,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS2V",
@@ -576,7 +624,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNopD",
@@ -586,7 +635,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS1M",
@@ -596,7 +646,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -613,7 +664,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNos1",
@@ -623,7 +675,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS4Q",
@@ -633,7 +686,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKST",
@@ -646,7 +700,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNowu",
@@ -656,7 +711,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS8Z",
@@ -666,7 +722,8 @@
       "typed": true,
       "type_name": "0762 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNau",
@@ -679,7 +736,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNoxK",
@@ -689,7 +747,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlS9F",
@@ -699,7 +758,8 @@
       "typed": true,
       "type_name": "0762 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
@@ -712,7 +772,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNozF",
@@ -722,7 +783,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSFK",
@@ -732,7 +794,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
@@ -745,7 +808,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNo$h",
@@ -755,7 +819,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlSDm",
@@ -765,7 +830,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1oKjKg9PD3fP1iIwXLh3lK",
@@ -775,7 +841,8 @@
       "typed": false,
       "type_name": "Stair:Residential - 200mm Max Riser 250mm Tread",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1gtrSK5QnDuxDwygd0EDGO",
@@ -785,7 +852,8 @@
       "typed": false,
       "type_name": "stringer",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "34qUFGjJzFKwVWpXe2dTPt",
@@ -795,7 +863,8 @@
       "typed": false,
       "type_name": "stringer",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4v_O1",
@@ -805,7 +874,8 @@
       "typed": false,
       "type_name": "Stair:Residential - 200mm Max Riser 250mm Tread",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4v_PL",
@@ -815,7 +885,8 @@
       "typed": false,
       "type_name": "Railing:900mm Handrail Only",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4v_PH",
@@ -825,7 +896,8 @@
       "typed": false,
       "type_name": "Railing:1100mm Guard Rail",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vyu$",
@@ -835,7 +907,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1JMZUwOon6WAV1rBBORAVn",
@@ -845,7 +918,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy_8",
@@ -855,7 +929,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0st2Ty2kP2i9GWVYN22HBn",
@@ -865,7 +940,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy3H",
@@ -875,7 +951,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1ur9wqEhD1fgF0XSBVdztK",
@@ -885,7 +962,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy3G",
@@ -895,7 +973,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2fQjX2SrTFrxFKC2cOmyZz",
@@ -905,7 +984,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy4m",
@@ -915,7 +995,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "3yrt06HiHCHQOnRKTWhuME",
@@ -925,7 +1006,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy4F",
@@ -935,7 +1017,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1dqkh_grrAr8eEicMrPggp",
@@ -945,7 +1028,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy6l",
@@ -955,7 +1039,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "24EFH82h1DgeJVWlc35MMP",
@@ -965,7 +1050,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vy6k",
@@ -975,7 +1061,8 @@
       "typed": true,
       "type_name": "800 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2YwZmYlr9AiPDZRZmucxc5",
@@ -985,7 +1072,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vyMO",
@@ -995,7 +1083,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0wkEuT1wr1kOyafLY4vyOn",
@@ -1005,7 +1094,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
@@ -1018,7 +1108,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNmlJ",
@@ -1028,7 +1119,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUuXp",
@@ -1038,7 +1130,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL96",
@@ -1051,7 +1144,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNnH$",
@@ -1061,7 +1155,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvVV",
@@ -1071,7 +1166,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
@@ -1084,7 +1180,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNnLa",
@@ -1094,7 +1191,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvR4",
@@ -1104,7 +1202,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
@@ -1117,7 +1216,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNnNr",
@@ -1127,7 +1227,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvPL",
@@ -1137,7 +1238,8 @@
       "typed": true,
       "type_name": "0864 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvGQ",
@@ -1147,7 +1249,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvH8",
@@ -1157,7 +1260,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUv88",
@@ -1167,7 +1271,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1_czKmicP9SRkaew1L5q7Z",
@@ -1177,7 +1282,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUv3h",
@@ -1187,7 +1293,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvup",
@@ -1197,7 +1304,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvuo",
@@ -1207,7 +1315,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvs2",
@@ -1217,7 +1326,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvsm",
@@ -1227,7 +1337,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvtA",
@@ -1237,7 +1348,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqp",
@@ -1247,7 +1359,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqo",
@@ -1257,7 +1370,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqz",
@@ -1267,7 +1381,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqy",
@@ -1277,7 +1392,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvq$",
@@ -1287,7 +1403,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "3obae0iBn5i9Cv4Ub3eEXf",
@@ -1297,7 +1414,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvq_",
@@ -1307,7 +1425,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqu",
@@ -1317,7 +1436,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqx",
@@ -1327,7 +1447,8 @@
       "typed": true,
       "type_name": "600mm Depth",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvqw",
@@ -1337,7 +1458,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvr5",
@@ -1347,7 +1469,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUvr4",
@@ -1357,7 +1480,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUshs",
@@ -1367,7 +1491,8 @@
       "typed": true,
       "type_name": "1830mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUsc7",
@@ -1377,7 +1502,8 @@
       "typed": true,
       "type_name": "1830mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUsab",
@@ -1387,7 +1513,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUsbY",
@@ -1397,7 +1524,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtVQ",
@@ -1407,7 +1535,8 @@
       "typed": true,
       "type_name": "0915 x 1830 x 0457mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtOy",
@@ -1417,7 +1546,8 @@
       "typed": true,
       "type_name": "1830mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtO$",
@@ -1427,7 +1557,8 @@
       "typed": true,
       "type_name": "1830mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtO_",
@@ -1437,7 +1568,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtOv",
@@ -1447,7 +1579,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtOu",
@@ -1457,7 +1590,8 @@
       "typed": true,
       "type_name": "0915 x 1830 x 0457mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtM4",
@@ -1467,7 +1601,8 @@
       "typed": true,
       "type_name": "1525 x 2007mm - Queen",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtI8",
@@ -1477,7 +1612,8 @@
       "typed": true,
       "type_name": "1981 x 2032mm - King",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtHN",
@@ -1487,7 +1623,8 @@
       "typed": true,
       "type_name": "1981 x 2032mm - King",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtEr",
@@ -1497,7 +1634,8 @@
       "typed": true,
       "type_name": "1525 x 2007mm - Queen",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtC0",
@@ -1510,7 +1648,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtDX",
@@ -1523,7 +1662,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtBP",
@@ -1536,7 +1676,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8F",
@@ -1549,7 +1690,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8s",
@@ -1562,7 +1704,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt5W",
@@ -1575,7 +1718,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt2f",
@@ -1588,7 +1732,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt0F",
@@ -1601,7 +1746,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtxr",
@@ -1614,7 +1760,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtoa",
@@ -1627,7 +1774,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtjR",
@@ -1640,7 +1788,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtju",
@@ -1653,7 +1802,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtgP",
@@ -1666,7 +1816,8 @@
       "materials": [
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUten",
@@ -1679,7 +1830,8 @@
       "materials": [
         "Ceramic Tile",
         "Masonry - Grout"
-      ]
+      ],
+      "layer_set": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -1696,7 +1848,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvN$je",
@@ -1706,7 +1859,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1s1jVhK8z0pgKYcr9jt781",
@@ -1716,7 +1870,8 @@
       "typed": true,
       "type_name": "0813 x 2420mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -1733,7 +1888,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvN$lY",
@@ -1743,7 +1899,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1s1jVhK8z0pgKYcr9jt7AB",
@@ -1753,7 +1910,8 @@
       "typed": true,
       "type_name": "0813 x 2420mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwHx",
@@ -1763,7 +1921,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4$e",
@@ -1773,7 +1932,8 @@
       "typed": true,
       "type_name": "2800mm x 2410mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwMI",
@@ -1783,7 +1943,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4u1",
@@ -1793,7 +1954,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwQb",
@@ -1803,7 +1965,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4qs",
@@ -1813,7 +1976,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwSd",
@@ -1823,7 +1987,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4oq",
@@ -1833,7 +1998,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwTD",
@@ -1843,7 +2009,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4pU",
@@ -1853,7 +2020,8 @@
       "typed": true,
       "type_name": "2800mm x 2410mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNw00",
@@ -1863,7 +2031,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4kJ",
@@ -1873,7 +2042,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNw49",
@@ -1883,7 +2053,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4gQ",
@@ -1893,7 +2064,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNw5g",
@@ -1903,7 +2075,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4hv",
@@ -1913,7 +2086,8 @@
       "typed": true,
       "type_name": "819mm x 759mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -1930,7 +2104,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwAF",
@@ -1940,7 +2115,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4aS",
@@ -1950,7 +2126,8 @@
       "typed": true,
       "type_name": "750mm x 2200mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -1967,7 +2144,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNwDm",
@@ -1977,7 +2155,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1l0GAJtRTFv8$zmKJOH4ZZ",
@@ -1987,7 +2166,8 @@
       "typed": true,
       "type_name": "750mm x 2200mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -2004,7 +2184,8 @@
         "Insulation / Thermal Barriers - Rigid insulation",
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
-      ]
+      ],
+      "layer_set": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "3ThA22djr8AQQ9eQMA5s7I",
@@ -2014,7 +2195,8 @@
       "typed": false,
       "type_name": "Basic Roof:Live Roof over Wood Joist Flat Roof",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "3v9a8BKHj2mvcndWrD6JMo",
@@ -2024,7 +2206,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0c3kWfbRLERxKStRVifSpJ",
@@ -2034,7 +2217,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -2051,7 +2235,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -2068,7 +2253,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -2085,7 +2271,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -2102,7 +2289,8 @@
         "Masonry - Concrete Block",
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNxVS",
@@ -2112,7 +2300,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1Eo2$BaHX42AEkDvQQDocD",
@@ -2122,7 +2311,8 @@
       "typed": true,
       "type_name": "1180 x 1170mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNx5J",
@@ -2132,7 +2322,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1Eo2$BaHX42AEkDvQQDoy2",
@@ -2142,7 +2333,8 @@
       "typed": true,
       "type_name": "1180 x 1170mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT5d",
@@ -2152,7 +2344,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT5l",
@@ -2162,7 +2355,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT5t",
@@ -2172,7 +2366,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT5$",
@@ -2182,7 +2377,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT2B",
@@ -2192,7 +2388,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT2N",
@@ -2202,7 +2399,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0kF45Qs8L9PAM9kmb1lT2Z",
@@ -2212,7 +2410,8 @@
       "typed": false,
       "type_name": "Wall Foundation:Bearing Footing - 900 x 300",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc5T8",
@@ -2225,7 +2424,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc503",
@@ -2238,7 +2438,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50B",
@@ -2251,7 +2452,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50U",
@@ -2264,7 +2466,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50n",
@@ -2277,7 +2480,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc52o",
@@ -2290,7 +2494,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc554",
@@ -2303,7 +2508,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55E",
@@ -2316,7 +2522,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55M",
@@ -2329,7 +2536,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55U",
@@ -2342,7 +2550,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55c",
@@ -2355,7 +2564,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55k",
@@ -2368,7 +2578,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55m",
@@ -2381,7 +2592,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jZ1",
@@ -2394,7 +2606,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4j_U",
@@ -2407,7 +2620,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jpl",
@@ -2420,7 +2634,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jDb",
@@ -2433,7 +2648,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jE6",
@@ -2446,7 +2662,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4j7w",
@@ -2456,7 +2673,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jOM",
@@ -2466,7 +2684,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jQJ",
@@ -2476,7 +2695,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jTB",
@@ -2486,7 +2706,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jJA",
@@ -2496,7 +2717,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jKO",
@@ -2506,7 +2728,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jMl",
@@ -2516,7 +2739,8 @@
       "typed": true,
       "type_name": "1000 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4ien",
@@ -2526,7 +2750,8 @@
       "typed": true,
       "type_name": "1000mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMNiA",
@@ -2539,7 +2764,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMN_Z",
@@ -2552,7 +2778,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "3KMJUyUe9DfQ2FOCd5ZoiN",
@@ -2562,7 +2789,8 @@
       "typed": false,
       "type_name": "Stair:Residential - 200mm Max Riser 250mm Tread",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "01KzA4SPn5IOODwLEb5RNY",
@@ -2572,7 +2800,8 @@
       "typed": false,
       "type_name": "stringer",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "37Fy90kSD2PvviizyM7EKl",
@@ -2582,7 +2811,8 @@
       "typed": false,
       "type_name": "stringer",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "21ldoMpbP4VfsJ0XGY_34d",
@@ -2592,7 +2822,8 @@
       "typed": false,
       "type_name": "Stair:Residential - 200mm Max Riser 250mm Tread",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "21ldoMpbP4VfsJ0XGY_34P",
@@ -2602,7 +2833,8 @@
       "typed": false,
       "type_name": "Railing:900mm Handrail Only",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "21ldoMpbP4VfsJ0XGY_335",
@@ -2612,7 +2844,8 @@
       "typed": false,
       "type_name": "Railing:1100mm Guard Rail",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpvt",
@@ -2625,7 +2858,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNd$j",
@@ -2635,7 +2869,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKp$i",
@@ -2645,7 +2880,8 @@
       "typed": true,
       "type_name": "0762 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpZw",
@@ -2658,7 +2894,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1xS3BCk291UvhgP2dvNdad",
@@ -2668,7 +2905,8 @@
       "typed": false,
       "type_name": "Opening",
       "type_source": "objecttype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpac",
@@ -2678,7 +2916,8 @@
       "typed": true,
       "type_name": "0762 x 2032mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpee",
@@ -2691,7 +2930,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKphf",
@@ -2704,7 +2944,8 @@
       "materials": [
         "Plasterboard",
         "Metal - Stud Layer"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2gRXFgjRn2HPE$YoDLX0mp",
@@ -2714,7 +2955,8 @@
       "typed": true,
       "type_name": "650 x 450 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2gRXFgjRn2HPE$YoDLX0q2",
@@ -2724,7 +2966,8 @@
       "typed": true,
       "type_name": "650 x 450 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2gRXFgjRn2HPE$YoDLX0rb",
@@ -2734,7 +2977,8 @@
       "typed": true,
       "type_name": "650 x 450 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2gRXFgjRn2HPE$YoDLX0ra",
@@ -2744,7 +2988,8 @@
       "typed": true,
       "type_name": "650 x 450 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2gRXFgjRn2HPE$YoDLX0vP",
@@ -2754,7 +2999,8 @@
       "typed": true,
       "type_name": "450 x 450 mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2kvhekJrnDjRw0CDkKW$UD",
@@ -2764,7 +3010,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2kvhekJrnDjRw0CDkKW$JW",
@@ -2774,7 +3021,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2kvhekJrnDjRw0CDkKW$KL",
@@ -2784,7 +3032,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2kvhekJrnDjRw0CDkKW$fQ",
@@ -2794,7 +3043,8 @@
       "typed": true,
       "type_name": "0610 x 0610 x 0610mm",
       "type_source": "ifctype",
-      "materials": []
+      "materials": [],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK_l8",
@@ -2806,7 +3056,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$8W",
@@ -2818,7 +3069,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Bq",
@@ -2830,7 +3082,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$CR",
@@ -2842,7 +3095,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dv",
@@ -2854,7 +3108,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Du",
@@ -2866,7 +3121,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dx",
@@ -2878,7 +3134,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dw",
@@ -2890,7 +3147,8 @@
       "type_source": "objecttype",
       "materials": [
         "Metal - Steel - 345 MPa"
-      ]
+      ],
+      "layer_set": null
     },
     {
       "guid": "1CZILmCaHETO8tf3SgGEWh",
@@ -2902,7 +3160,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Floor:150mm Exterior Slab on Grade"
     },
     {
       "guid": "1CZILmCaHETO8tf3SgGEXu",
@@ -2914,7 +3173,8 @@
       "type_source": "objecttype",
       "materials": [
         "Concrete - Cast In Situ"
-      ]
+      ],
+      "layer_set": "Floor:150mm Exterior Slab on Grade"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVS",
@@ -2927,7 +3187,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVT",
@@ -2940,7 +3201,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVI",
@@ -2953,7 +3215,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVJ",
@@ -2966,7 +3229,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITp",
@@ -2979,7 +3243,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITm",
@@ -2992,7 +3257,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITn",
@@ -3005,7 +3271,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITs",
@@ -3018,7 +3285,8 @@
       "materials": [
         "Metal - Stud Layer",
         "Plasterboard"
-      ]
+      ],
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)"
     }
   ],
   "storeys": [

@@ -10,6 +10,7 @@ export type Selection =
   | { kind: "storey"; value: string; label?: string }
   | { kind: "type"; value: string }
   | { kind: "material"; value: string }
+  | { kind: "layer_set"; value: string }
   | { kind: "untyped" }
   | null;
 
@@ -19,6 +20,7 @@ type Ctx = {
   toggleStorey: (storey_guid: string, label?: string) => void;
   toggleType: (type_name: string) => void;
   toggleMaterial: (material: string) => void;
+  toggleLayerSet: (layer_set: string) => void;
   toggleUntyped: () => void;
   clear: () => void;
 };
@@ -58,14 +60,21 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         : { kind: "material", value: material }
     );
   }, []);
+  const toggleLayerSet = useCallback((layer_set: string) => {
+    setSelection(cur =>
+      cur && cur.kind === "layer_set" && cur.value === layer_set
+        ? null
+        : { kind: "layer_set", value: layer_set }
+    );
+  }, []);
   const toggleUntyped = useCallback(() => {
     setSelection(cur => (cur && cur.kind === "untyped" ? null : { kind: "untyped" }));
   }, []);
   const clear = useCallback(() => setSelection(null), []);
 
   const value = useMemo(
-    () => ({ selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleUntyped, clear }),
-    [selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleUntyped, clear]
+    () => ({ selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleLayerSet, toggleUntyped, clear }),
+    [selection, toggleEntity, toggleStorey, toggleType, toggleMaterial, toggleLayerSet, toggleUntyped, clear]
   );
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
 }
