@@ -137,7 +137,10 @@ export function ModelViewer({
     const mv = mvRef.current as unknown as { model?: { materials: Mat[] } } | null;
     const mats = mv?.model?.materials;
     if (!mats) return;
-    const ACCENT: [number, number, number, number] = [0.878, 0.486, 0.184, 1.0];
+    // Selection callout color — teal (#1d8a8a), complementary to the
+    // rust theme accent. Used for "this element is what you focused on".
+    // Kept in sync with COLOR_CALLOUT in components/ifc-palette.ts.
+    const ACCENT: [number, number, number, number] = [0.114, 0.541, 0.541, 1.0];
     const DIM:    [number, number, number, number] = [0.5, 0.5, 0.5, 0.03];
     const HIDE:   [number, number, number, number] = [0, 0, 0, 0];
     // Entities that are "ghost-by-nature" — translucent volumes that show
@@ -174,6 +177,10 @@ export function ModelViewer({
         isMatch = meta.layer_set === selection.value;
       } else if (selection?.kind === "untyped" && meta) {
         isMatch = meta.typed === false;
+      } else if (selection?.kind === "instance") {
+        // Exact guid match — the material name in the GLB is the
+        // product guid for elements ifcfast-mesh tagged.
+        isMatch = m.name === selection.value;
       }
 
       if (!selection) {

@@ -1,5 +1,5 @@
 {
-  "path": "/tmp/duplex_a.ifc",
+  "path": "/home/edkjo/workspace/inbox/ifcfast/.local-samples/Duplex_A_20110907.ifc",
   "size_bytes": 2380763,
   "schema": "IFC2X3",
   "project_name": "0001",
@@ -21,10 +21,10 @@
     "IfcFooting": 7,
     "IfcMember": 4,
     "IfcRailing": 4,
-    "IfcStairFlight": 2,
     "IfcStair": 2,
-    "IfcWall": 1,
-    "IfcRoof": 1
+    "IfcStairFlight": 2,
+    "IfcRoof": 1,
+    "IfcWall": 1
   },
   "tables": {
     "products": {
@@ -40,7 +40,10 @@
         "storey_name",
         "parent_guid",
         "mode",
-        "step_id"
+        "step_id",
+        "type_guid",
+        "type_name",
+        "type_source"
       ],
       "loaded": true
     },
@@ -51,6 +54,24 @@
         "name",
         "elevation",
         "building_guid"
+      ],
+      "loaded": true
+    },
+    "spaces": {
+      "rows": 21,
+      "columns": [
+        "guid",
+        "step_id"
+      ],
+      "loaded": true
+    },
+    "type_objects": {
+      "rows": 25,
+      "columns": [
+        "guid",
+        "entity",
+        "name",
+        "step_id"
       ],
       "loaded": true
     },
@@ -76,6 +97,14 @@
       "columns": [
         "storey_guid",
         "building_guid"
+      ],
+      "loaded": true
+    },
+    "voids": {
+      "rows": 50,
+      "columns": [
+        "opening_guid",
+        "host_guid"
       ],
       "loaded": true
     },
@@ -128,7 +157,7 @@
       "loaded": true
     },
     "drift": {
-      "rows": 205,
+      "rows": 286,
       "columns": [
         "guid",
         "entity",
@@ -148,7 +177,19 @@
         "drift_severity"
       ],
       "loaded": true
+    },
+    "segments": {
+      "rows": 493,
+      "columns": [
+        "guid",
+        "product_index",
+        "segment_index",
+        "source",
+        "triangle_count",
+        "index_start"
+      ],
+      "loaded": true
     }
   },
-  "parse_seconds": 0.3033480644226074
+  "parse_seconds": 0.19379591941833496
 }

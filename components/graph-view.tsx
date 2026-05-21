@@ -28,7 +28,7 @@ type TreeNode = {
   storey_label?: string;  // human-readable storey name for type nodes
 };
 
-export function GraphView({ src }: { src: string }) {
+export function GraphView({ src, compact = false }: { src: string; compact?: boolean }) {
   const [data, setData] = useState<Graph | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const { selection, toggleEntity, toggleStorey, clear } = useSelection();
@@ -114,23 +114,25 @@ export function GraphView({ src }: { src: string }) {
 
   return (
     <div className="h-full flex flex-col bg-card">
-      <div className="px-5 py-3 border-b border-line flex items-baseline justify-between">
-        <div>
-          <div className="text-xs font-mono text-muted uppercase tracking-wider">
-            m.aggregates + m.contained_in
+      {!compact && (
+        <div className="px-5 py-3 border-b border-line flex items-baseline justify-between">
+          <div>
+            <div className="text-xs font-mono text-muted uppercase tracking-wider">
+              m.aggregates + m.contained_in
+            </div>
+            <div className="text-sm font-medium">Model tree</div>
           </div>
-          <div className="text-sm font-medium">Model tree</div>
+          {selection ? (
+            <button onClick={clear} className="font-mono text-xs text-accent hover:underline">
+              clear
+            </button>
+          ) : (
+            <div className="font-mono text-xs text-muted tabular-nums">
+              {data.storeys.length} storeys · {data.products.length} products
+            </div>
+          )}
         </div>
-        {selection ? (
-          <button onClick={clear} className="font-mono text-xs text-accent hover:underline">
-            clear
-          </button>
-        ) : (
-          <div className="font-mono text-xs text-muted tabular-nums">
-            {data.storeys.length} storeys · {data.products.length} products
-          </div>
-        )}
-      </div>
+      )}
       <div className="flex-1 overflow-auto scroll-thin py-2">
         <Row
           node={tree}
@@ -143,9 +145,11 @@ export function GraphView({ src }: { src: string }) {
           hasSelection={!!selection}
         />
       </div>
-      <div className="border-t border-line px-5 py-2 bg-bg/40 text-[11px] font-mono text-muted">
-        click an entity or storey to cross-filter
-      </div>
+      {!compact && (
+        <div className="border-t border-line px-5 py-2 bg-bg/40 text-[11px] font-mono text-muted">
+          click an entity or storey to cross-filter
+        </div>
+      )}
     </div>
   );
 }

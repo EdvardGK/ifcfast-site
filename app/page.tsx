@@ -20,10 +20,9 @@ import { Benchmark } from "@/components/benchmark";
 import { McpInstall } from "@/components/mcp-install";
 import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
-import { GraphView } from "@/components/graph-view";
 import { VectorGraph } from "@/components/vector-graph";
-import { DataTabs } from "@/components/data-tabs";
 import { SelectionProvider } from "@/components/selection-context";
+import { DashTile } from "./dev/workbench/dash-tile";
 
 export default function Home() {
   return (
@@ -64,34 +63,26 @@ function ThreeLensSection() {
           </p>
         </div>
         <SelectionProvider>
-          <div className="grid lg:grid-cols-12 gap-px bg-line rounded-xl overflow-hidden border border-line h-[460px] sm:h-[520px]">
-            <div className="lg:col-span-7 bg-card relative">
-              <div className="absolute top-0 left-0 right-0 px-5 py-3 border-b border-line bg-card/95 backdrop-blur z-10">
-                <div className="text-xs font-mono text-muted uppercase tracking-wider">
-                  ifcfast-mesh → glTF
-                </div>
-                <div className="text-sm font-medium">3D viewer</div>
-              </div>
-              <div className="pt-[60px] h-full">
-                <ModelViewer
-                  src="/sample/duplex.glb"
-                  metaSrc="/sample/duplex.graph.json"
-                  alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-                />
-              </div>
+          {/* 2×2 workbench — layout A. Same proportions as the
+              original ThreeLensSection band so the page rhythm
+              doesn't change; the inner block now packs four
+              cross-filtered tiles instead of a 7/5 viewer+tabs split. */}
+          <div className="grid grid-cols-1 grid-rows-[repeat(4,minmax(420px,1fr))] lg:grid-cols-2 lg:grid-rows-2 gap-px bg-line rounded-xl overflow-hidden border border-line h-auto lg:h-[780px]">
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <ModelViewer
+                src="/sample/duplex.glb"
+                metaSrc="/sample/duplex.graph.json"
+                alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+              />
             </div>
-            <div className="lg:col-span-5 bg-card min-h-0">
-              <DataTabs
-                labels={[
-                  { id: "qto", label: "QTO" },
-                  { id: "spatial", label: "Spatial" },
-                  { id: "vector", label: "Vector" },
-                ]}
-              >
-                <QtoPanel src="/sample/duplex.qto.json" metaSrc="/sample/duplex.graph.json" />
-                <GraphView src="/sample/duplex.graph.json" />
-                <VectorGraph src="/sample/duplex.graph.json" />
-              </DataTabs>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <VectorGraph src="/sample/duplex.graph.json" compact />
+            </div>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <DashTile qtoSrc="/sample/duplex.qto.json" graphSrc="/sample/duplex.graph.json" />
+            </div>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <QtoPanel src="/sample/duplex.qto.json" metaSrc="/sample/duplex.graph.json" compact />
             </div>
           </div>
         </SelectionProvider>
@@ -111,17 +102,16 @@ function ThreeLensSection() {
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
             <span>
-              IfcRoof + IfcStair appear in QTO but the source IFC ships
-              no body representation for them, so they don&apos;t render — see{" "}
-              <a
-                href="https://github.com/EdvardGK/ifcfast/issues/5"
-                target="_blank"
-                rel="noreferrer"
-                className="underline hover:text-fg font-mono"
-              >
-                #5
-              </a>
-              . QTO + graph data are complete.
+              ifcfast emits every measure it can compute — mesh volume,
+              AABB volume, per-face area, footprint, length, thickness,
+              author-supplied <span className="font-mono">Qto_*</span> pset
+              values, layer breakdowns. No measure is privileged, none
+              are filtered. The numbers reflect the geometry the modeller
+              authored: a lightbulb&apos;s mesh volume is the bulb&apos;s
+              envelope, not its glass. ifcfast hands over the data;
+              interpreting it is the consumer&apos;s job. Structural
+              gaps and parser surface inconsistencies live in the
+              <span className="font-mono"> Findings </span> tab.
             </span>
           </span>
         </div>
