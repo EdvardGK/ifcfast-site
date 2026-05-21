@@ -21,7 +21,7 @@ export type Selection =
   | ({ kind: "type"; value: string } & { source?: string })
   | ({ kind: "material"; value: string } & { source?: string })
   | ({ kind: "layer_set"; value: string } & { source?: string })
-  | ({ kind: "untyped" } & { source?: string })
+  | ({ kind: "untyped"; entity?: string } & { source?: string })
   | ({ kind: "instance"; value: string; entity?: string; storey_guid?: string; name?: string } & { source?: string })
   | null;
 
@@ -32,7 +32,7 @@ type Ctx = {
   toggleType: (type_name: string, source?: string) => void;
   toggleMaterial: (material: string, source?: string) => void;
   toggleLayerSet: (layer_set: string, source?: string) => void;
-  toggleUntyped: (source?: string) => void;
+  toggleUntyped: (opts?: { entity?: string; source?: string }) => void;
   toggleInstance: (guid: string, opts?: { entity?: string; storey_guid?: string; name?: string; source?: string }) => void;
   clear: () => void;
 };
@@ -79,8 +79,14 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         : { kind: "layer_set", value: layer_set, source }
     );
   }, []);
-  const toggleUntyped = useCallback((source?: string) => {
-    setSelection(cur => (cur && cur.kind === "untyped" ? null : { kind: "untyped", source }));
+  const toggleUntyped = useCallback((opts?: { entity?: string; source?: string }) => {
+    const entity = opts?.entity;
+    const source = opts?.source;
+    setSelection(cur =>
+      cur && cur.kind === "untyped" && (cur.entity ?? null) === (entity ?? null)
+        ? null
+        : { kind: "untyped", entity, source }
+    );
   }, []);
   const toggleInstance = useCallback(
     (guid: string, opts?: { entity?: string; storey_guid?: string; name?: string; source?: string }) => {

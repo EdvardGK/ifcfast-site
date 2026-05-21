@@ -41,14 +41,22 @@ type QtoRow = {
 };
 type QtoFile = { rows: QtoRow[] };
 
-type Mode = "type" | "untyped" | "material" | "layer_set" | "findings";
+type Mode = "type" | "material" | "layer_set" | "findings";
+
+// Sentinel value used as the row label for the untyped bucket inside
+// the merged Types view. Same pattern as a classification-status
+// report that surfaces "Unclassified" as one of the values — not a
+// separate dataset. Kept as a constant so the click router and the
+// renderer can recognise the pseudo-row without string-matching on a
+// translated label later.
+const UNTYPED_ROW_VALUE = "Untyped";
 
 export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaSrc?: string; compact?: boolean }) {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [qto, setQto] = useState<QtoFile | null>(null);
   const [mode, setMode] = useState<Mode>("type");
   const [expandedSets, setExpandedSets] = useState<Set<string>>(() => new Set());
-  const { selection, toggleType, toggleMaterial, toggleLayerSet, toggleEntity, clear } = useSelection();
+  const { selection, toggleType, toggleMaterial, toggleLayerSet, toggleEntity, toggleUntyped, clear } = useSelection();
 
   useEffect(() => {
     if (!metaSrc) return;
@@ -102,18 +110,20 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
         return (p.type_name ?? "") === selection.value && (p.type_source ?? "none") === "ifctype";
       if (selection.kind === "material") return (p.materials ?? []).includes(selection.value);
       if (selection.kind === "layer_set") return (p.layer_set ?? null) === selection.value;
-      if (selection.kind === "untyped") return (p.type_source ?? "none") !== "ifctype";
+      if (selection.kind === "untyped") {
+        if (selection.entity && p.entity !== selection.entity) return false;
+        return (p.type_source ?? "none") !== "ifctype";
+      }
       if (selection.kind === "instance") return p.guid === selection.value;
       return true;
     });
   }, [graph, selection, isOwnSelection, scopeStorey]);
 
-  // Per-mode aggregation. Type and Untyped split products by whether
-  // an IfcRelDefinesByType link exists — that's the IFC-formal distinction.
-  //   - Type:     products with type_source === "ifctype". Row key = IfcTypeObject.Name.
-  //   - Untyped:  products with type_source !== "ifctype". Row key = ObjectType
-  //               string (Revit's "type-by-name only" pattern); falls back to
-  //               the entity class when even that's missing.
+  // Per-mode aggregation. The Types view rolls up by IfcTypeObject.Name
+  // for products that carry an IfcRelDefinesByType link, and folds all
+  // products without that link into a single "Untyped" pseudo-row per
+  // entity. Same shape as a classification-status report: unclassified
+  // items aren't a separate dataset, they're one of the buckets.
   // Materials: one product can carry several materials (e.g. wall layer sets);
   // it contributes one tick to each material it touches.
   // Each row is keyed by (entity, value). Rows are then grouped by entity
@@ -180,23 +190,10 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
   const typeGroups = useMemo(() => {
     const acc = new Map<string, Row>();
     for (const p of scopedProducts) {
-      if ((p.type_source ?? "none") !== "ifctype") continue;
-      const v = p.type_name && p.type_name !== "" ? p.type_name : "—";
-      const key = `${p.entity}::${v}`;
-      let cur = acc.get(key);
-      if (!cur) { cur = emptyRow(p.entity, v); acc.set(key, cur); }
-      addProduct(cur, p);
-    }
-    return groupRows([...acc.values()]);
-  }, [scopedProducts]);
-
-  const untypedGroups = useMemo(() => {
-    const acc = new Map<string, Row>();
-    for (const p of scopedProducts) {
-      if ((p.type_source ?? "none") === "ifctype") continue;
-      const v = p.type_name && p.type_name !== "" && p.type_name !== "—"
-        ? p.type_name
-        : "(no name)";
+      const isTyped = (p.type_source ?? "none") === "ifctype";
+      const v = isTyped
+        ? (p.type_name && p.type_name !== "" ? p.type_name : "—")
+        : UNTYPED_ROW_VALUE;
       const key = `${p.entity}::${v}`;
       let cur = acc.get(key);
       if (!cur) { cur = emptyRow(p.entity, v); acc.set(key, cur); }
@@ -240,20 +237,24 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
 
   const activeGroups =
     mode === "type" ? typeGroups
-    : mode === "untyped" ? untypedGroups
     : mode === "material" ? materialGroups
     : layerSetGroups;
   const rowCount = activeGroups.reduce((s, g) => s + g.rows.length, 0);
   const itemLabel =
     mode === "type" ? "types"
-    : mode === "untyped" ? "kinds"
     : mode === "material" ? "materials"
     : "layer sets";
   const selectedEntity = selection?.kind === "entity" ? selection.value : null;
+  // Sentinel: which (entity, "Untyped") row is currently the active
+  // selection, if any. Used to give the pseudo-row the same accent
+  // treatment a typed row gets when toggleType has matched its value.
+  const selectedUntypedEntity =
+    selection?.kind === "untyped" ? selection.entity ?? null : null;
 
-  function handleRowClick(value: string) {
+  function handleRowClick(entity: string, value: string) {
     if (mode === "material") return toggleMaterial(value);
     if (mode === "layer_set") return toggleLayerSet(value);
+    if (value === UNTYPED_ROW_VALUE) return toggleUntyped({ entity, source: QTO_SOURCE });
     return toggleType(value);
   }
   function rowSelectedValue(): string | null {
@@ -269,14 +270,12 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
           <div>
             <div className="text-xs font-mono text-muted uppercase tracking-wider">
               {mode === "type" ? "m.type_summary()"
-                : mode === "untyped" ? "m.objects[~m.is_typed]"
                 : mode === "material" ? "m.materials"
                 : mode === "layer_set" ? "m.material_layer_sets"
                 : "m.findings()"}
             </div>
             <div className="text-sm font-medium">
               {mode === "type" ? "Types"
-                : mode === "untyped" ? "Untyped"
                 : mode === "material" ? "Materials"
                 : mode === "layer_set" ? "Layer sets"
                 : "Findings"}
@@ -300,7 +299,6 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
       )}
       <div className="px-5 py-2 border-b border-line bg-bg/40 flex flex-wrap items-center gap-1 text-[11px] font-mono">
         <ModeTab label="Types" active={mode === "type"} onClick={() => setMode("type")} />
-        <ModeTab label="Untyped" active={mode === "untyped"} onClick={() => setMode("untyped")} />
         <ModeTab label="Materials" active={mode === "material"} onClick={() => setMode("material")} />
         <ModeTab label="Layer sets" active={mode === "layer_set"} onClick={() => setMode("layer_set")} />
         <ModeTab label="Findings" active={mode === "findings"} onClick={() => setMode("findings")} />
@@ -308,9 +306,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
           className="ml-auto text-muted truncate"
           title={
             mode === "type"
-              ? "Products with an IfcRelDefinesByType link to an IfcTypeObject — the formal IFC type."
-              : mode === "untyped"
-              ? "Not related to an IfcTypeObject. Rows show the IfcXxx.ObjectType string instead (Revit's type-by-name export pattern)."
+              ? "IfcTypeObject names where IfcRelDefinesByType exists. Products without that link roll up into an \"Untyped\" pseudo-row per entity — same shape as a classification-status report."
               : mode === "material"
               ? "Linked to an IfcMaterial via IfcRelAssociatesMaterial (single material, layer-set, profile-set, or constituent-set). A product can appear under several materials."
               : mode === "layer_set"
@@ -318,8 +314,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
               : "Structural integrity findings derived from the IFC + ifcfast's self-report. Click a row to highlight affected products everywhere."
           }
         >
-          {mode === "type" ? "linked to IfcTypeObject"
-            : mode === "untyped" ? "not related to an IfcTypeObject"
+          {mode === "type" ? "IfcTypeObject · Untyped bucket"
             : mode === "material" ? "via IfcRelAssociatesMaterial"
             : mode === "layer_set" ? "IfcMaterialLayerSet"
             : "QC · expose, don't curate"}
@@ -383,8 +378,18 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
                     </td>
                   </tr>
                   {g.rows.map(r => {
-                    const isSel = selVal === r.value;
-                    const isDim = selVal !== null && !isSel;
+                    // The "Untyped" pseudo-row sits in the same table as
+                    // typed rows but is matched against the untyped
+                    // selection kind (scoped by entity) rather than
+                    // selection.value. Keeping its accent in sync with
+                    // typed rows needs this extra branch.
+                    const isUntypedRow = r.value === UNTYPED_ROW_VALUE && mode === "type";
+                    const isSel = isUntypedRow
+                      ? selectedUntypedEntity === g.entity
+                      : selVal === r.value;
+                    const isDim = isUntypedRow
+                      ? selectedUntypedEntity !== null && selectedUntypedEntity !== g.entity
+                      : selVal !== null && !isSel;
                     const lsDef =
                       mode === "layer_set"
                         ? graph.material_layer_sets?.[r.value]
@@ -397,7 +402,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
                     return (
                       <Fragment key={`${g.entity}::${r.value}`}>
                         <tr
-                          onClick={() => handleRowClick(r.value)}
+                          onClick={() => handleRowClick(g.entity, r.value)}
                           className={`cursor-pointer transition-colors ${
                             isSel
                               ? "text-fg"
@@ -407,7 +412,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
                           }`}
                           style={isSel ? { background: "var(--color-accent-soft, #fce8d4)" } : undefined}
                         >
-                          <td className={`pl-8 pr-3 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
+                          <td className={`pl-8 pr-3 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""} ${isUntypedRow && !isSel ? "italic text-muted" : ""}`}>
                             <span className="flex items-center gap-2 min-w-0">
                               {lsDef && (
                                 <button

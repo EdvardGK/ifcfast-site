@@ -438,6 +438,7 @@ function isMatch(n: Node, sel: Selection): boolean {
     return (n.layer_set ?? null) === sel.value;
   }
   if (sel.kind === "untyped") {
+    if (sel.entity && n.entity.toLowerCase() !== sel.entity.toLowerCase()) return false;
     return (n.type_source ?? "none") !== "ifctype";
   }
   return true;

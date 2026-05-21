@@ -177,6 +177,9 @@ export function ModelViewer({
         isMatch = meta.layer_set === selection.value;
       } else if (selection?.kind === "untyped" && meta) {
         isMatch = meta.typed === false;
+        if (isMatch && selection.entity) {
+          isMatch = meta.entity.toLowerCase() === selection.entity.toLowerCase();
+        }
       } else if (selection?.kind === "instance") {
         // Exact guid match — the material name in the GLB is the
         // product guid for elements ifcfast-mesh tagged.
