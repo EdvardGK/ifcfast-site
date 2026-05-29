@@ -302,13 +302,13 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
           className="ml-auto text-muted truncate"
           title={
             mode === "type"
-              ? "IfcTypeObject names where IfcRelDefinesByType exists. Products without that link roll up into an \"Untyped\" pseudo-row per entity — same shape as a classification-status report."
+              ? "Grouped by IfcTypeObject name (where IfcRelDefinesByType exists). Products without that link are presented as the \"Untyped\" type — one of the type values per entity, not a separate bucket. Same shape as a classification-status report."
               : mode === "material"
               ? "Linked to an IfcMaterial via IfcRelAssociatesMaterial (single material, layer-set, profile-set, or constituent-set). A product can appear under several materials."
               : "Grouped by IfcMaterialLayerSet name — the named construction stack a wall/floor/roof carries (e.g. \"Basic Wall:Interior - Partition\")."
           }
         >
-          {mode === "type" ? "IfcTypeObject · Untyped bucket"
+          {mode === "type" ? "IfcTypeObject · incl. Untyped"
             : mode === "material" ? "via IfcRelAssociatesMaterial"
             : "IfcMaterialLayerSet"}
         </span>
@@ -402,7 +402,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
                           }`}
                           style={isSel ? { background: "var(--color-accent-soft, #fce8d4)" } : undefined}
                         >
-                          <td className={`pl-8 pr-3 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""} ${isUntypedRow && !isSel ? "italic text-muted" : ""}`}>
+                          <td className={`pl-8 pr-3 py-1.5 font-mono text-[12px] ${isSel ? "text-accent font-medium" : ""}`}>
                             <span className="flex items-center gap-2 min-w-0">
                               {lsDef && (
                                 <button
