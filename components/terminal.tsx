@@ -6,19 +6,22 @@ import { Code } from "./code";
 
 const SCRIPT = `import ifcfast
 
-m = ifcfast.open(ifcfast.example_path())
+m = ifcfast.open("model.ifc")
 
-m.summary()
-# {'schema': 'IFC4', 'products': 8873, 'storeys': 13,
-#  'tables': {'contained_in': {'rows': 5725, ...},
-#             'aggregates':   {'rows': 2671, ...}, ...}}
+# Self-describing — what am I looking at?
+m.summary()              # schema, counts, available tables
 
-m.ancestors(wall_guid)
-# ['1l_rGR5b...', '3xX4Gf2u...', '3xX4Gf2u...', '3xX4Gf2u...']
-# storey  →  building  →  site  →  project
+# Data layers, as pandas DataFrames
+m.psets                  # property sets
+m.materials              # material assignments
+m.classifications        # NS 3451 / Uniformat / OmniClass
 
-m.diff("model_v2.ifc")["products"]
-# {'added_count': 47, 'removed_count': 12, 'changed_count': 8}`;
+# Geometry, no CAD kernel required
+m.meshes()               # per-product triangles (vertices, faces)
+m.point_cloud(per_m2=1000)   # sampled surface points + normals
+
+# Spatial graph
+m.ancestors(wall_guid)   # storey → building → site → project`;
 
 export function HeroTerminal() {
   const [shown, setShown] = useState(0);

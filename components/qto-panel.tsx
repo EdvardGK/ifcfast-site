@@ -2,7 +2,6 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSelection } from "./selection-context";
-import { FindingsView } from "./findings-view";
 
 type Product = {
   guid: string;
@@ -41,7 +40,7 @@ type QtoRow = {
 };
 type QtoFile = { rows: QtoRow[] };
 
-type Mode = "type" | "material" | "layer_set" | "findings";
+type Mode = "type" | "material" | "layer_set";
 
 // Sentinel value used as the row label for the untyped bucket inside
 // the merged Types view. Same pattern as a classification-status
@@ -271,14 +270,12 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
             <div className="text-xs font-mono text-muted uppercase tracking-wider">
               {mode === "type" ? "m.type_summary()"
                 : mode === "material" ? "m.materials"
-                : mode === "layer_set" ? "m.material_layer_sets"
-                : "m.findings()"}
+                : "m.material_layer_sets"}
             </div>
             <div className="text-sm font-medium">
               {mode === "type" ? "Types"
                 : mode === "material" ? "Materials"
-                : mode === "layer_set" ? "Layer sets"
-                : "Findings"}
+                : "Layer sets"}
               {scopeLabel && (
                 <span className="ml-2 text-xs font-mono text-accent">
                   · {scopeLabel}
@@ -301,7 +298,6 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
         <ModeTab label="Types" active={mode === "type"} onClick={() => setMode("type")} />
         <ModeTab label="Materials" active={mode === "material"} onClick={() => setMode("material")} />
         <ModeTab label="Layer sets" active={mode === "layer_set"} onClick={() => setMode("layer_set")} />
-        <ModeTab label="Findings" active={mode === "findings"} onClick={() => setMode("findings")} />
         <span
           className="ml-auto text-muted truncate"
           title={
@@ -309,20 +305,14 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
               ? "IfcTypeObject names where IfcRelDefinesByType exists. Products without that link roll up into an \"Untyped\" pseudo-row per entity — same shape as a classification-status report."
               : mode === "material"
               ? "Linked to an IfcMaterial via IfcRelAssociatesMaterial (single material, layer-set, profile-set, or constituent-set). A product can appear under several materials."
-              : mode === "layer_set"
-              ? "Grouped by IfcMaterialLayerSet name — the named construction stack a wall/floor/roof carries (e.g. \"Basic Wall:Interior - Partition\")."
-              : "Structural integrity findings derived from the IFC + ifcfast's self-report. Click a row to highlight affected products everywhere."
+              : "Grouped by IfcMaterialLayerSet name — the named construction stack a wall/floor/roof carries (e.g. \"Basic Wall:Interior - Partition\")."
           }
         >
           {mode === "type" ? "IfcTypeObject · Untyped bucket"
             : mode === "material" ? "via IfcRelAssociatesMaterial"
-            : mode === "layer_set" ? "IfcMaterialLayerSet"
-            : "QC · expose, don't curate"}
+            : "IfcMaterialLayerSet"}
         </span>
       </div>
-      {mode === "findings" ? (
-        <FindingsView qto={qto} graph={graph} toggleEntity={toggleEntity} selection={selection} />
-      ) : (
       <div className="flex-1 overflow-auto scroll-thin">
         <table className="w-full text-sm border-separate border-spacing-0">
           <thead>
@@ -484,8 +474,7 @@ export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaS
           </tbody>
         </table>
       </div>
-      )}
-      {!compact && mode !== "findings" && (
+      {!compact && (
         <div className="border-t border-line px-5 py-2 bg-bg/40 text-[11px] font-mono text-muted">
           {selection
             ? "↳ also filters the model and graph"
