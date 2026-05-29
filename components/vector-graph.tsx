@@ -245,13 +245,11 @@ export function VectorGraph({ src, compact = false }: { src: string; compact?: b
         .on("end",   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
     );
 
-    // When a filter fires, guarantee the highlighted nodes are actually
-    // on screen. A filter only changes opacity/stroke — if the user has
-    // panned or zoomed away, the matches light up off-frame and the graph
-    // looks unchanged. So: if NONE of the active nodes fall inside the
-    // current viewport, animate the camera to frame them. If at least one
-    // is already visible we leave the view alone (don't yank it from under
-    // the user).
+    // When a filter fires, frame the highlighted nodes to fit. A filter only
+    // changes opacity/stroke — leaving the camera put means matches can light
+    // up scattered, mostly off-frame, with the view looking unchanged just
+    // because one match happens to be on screen. So always animate the camera
+    // to fit the full set of matches into the viewport.
     const ensureMatchVisible = () => {
       const sel = selectionRef.current;
       if (!sel) return; // a clear() shouldn't move the camera
@@ -261,15 +259,8 @@ export function VectorGraph({ src, compact = false }: { src: string; compact?: b
       if (matches.length === 0) return;
 
       const t = d3.zoomTransform(svgEl);
-      const PAD = 8; // px slack so a node hugging the edge still counts
-      const anyVisible = matches.some(n => {
-        const sx = t.applyX(n.x!);
-        const sy = t.applyY(n.y!);
-        return sx >= PAD && sx <= W - PAD && sy >= PAD && sy <= H - PAD;
-      });
-      if (anyVisible) return;
 
-      // Frame all matches: bbox in graph space → a transform that fits it
+      // Fit all matches: bbox in graph space → a transform that fits it
       // into the viewport with margin, clamped to the zoom scale extent.
       let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
       for (const n of matches) {
