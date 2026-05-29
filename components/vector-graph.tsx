@@ -245,6 +245,54 @@ export function VectorGraph({ src, compact = false }: { src: string; compact?: b
         .on("end",   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
     );
 
+    // When a filter fires, guarantee the highlighted nodes are actually
+    // on screen. A filter only changes opacity/stroke — if the user has
+    // panned or zoomed away, the matches light up off-frame and the graph
+    // looks unchanged. So: if NONE of the active nodes fall inside the
+    // current viewport, animate the camera to frame them. If at least one
+    // is already visible we leave the view alone (don't yank it from under
+    // the user).
+    const ensureMatchVisible = () => {
+      const sel = selectionRef.current;
+      if (!sel) return; // a clear() shouldn't move the camera
+      const matches = nodes.filter(
+        n => isMatch(n, sel) && Number.isFinite(n.x) && Number.isFinite(n.y),
+      );
+      if (matches.length === 0) return;
+
+      const t = d3.zoomTransform(svgEl);
+      const PAD = 8; // px slack so a node hugging the edge still counts
+      const anyVisible = matches.some(n => {
+        const sx = t.applyX(n.x!);
+        const sy = t.applyY(n.y!);
+        return sx >= PAD && sx <= W - PAD && sy >= PAD && sy <= H - PAD;
+      });
+      if (anyVisible) return;
+
+      // Frame all matches: bbox in graph space → a transform that fits it
+      // into the viewport with margin, clamped to the zoom scale extent.
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (const n of matches) {
+        x0 = Math.min(x0, n.x!); y0 = Math.min(y0, n.y!);
+        x1 = Math.max(x1, n.x!); y1 = Math.max(y1, n.y!);
+      }
+      const bw = Math.max(x1 - x0, 1e-3);
+      const bh = Math.max(y1 - y0, 1e-3);
+      const cx = (x0 + x1) / 2;
+      const cy = (y0 + y1) / 2;
+      const margin = 48;
+      let k = Math.min((W - 2 * margin) / bw, (H - 2 * margin) / bh);
+      if (!Number.isFinite(k) || k <= 0) k = 1.5;
+      // A single node (or tiny cluster) yields a huge fit-scale; cap it so
+      // we recenter at a readable zoom rather than slamming to max.
+      if (bw < 2 && bh < 2) k = Math.min(k, Math.max(t.k, 1.6));
+      k = Math.max(0.1, Math.min(8, k)); // respect zoom.scaleExtent
+      const target = d3.zoomIdentity
+        .translate(W / 2 - k * cx, H / 2 - k * cy)
+        .scale(k);
+      svg.transition().duration(500).call(zoom.transform, target);
+    };
+
     // Apply current selection on initial mount, and react to changes by
     // updating opacities/strokes without rebuilding the simulation.
     const applySelection = () => {
@@ -266,6 +314,7 @@ export function VectorGraph({ src, compact = false }: { src: string; compact?: b
         return (isMatch(s, sel) && isMatch(t, sel)) ? 0.75 : 0.08;
       });
       label.attr("opacity", n => isMatch(n, sel) ? 1.0 : 0.2);
+      ensureMatchVisible();
     };
     applySelection();
 
