@@ -81,10 +81,19 @@ function ThreeLensSection() {
               <VectorGraph src="/sample/duplex.graph.json" compact />
             </div>
             <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <DashTile qtoSrc="/sample/duplex.qto.json" graphSrc="/sample/duplex.graph.json" />
+              <DashTile
+                qtoSrc="/sample/duplex.qto.json"
+                graphSrc="/sample/duplex.graph.json"
+                bundleSrc="/sample/duplex.bundle.json"
+              />
             </div>
             <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <QtoPanel src="/sample/duplex.qto.json" metaSrc="/sample/duplex.graph.json" compact />
+              <QtoPanel
+                src="/sample/duplex.qto.json"
+                metaSrc="/sample/duplex.graph.json"
+                bundleSrc="/sample/duplex.bundle.json"
+                compact
+              />
             </div>
           </div>
         </SelectionProvider>
