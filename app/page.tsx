@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { Code } from "@/components/code";
+import { CopyButton } from "@/components/copy-button";
 
 function Github({ size = 16 }: { size?: number }) {
   return (
@@ -9,8 +10,10 @@ function Github({ size = 16 }: { size?: number }) {
       height={size}
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-hidden
+      role="img"
+      aria-label="GitHub"
     >
+      <title>GitHub</title>
       <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.1c-3.2.69-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.74-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39s1.97.13 2.89.39c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
     </svg>
   );
@@ -30,12 +33,14 @@ export default function Home() {
   return (
     <div className="relative z-10">
       <Header />
-      <Hero />
-      <WhatItIs />
-      <ThreeLensSection />
-      <WhatWeAreAttempting />
-      <McpSection />
-      <CodeShowcase />
+      <main id="main">
+        <Hero />
+        <WhatItIs />
+        <ThreeLensSection />
+        <WhatWeAreAttempting />
+        <McpSection />
+        <CodeShowcase />
+      </main>
       <Footer />
     </div>
   );
@@ -131,20 +136,21 @@ function Header() {
             experimental
           </span>
         </div>
-        <nav className="flex items-center gap-1 sm:gap-4 text-sm">
+        <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-4 text-sm">
           <a
             href={REPO}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 text-muted hover:text-fg px-2 py-1 rounded"
+            aria-label="GitHub repository"
+            className="inline-flex items-center gap-1.5 text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded"
           >
-            <Github size={14} /> GitHub
+            <Github size={14} /> <span className="hidden sm:inline">GitHub</span>
           </a>
           <a
             href="https://pypi.org/project/ifcfast/"
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 text-muted hover:text-fg px-2 py-1 rounded font-mono text-xs"
+            className="inline-flex items-center gap-1.5 text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded font-mono text-xs"
           >
             pypi
           </a>
@@ -152,9 +158,9 @@ function Header() {
             href={`${REPO}/blob/main/AGENTS.md`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-fg hover:text-accent px-2 py-1 rounded"
+            className="inline-flex items-center gap-1 text-fg hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded"
           >
-            For agents <ArrowUpRight size={14} />
+            For agents <ArrowUpRight size={14} aria-hidden />
           </a>
         </nav>
       </div>
@@ -182,12 +188,12 @@ function Hero() {
             <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
             an open IFC parser — early & in progress
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-semibold tracking-tight leading-[1.05]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-semibold tracking-tight leading-[1.05] text-balance">
             Open any IFC.
             <br />
             <span className="text-muted">Ask any question.</span>
           </h1>
-          <p className="mt-6 text-lg text-muted leading-relaxed max-w-md">
+          <p className="mt-6 text-base sm:text-lg text-muted leading-relaxed max-w-md">
             A native IFC parser with a Python API. It reads a model&apos;s{" "}
             <span className="text-fg font-medium">data and geometry</span> into
             pandas tables, triangle meshes, and point clouds — no geometry
@@ -201,11 +207,11 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="#install"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-fg text-bg text-sm font-medium hover:bg-fg/90"
+              href="#quickstart"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-fg text-bg text-sm font-medium hover:bg-fg/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Install{" "}
-              <span className="font-mono text-xs opacity-70">
+              <span className="hidden sm:inline font-mono text-xs opacity-70">
                 pip install ifcfast
               </span>
             </a>
@@ -213,14 +219,24 @@ function Hero() {
               href={REPO}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-line bg-card text-sm hover:bg-bg"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-line bg-card text-sm hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <Github size={14} /> Source
             </a>
           </div>
-          <div className="mt-10 flex flex-col gap-1 text-xs font-mono text-muted">
-            <span>$ pip install ifcfast</span>
-            <span>$ python -c &quot;import ifcfast; ifcfast.open(ifcfast.example_path()).summary()&quot;</span>
+          <div
+            id="quickstart"
+            className="mt-10 relative rounded-md bg-card border border-line px-4 py-3 pr-10 scroll-mt-20"
+          >
+            <pre className="text-xs font-mono text-muted leading-relaxed whitespace-pre-wrap break-words">
+{`$ pip install ifcfast
+$ python -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"`}
+            </pre>
+            <CopyButton
+              value={'pip install ifcfast\npython -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"'}
+              label="Copy install commands"
+              className="absolute top-2 right-2"
+            />
           </div>
         </div>
         <div className="lg:col-span-7">
@@ -428,9 +444,9 @@ function McpSection() {
             <p className="mt-5 text-muted leading-relaxed max-w-md">
               <span className="font-mono text-fg">ifcfast-mcp</span> exposes
               the parse, data, and geometry surface as Model Context
-              Protocol tools. Add one line to your MCP client config and
-              your agent can drive IFCs directly — without you writing any
-              glue code.
+              Protocol tools. Add one block to your MCP client config and
+              your agent can drive IFCs directly — no per-tool wiring to
+              write.
             </p>
             <div className="mt-6 text-sm text-muted">
               Paste{" "}
@@ -514,8 +530,9 @@ function CodeShowcase() {
 function CodeCard({ kicker, code }: { kicker: string; code: string }) {
   return (
     <div className="rounded-xl border border-line bg-card overflow-hidden">
-      <div className="px-5 py-2.5 border-b border-line text-xs font-mono text-muted">
-        {kicker}
+      <div className="px-5 py-2.5 border-b border-line text-xs font-mono text-muted flex items-center justify-between">
+        <span>{kicker}</span>
+        <CopyButton value={code} label={`Copy ${kicker} snippet`} className="-mr-1.5" />
       </div>
       <div className="p-5 overflow-x-auto scroll-thin">
         <Code lang="python">{code}</Code>
