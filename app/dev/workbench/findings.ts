@@ -123,6 +123,22 @@ export function computeFindings(qto: QtoLike, graph: GraphLike): Finding[] {
   const inAgg = new Set((graph.aggregates ?? []).map((e) => e.child_guid));
   const inVoid = new Set((graph.voids ?? []).map((e) => e.opening_guid));
 
+  // Spatial orphans, computed up front so the storeyless check can
+  // suppress them. A product that sits outside the spatial tree
+  // entirely (no containment, no aggregate parent, no void host) is by
+  // definition storeyless — emitting BOTH a "spatial orphan" error and
+  // a "no storey" warn on the identical GUID set is double-counting one
+  // condition (the 61 IfcFurnishingElement on the Duplex sample did
+  // exactly this). The orphan finding is strictly the more informative
+  // of the two, so it wins and the storeyless row drops for those
+  // GUIDs. See GH #12 sub-bug 2.
+  const orphanGuids = new Set<string>();
+  for (const p of graph.products) {
+    if (!inContained.has(p.guid) && !inAgg.has(p.guid) && !inVoid.has(p.guid)) {
+      orphanGuids.add(p.guid);
+    }
+  }
+
   // 1. no_mesh — ifcfast didn't extract geometry for these products.
   // Sourced from the comprehensive sidecar's per-class mesh counts:
   //   source === "none"               → 0 of N products meshed (class-wide gap)
@@ -208,12 +224,18 @@ export function computeFindings(qto: QtoLike, graph: GraphLike): Finding[] {
   // aggregates aren't actually missing a storey — they live one hop
   // away through their host. Only flag if (a) the entity is not in
   // the void/aggregate domain, OR (b) it's in that domain but isn't
-  // actually linked through it (the genuinely orphaned subset).
+  // actually linked through it (the genuinely orphaned subset). Also
+  // suppress products already reported as spatial orphans below — a
+  // product outside the spatial tree is trivially storeyless, and the
+  // orphan error already covers it (GH #12 sub-bug 2).
   const storeylessByEntity = new Map<string, string[]>();
   for (const p of graph.products) {
     if (p.storey_guid) continue;
     if (VOID_DOMAIN_ENTITIES.has(p.entity) && inVoid.has(p.guid)) continue;
     if (AGGREGATE_DOMAIN_ENTITIES.has(p.entity) && inAgg.has(p.guid)) continue;
+    // Already reported as a spatial orphan (error) below — don't stack a
+    // redundant "no storey" warn on the same GUID. GH #12 sub-bug 2.
+    if (orphanGuids.has(p.guid)) continue;
     const arr = storeylessByEntity.get(p.entity) ?? [];
     arr.push(p.guid);
     storeylessByEntity.set(p.entity, arr);
@@ -230,14 +252,14 @@ export function computeFindings(qto: QtoLike, graph: GraphLike): Finding[] {
     });
   }
 
-  // 4. spatial_orphan — not in contained_in, not aggregate child,
-  // and not linked to a host via IfcRelVoidsElement. Anything still
-  // floating after all three checks is a genuine spatial orphan.
-  // (Sets hoisted above the storeyless check so we can consult them
-  // for the false-alarm suppression there too.)
+  // 4. spatial_orphan — not in contained_in, not aggregate child, and
+  // not linked to a host via IfcRelVoidsElement. The orphan GUID set
+  // was computed up front (see top of function) so the storeyless
+  // check could suppress these same GUIDs; here we just group it by
+  // entity for display.
   const orphansByEntity = new Map<string, string[]>();
   for (const p of graph.products) {
-    if (!inContained.has(p.guid) && !inAgg.has(p.guid) && !inVoid.has(p.guid)) {
+    if (orphanGuids.has(p.guid)) {
       const arr = orphansByEntity.get(p.entity) ?? [];
       arr.push(p.guid);
       orphansByEntity.set(p.entity, arr);
