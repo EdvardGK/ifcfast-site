@@ -38,6 +38,7 @@ const SAMPLE = {
   glb: "/sample/duplex.glb",
   graph: "/sample/duplex.graph.json",
   qto: "/sample/duplex.qto.json",
+  bundle: "/sample/duplex.bundle.json",
 };
 
 export default function WorkbenchPage() {
@@ -161,12 +162,12 @@ function LayoutGrid({ layout }: { layout: LayoutKey }) {
     ),
     dash: (
       <Tile>
-        <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} />
+        <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} />
       </Tile>
     ),
     table: (
       <Tile>
-        <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} compact />
+        <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} compact />
       </Tile>
     ),
   };

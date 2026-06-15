@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSelection } from "./selection-context";
+import { deriveLayerSets } from "./layer-sets";
 
 type Product = {
   guid: string;
@@ -50,21 +51,84 @@ type Mode = "type" | "material" | "layer_set";
 // translated label later.
 const UNTYPED_ROW_VALUE = "Untyped";
 
-export function QtoPanel({ src, metaSrc, compact = false }: { src: string; metaSrc?: string; compact?: boolean }) {
-  const [graph, setGraph] = useState<Graph | null>(null);
+type BundleFile = {
+  materials?: {
+    guid: string;
+    role: string;
+    layer_index: number;
+    material_name: string;
+    layer_thickness_mm: number | null;
+  }[];
+};
+
+export function QtoPanel({
+  src,
+  metaSrc,
+  bundleSrc,
+  compact = false,
+}: {
+  src: string;
+  metaSrc?: string;
+  /**
+   * Optional bundle sidecar. graph.json ships with no layer-set
+   * assignments (`layer_set: null`, empty `material_layer_sets`); the
+   * layered-construction data lives in the bundle. When provided, the
+   * Layer sets tab is reconstructed from it instead of rendering an
+   * empty lens on a layered model (#8 bug 2).
+   */
+  bundleSrc?: string;
+  compact?: boolean;
+}) {
+  const [graphRaw, setGraphRaw] = useState<Graph | null>(null);
   const [qto, setQto] = useState<QtoFile | null>(null);
+  const [bundle, setBundle] = useState<BundleFile | null>(null);
   const [mode, setMode] = useState<Mode>("type");
   const [expandedSets, setExpandedSets] = useState<Set<string>>(() => new Set());
   const { selection, toggleType, toggleMaterial, toggleLayerSet, toggleEntity, toggleUntyped, clear } = useSelection();
 
   useEffect(() => {
     if (!metaSrc) return;
-    fetch(metaSrc).then(r => r.json()).then(setGraph).catch(() => setGraph(null));
+    fetch(metaSrc).then(r => r.json()).then(setGraphRaw).catch(() => setGraphRaw(null));
   }, [metaSrc]);
 
   useEffect(() => {
     fetch(src).then(r => r.json()).then(setQto).catch(() => setQto(null));
   }, [src]);
+
+  useEffect(() => {
+    if (!bundleSrc) {
+      setBundle(null);
+      return;
+    }
+    fetch(bundleSrc).then(r => r.json()).then(setBundle).catch(() => setBundle(null));
+  }, [bundleSrc]);
+
+  // Splice reconstructed IfcMaterialLayerSet data onto the graph: each
+  // layered product gets a `layer_set` name and the
+  // `material_layer_sets` definition map is populated so the expander
+  // can render the layer stack. Without this the Layer sets lens is
+  // silently empty on a layered-wall model.
+  const graph = useMemo<Graph | null>(() => {
+    if (!graphRaw) return null;
+    if (!bundle) return graphRaw;
+    const typeNameByGuid = new Map(
+      graphRaw.products.map(p => [p.guid, p.type_name ?? p.entity] as const),
+    );
+    const derived = deriveLayerSets(bundle, guid => typeNameByGuid.get(guid) ?? null);
+    if (derived.layerSetByGuid.size === 0) return graphRaw;
+    return {
+      ...graphRaw,
+      products: graphRaw.products.map(p =>
+        derived.layerSetByGuid.has(p.guid)
+          ? { ...p, layer_set: derived.layerSetByGuid.get(p.guid)! }
+          : p,
+      ),
+      material_layer_sets: {
+        ...(graphRaw.material_layer_sets ?? {}),
+        ...derived.definitions,
+      },
+    };
+  }, [graphRaw, bundle]);
 
   const selectedType = selection?.kind === "type" ? selection.value : null;
   const selectedMaterial = selection?.kind === "material" ? selection.value : null;

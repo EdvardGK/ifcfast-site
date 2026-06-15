@@ -28,6 +28,7 @@ import {
   COLOR_CALLOUT,
   COLOR_CALLOUT_SOFT,
 } from "@/components/ifc-palette";
+import { deriveLayerSets } from "@/components/layer-sets";
 
 interface QtoRow {
   entity: string;
@@ -74,9 +75,34 @@ const METRIC_LABEL: Record<Metric, string> = {
   count: "count",
 };
 
-export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: string }) {
+interface BundleFile {
+  materials?: {
+    guid: string;
+    role: string;
+    layer_index: number;
+    material_name: string;
+    layer_thickness_mm: number | null;
+  }[];
+}
+
+export function DashTile({
+  qtoSrc,
+  graphSrc,
+  bundleSrc,
+}: {
+  qtoSrc: string;
+  graphSrc: string;
+  /**
+   * Optional bundle sidecar. When present, layered-construction data
+   * (IfcMaterialLayerSet) is reconstructed from it so the LAYER SETS
+   * KPI reflects the real stacks instead of a misleading 0 — the
+   * graph.json the demo ships carries no layer-set assignments.
+   */
+  bundleSrc?: string;
+}) {
   const [qto, setQto] = useState<QtoFile | null>(null);
   const [graph, setGraph] = useState<GraphFile | null>(null);
+  const [bundle, setBundle] = useState<BundleFile | null>(null);
   const [metric, setMetric] = useState<Metric>("volume_m3");
   const { selection, toggleEntity, toggleMaterial, clear } = useSelection();
 
@@ -85,13 +111,41 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
     fetch(graphSrc).then((r) => r.json()).then(setGraph).catch(() => setGraph(null));
   }, [qtoSrc, graphSrc]);
 
+  useEffect(() => {
+    if (!bundleSrc) {
+      setBundle(null);
+      return;
+    }
+    fetch(bundleSrc).then((r) => r.json()).then(setBundle).catch(() => setBundle(null));
+  }, [bundleSrc]);
+
+  // Reconstruct IfcMaterialLayerSet assignments from the bundle and
+  // splice them onto the graph products. graph.json ships with
+  // `layer_set: null` everywhere; the layered-wall data lives in the
+  // bundle. Naming a layer set by the product's type_name matches the
+  // QtoPanel convention ("Basic Wall:Interior - Partition…").
+  const productsWithLayerSets = useMemo<GraphProduct[]>(() => {
+    if (!graph) return [];
+    if (!bundle) return graph.products;
+    const typeNameByGuid = new Map(
+      graph.products.map((p) => [p.guid, p.type_name ?? p.entity] as const),
+    );
+    const derived = deriveLayerSets(bundle, (guid) => typeNameByGuid.get(guid) ?? null);
+    if (derived.layerSetByGuid.size === 0) return graph.products;
+    return graph.products.map((p) =>
+      derived.layerSetByGuid.has(p.guid)
+        ? { ...p, layer_set: derived.layerSetByGuid.get(p.guid)! }
+        : p,
+    );
+  }, [graph, bundle]);
+
   // Filter products against the current selection. Every downstream
   // aggregation reads from this list so KPIs, treemap and material
   // bars all stay in sync with whatever the user has filtered on.
   const filtered = useMemo<GraphProduct[]>(() => {
     if (!graph) return [];
-    if (!selection) return graph.products;
-    return graph.products.filter((p) => {
+    if (!selection) return productsWithLayerSets;
+    return productsWithLayerSets.filter((p) => {
       if (selection.kind === "entity") {
         if (p.entity.toLowerCase() !== selection.value.toLowerCase()) return false;
         if (selection.storey_guid && p.storey_guid !== selection.storey_guid) return false;
@@ -106,7 +160,7 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
       if (selection.kind === "instance") return p.guid === selection.value;
       return true;
     });
-  }, [graph, selection]);
+  }, [graph, selection, productsWithLayerSets]);
 
   // When the active selection came FROM this widget, the widget
   // keeps its full data and only highlights the picked element.
@@ -118,44 +172,80 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
   const isTreemapSource = selection?.source === TREEMAP_SOURCE;
   const isMaterialsSource = selection?.source === MATERIALS_SOURCE;
 
-  // Per-entity stats. Treemap reads from full data if it's the source
-  // of the current selection; otherwise from the scope-narrowed set.
-  const filteredByEntity = useMemo(() => {
-    if (!graph) return [];
-    // Treemap stays full when it's the source; otherwise it narrows.
-    const productSet = isTreemapSource ? graph.products : filtered;
-    // Sum per entity directly from products — picks up
-    // aggregate-rollup values (IfcRoof reads as its aggregated
-    // IfcSlab's m³, etc.) instead of dropping the row because the
-    // direct mesh sum is null. The `source` tag is set to
-    // "aggregate-rollup" if ANY product in the class contributed
-    // via rollup, so the UI can flag it.
-    type Acc = { entity: string; count: number; m3: number; m2: number; sourceUsesRollup: boolean };
+  // Per-entity stats. Geometry is partitioned EXACTLY ONCE: an
+  // aggregate container (IfcRoof, IfcStair) carries `m_source =
+  // "aggregate-rollup"` and its m³/m² are a copy of the child it
+  // aggregates (an IfcSlab, an IfcStairFlight) which is itself a
+  // separate product in the same set. Summing both double-counts the
+  // same geometry — that's the Roof-under-Slab inflation in #7. We
+  // therefore credit geometry only to the product that owns it
+  // directly (`m_source !== "aggregate-rollup"`). The container still
+  // appears as its own class with its own count and is flagged
+  // `rolledUp` so the UI can render "geometry counted under the
+  // aggregated child" rather than a misleading number.
+  function aggregateByEntity(productSet: GraphProduct[]) {
+    type Acc = { entity: string; count: number; m3: number; m2: number; rolledUp: boolean };
     const byEntity = new Map<string, Acc>();
     for (const p of productSet) {
       let row = byEntity.get(p.entity);
       if (!row) {
-        row = { entity: p.entity, count: 0, m3: 0, m2: 0, sourceUsesRollup: false };
+        row = { entity: p.entity, count: 0, m3: 0, m2: 0, rolledUp: false };
         byEntity.set(p.entity, row);
       }
       row.count += 1;
-      if (typeof p.m3 === "number") row.m3 += p.m3;
-      if (typeof p.m2 === "number") row.m2 += p.m2;
-      if (p.m_source === "aggregate-rollup") row.sourceUsesRollup = true;
+      const isRollup = p.m_source === "aggregate-rollup";
+      if (isRollup) {
+        row.rolledUp = true;
+      } else {
+        if (typeof p.m3 === "number") row.m3 += p.m3;
+        if (typeof p.m2 === "number") row.m2 += p.m2;
+      }
     }
     return [...byEntity.values()].map((r) => ({
       entity: r.entity,
       count: r.count,
       m3: r.m3,
       m2: r.m2,
-      source: r.sourceUsesRollup ? "rollup" : "mesh",
+      source: r.rolledUp ? "rollup" : "mesh",
     }));
-  }, [graph, filtered, isTreemapSource]);
+  }
+
+  // KPI tiles and the per-class table both read THIS set, which always
+  // tracks the active scope (`filtered`). Keeping the KPIs off the
+  // treemap's source-aware set is the fix for #8 bug 1: previously the
+  // tiles shared the treemap's "stay full when I'm the source"
+  // aggregation, so scoping by an IFC class (a treemap click) left the
+  // VOLUME/AREA tiles showing whole-model totals while material scope
+  // — which never set that source flag — updated them correctly.
+  const scopedByEntity = useMemo(
+    () => (graph ? aggregateByEntity(filtered) : []),
+    [graph, filtered],
+  );
+
+  // Treemap stays full when it's the source of the current selection;
+  // otherwise it narrows to scope. This is display-only behaviour and
+  // must not leak into the KPI totals above.
+  const treemapByEntity = useMemo(
+    () => (graph ? aggregateByEntity(isTreemapSource ? productsWithLayerSets : filtered) : []),
+    [graph, filtered, isTreemapSource, productsWithLayerSets],
+  );
+
+  // True if the model carries ANY layer-set assignment at all (after
+  // bundle reconstruction). Lets the Layer-sets KPI tell "none in this
+  // scope" apart from "this parse routed no layer-set data" — the
+  // latter is the silent-empty case #8 bug 2 calls out, and must read
+  // as an explicit unknown ("—"), not a confident zero.
+  const modelHasLayerSets = useMemo(
+    () => productsWithLayerSets.some((p) => !!p.layer_set),
+    [productsWithLayerSets],
+  );
 
   // KPIs (always recomputed against the filtered scope).
-  const kpis = useMemo(() => {
-    const totalVolume = filteredByEntity.reduce((s, r) => s + r.m3, 0);
-    const totalArea = filteredByEntity.reduce((s, r) => s + r.m2, 0);
+  const kpis = useMemo<
+    { label: string; value: string; unit: string; title?: string }[]
+  >(() => {
+    const totalVolume = scopedByEntity.reduce((s, r) => s + r.m3, 0);
+    const totalArea = scopedByEntity.reduce((s, r) => s + r.m2, 0);
     const products = filtered.length;
     const typed = filtered.filter((p) => (p.type_source ?? "none") === "ifctype").length;
     const classifiedPct = products > 0 ? (typed / products) * 100 : 0;
@@ -166,10 +256,19 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
       { label: "Area", value: totalArea.toFixed(0), unit: "m²" },
       { label: "Products", value: String(products), unit: "" },
       { label: "Materials", value: String(materials), unit: "uniq" },
-      { label: "Layer sets", value: String(layerSets), unit: "" },
+      modelHasLayerSets
+        ? { label: "Layer sets", value: String(layerSets), unit: "" }
+        : {
+            label: "Layer sets",
+            value: "—",
+            unit: "",
+            title:
+              "No IfcMaterialLayerSet data routed into this parse view. " +
+              "The model may still carry layered constructions in its bundle sidecar.",
+          },
       { label: "Classified", value: classifiedPct.toFixed(0), unit: "%" },
     ];
-  }, [filtered, filteredByEntity]);
+  }, [filtered, scopedByEntity, modelHasLayerSets]);
 
   // Treemap layout — squarified algorithm over the filtered class set
   // sized by the active metric. Colors come from the rangePalette
@@ -179,7 +278,7 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
   // is what determines the slot); for cross-view consistency on the
   // graph and viewer we use stableEntityPalette instead.
   const treemap = useMemo(() => {
-    const raw = filteredByEntity.map((r) => ({
+    const raw = treemapByEntity.map((r) => ({
       entity: r.entity,
       value: metric === "volume_m3" ? r.m3 : metric === "area_m2" ? r.m2 : r.count,
       source: r.source,
@@ -200,7 +299,7 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
       .sort((a, b) => b.layoutValue - a.layoutValue);
     const colors = rangePalette(DEFAULT_RANGE, sized.length);
     return sized.map((t, i) => ({ ...t, color: colors[i] }));
-  }, [filteredByEntity, metric]);
+  }, [treemapByEntity, metric]);
 
   // Materials bar — same source-aware pattern as the treemap.
   // Stays full when it was the source of the current selection.
@@ -240,7 +339,8 @@ export function DashTile({ qtoSrc, graphSrc }: { qtoSrc: string; graphSrc: strin
         {kpis.map((k, i) => (
           <div
             key={k.label}
-            className={`px-3 py-2.5 ${i < kpis.length - 1 ? "border-r border-line" : ""} ${i >= 3 ? "border-t border-line sm:border-t-0" : ""}`}
+            title={k.title}
+            className={`px-3 py-2.5 ${i < kpis.length - 1 ? "border-r border-line" : ""} ${i >= 3 ? "border-t border-line sm:border-t-0" : ""} ${k.title ? "cursor-help" : ""}`}
           >
             <div className="text-[10px] font-mono text-muted uppercase tracking-wider">
               {k.label}
