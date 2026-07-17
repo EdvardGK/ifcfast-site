@@ -14,7 +14,7 @@
  *   - QtoPanel     (existing Types · Untyped · Materials · LayerSets)
  *
  * Five layouts share the same four tiles. Toolbar switches A–E.
- * Route: /dev/workbench
+ * Route: /workbench
  */
 
 import { useState } from "react";
@@ -22,7 +22,8 @@ import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
 import { VectorGraph } from "@/components/vector-graph";
 import { SelectionProvider, useSelection } from "@/components/selection-context";
-import { DashTile } from "./dash-tile";
+import { DashTile } from "@/components/dash-tile";
+import { TileChrome } from "@/components/tile-chrome";
 
 type LayoutKey = "A" | "B" | "C" | "D" | "E";
 
@@ -148,26 +149,34 @@ function LayoutGrid({ layout }: { layout: LayoutKey }) {
   const tiles = {
     viewer: (
       <Tile>
-        <ModelViewer
-          src={SAMPLE.glb}
-          metaSrc={SAMPLE.graph}
-          alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-        />
+        <TileChrome label="3D viewer">
+          <ModelViewer
+            src={SAMPLE.glb}
+            metaSrc={SAMPLE.graph}
+            alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+          />
+        </TileChrome>
       </Tile>
     ),
     vector: (
       <Tile>
-        <VectorGraph src={SAMPLE.graph} compact />
+        <TileChrome label="Spatial graph">
+          <VectorGraph src={SAMPLE.graph} compact />
+        </TileChrome>
       </Tile>
     ),
     dash: (
       <Tile>
-        <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} />
+        <TileChrome label="Dashboard">
+          <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} />
+        </TileChrome>
       </Tile>
     ),
     table: (
       <Tile>
-        <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} compact />
+        <TileChrome label="Quantities">
+          <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} compact />
+        </TileChrome>
       </Tile>
     ),
   };

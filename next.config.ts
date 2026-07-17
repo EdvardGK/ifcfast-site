@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    // the workbench graduated out of /dev
+    return [
+      { source: "/dev/workbench", destination: "/workbench", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
