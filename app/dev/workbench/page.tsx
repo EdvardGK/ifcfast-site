@@ -14,7 +14,7 @@
  *   - QtoPanel     (existing Types · Untyped · Materials · LayerSets)
  *
  * Five layouts share the same four tiles. Toolbar switches A–E.
- * Route: /workbench
+ * Route: /dev/workbench
  */
 
 import { useState } from "react";
@@ -22,8 +22,7 @@ import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
 import { VectorGraph } from "@/components/vector-graph";
 import { SelectionProvider, useSelection } from "@/components/selection-context";
-import { DashTile } from "@/components/dash-tile";
-import { TileChrome } from "@/components/tile-chrome";
+import { DashTile } from "./dash-tile";
 
 type LayoutKey = "A" | "B" | "C" | "D" | "E";
 
@@ -149,34 +148,26 @@ function LayoutGrid({ layout }: { layout: LayoutKey }) {
   const tiles = {
     viewer: (
       <Tile>
-        <TileChrome label="3D viewer">
-          <ModelViewer
-            src={SAMPLE.glb}
-            metaSrc={SAMPLE.graph}
-            alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-          />
-        </TileChrome>
+        <ModelViewer
+          src={SAMPLE.glb}
+          metaSrc={SAMPLE.graph}
+          alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+        />
       </Tile>
     ),
     vector: (
       <Tile>
-        <TileChrome label="Spatial graph">
-          <VectorGraph src={SAMPLE.graph} compact />
-        </TileChrome>
+        <VectorGraph src={SAMPLE.graph} compact />
       </Tile>
     ),
     dash: (
       <Tile>
-        <TileChrome label="Dashboard">
-          <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} />
-        </TileChrome>
+        <DashTile qtoSrc={SAMPLE.qto} graphSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} />
       </Tile>
     ),
     table: (
       <Tile>
-        <TileChrome label="Quantities">
-          <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} compact />
-        </TileChrome>
+        <QtoPanel src={SAMPLE.qto} metaSrc={SAMPLE.graph} bundleSrc={SAMPLE.bundle} compact />
       </Tile>
     ),
   };

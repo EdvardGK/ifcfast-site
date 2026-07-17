@@ -25,9 +25,7 @@ import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
 import { VectorGraph } from "@/components/vector-graph";
 import { SelectionProvider } from "@/components/selection-context";
-import { DashTile } from "@/components/dash-tile";
-import { TileChrome } from "@/components/tile-chrome";
-import { TypeGallery } from "@/components/type-gallery";
+import { DashTile } from "./dev/workbench/dash-tile";
 
 const REPO = "https://github.com/EdvardGK/ifcfast";
 const ISSUES = "https://github.com/EdvardGK/ifcfast/issues";
@@ -38,14 +36,8 @@ export default function Home() {
       <Header />
       <main id="main">
         <Hero />
-        {/* Product first: the workbench and the type catalogue share
-            one selection scope, so a click in either cross-filters
-            both. The editorial layer reads below. */}
-        <SelectionProvider>
-          <WorkbenchSection />
-          <TypeGallery />
-        </SelectionProvider>
         <WhatItIs />
+        <ThreeLensSection />
         <WhatWeAreAttempting />
         <McpSection />
         <CodeShowcase />
@@ -55,93 +47,92 @@ export default function Home() {
   );
 }
 
-function WorkbenchSection() {
+function ThreeLensSection() {
   return (
     <section className="border-b border-line">
-      {/* Slim editorial strip — the workbench itself is the hero. */}
-      <div className="px-6 sm:px-8 py-6 flex flex-col lg:flex-row lg:items-baseline gap-3 lg:gap-8 border-b border-line">
-        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight whitespace-nowrap">
-          See it. Count it. <span className="text-muted">Trace it.</span>
-        </h2>
-        <p className="text-sm text-muted leading-relaxed max-w-2xl">
-          A public-license IFC opened once with{" "}
-          <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-            ifcfast.open()
-          </code>
-          . Click anything, anywhere — the model dims, the graph highlights
-          the path, the numbers re-scope. One model, every lens,
-          cross-filtered.
-        </p>
-        <a
-          href="/workbench"
-          className="lg:ml-auto inline-flex items-center gap-1 text-sm text-fg hover:text-accent whitespace-nowrap"
-        >
-          Open full workbench <ArrowUpRight size={14} />
-        </a>
-      </div>
-      {/* Full-bleed 2×2 instrument grid, sized to the viewport. */}
-      <div className="grid grid-cols-1 grid-rows-[repeat(4,minmax(420px,1fr))] lg:grid-cols-2 lg:grid-rows-2 gap-px bg-line h-auto lg:h-[calc(100vh-3.5rem)] lg:min-h-[700px]">
-        <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-          <TileChrome label="3D viewer">
-            <ModelViewer
-              src="/sample/duplex.glb"
-              metaSrc="/sample/duplex.graph.json"
-              alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-            />
-          </TileChrome>
+      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
+        <div className="max-w-2xl mb-10">
+          <div className="text-xs uppercase tracking-wider text-muted mb-2">
+            One parse, every lens.
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+            See it. Count it.
+            <br />
+            <span className="text-muted">Trace it.</span>
+          </h2>
+          <p className="mt-4 text-muted leading-relaxed max-w-xl">
+            A public-license IFC opened once with{" "}
+            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
+              ifcfast.open()
+            </code>
+            . Click anything in the data panel — the model dims,
+            the graph highlights the path. Three lenses, one model,
+            cross-filtered. A live look at what the parser produces,
+            not a benchmark.
+          </p>
         </div>
-        <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-          <TileChrome label="Spatial graph">
-            <VectorGraph src="/sample/duplex.graph.json" compact />
-          </TileChrome>
-        </div>
-        <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-          <TileChrome label="Dashboard">
-            <DashTile
-              qtoSrc="/sample/duplex.qto.json"
-              graphSrc="/sample/duplex.graph.json"
-              bundleSrc="/sample/duplex.bundle.json"
-            />
-          </TileChrome>
-        </div>
-        <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-          <TileChrome label="Quantities">
-            <QtoPanel
-              src="/sample/duplex.qto.json"
-              metaSrc="/sample/duplex.graph.json"
-              bundleSrc="/sample/duplex.bundle.json"
-              compact
-            />
-          </TileChrome>
-        </div>
-      </div>
-      <div className="px-6 sm:px-8 py-4 border-t border-line flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 text-xs text-muted">
-        <span>
-          Source IFC:{" "}
-          <a
-            href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
-            target="_blank"
-            rel="noreferrer"
-            className="underline hover:text-fg"
-          >
-            buildingSMART community sample — Duplex Apartment
-          </a>{" "}
-          (CC BY 4.0).
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+        <SelectionProvider>
+          {/* 2×2 workbench — model viewer, relationship graph, a small
+              dashboard, and the data panel, all reading from the same
+              parse and cross-filtered through a shared selection. */}
+          <div className="grid grid-cols-1 grid-rows-[repeat(4,minmax(420px,1fr))] lg:grid-cols-2 lg:grid-rows-2 gap-px bg-line rounded-xl overflow-hidden border border-line h-auto lg:h-[780px]">
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <ModelViewer
+                src="/sample/duplex.glb"
+                metaSrc="/sample/duplex.graph.json"
+                alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
+              />
+            </div>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <VectorGraph src="/sample/duplex.graph.json" compact />
+            </div>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <DashTile
+                qtoSrc="/sample/duplex.qto.json"
+                graphSrc="/sample/duplex.graph.json"
+                bundleSrc="/sample/duplex.bundle.json"
+              />
+            </div>
+            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
+              <QtoPanel
+                src="/sample/duplex.qto.json"
+                metaSrc="/sample/duplex.graph.json"
+                bundleSrc="/sample/duplex.bundle.json"
+                compact
+              />
+            </div>
+          </div>
+        </SelectionProvider>
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 text-xs text-muted">
           <span>
-            ifcfast hands over whatever it can read — mesh volume, AABB
-            volume, per-face area, footprint, author-supplied{" "}
-            <span className="font-mono">Qto_*</span> values, layer
-            breakdowns. The numbers reflect the geometry the modeller
-            authored (a lightbulb&apos;s mesh volume is its envelope, not
-            its glass). Geometric quantities are differential-tested
-            against <span className="font-mono">ifcopenshell</span> on real
-            multi-discipline models, but interpretation is still on you —
-            cross-check anything you&apos;re about to rely on.
+            Source IFC:{" "}
+            <a
+              href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-fg"
+            >
+              buildingSMART community sample — Duplex Apartment
+            </a>{" "}
+            (CC BY 4.0).
           </span>
-        </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+            <span>
+              ifcfast hands over whatever it can read — mesh volume, AABB
+              volume, per-face area, footprint, length, thickness,
+              author-supplied <span className="font-mono">Qto_*</span> pset
+              values, layer breakdowns. Interpreting them is the
+              consumer&apos;s job: the numbers reflect the geometry the
+              modeller authored (a lightbulb&apos;s mesh volume is its
+              envelope, not its glass). Geometric quantities are
+              differential-tested against{" "}
+              <span className="font-mono">ifcopenshell</span> on real
+              multi-discipline models, but interpretation is still on you —
+              cross-check anything you&apos;re about to rely on.
+            </span>
+          </span>
+        </div>
       </div>
     </section>
   );
@@ -160,12 +151,6 @@ function Header() {
           <PypiVersion className="text-[10px] font-mono text-muted border border-line rounded-full px-1.5 py-0.5 hover:text-fg" />
         </div>
         <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-4 text-sm">
-          <a
-            href="/workbench"
-            className="inline-flex items-center gap-1.5 text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded"
-          >
-            Workbench
-          </a>
           <a
             href={REPO}
             target="_blank"
@@ -209,55 +194,68 @@ function Mark() {
 }
 
 function Hero() {
-  // Deliberately slim: one band of pitch, then the product. The
-  // typed terminal moved down to the API section — the workbench
-  // below is the demo now.
   return (
     <section className="border-b border-line">
-      <div className="px-6 sm:px-8 py-10 sm:py-14 flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-14">
-        <div>
-          <div className="inline-flex items-center gap-2 text-xs font-mono text-muted border border-line rounded-full px-3 py-1 mb-5">
+      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        <div className="lg:col-span-5">
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-muted border border-line rounded-full px-3 py-1 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
             an open IFC parser — early & in progress
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-[1.05] text-balance">
-            Open any IFC.{" "}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-semibold tracking-tight leading-[1.05] text-balance">
+            Open any IFC.
+            <br />
             <span className="text-muted">Ask any question.</span>
           </h1>
-        </div>
-        <div className="lg:max-w-xl lg:pb-1">
-          <p className="text-sm sm:text-base text-muted leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg text-muted leading-relaxed max-w-md">
             A native IFC parser with a Python API. It reads a model&apos;s{" "}
-            <span className="text-fg font-medium">data and geometry</span>{" "}
-            into pandas tables, meshes, and point clouds — and writes{" "}
+            <span className="text-fg font-medium">data and geometry</span> into
+            pandas tables, triangle meshes, and point clouds — and writes{" "}
             <span className="text-fg font-medium">surgical edits</span> back
-            out as valid IFC. No geometry kernel on the hot path. It
-            complements <span className="font-mono">ifcopenshell</span>,
-            not replaces it.
+            out as valid IFC. No geometry kernel on the hot path. Built for AI
+            agents, analytics, and pipelines.
           </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <div
-              id="quickstart"
-              className="relative rounded-md bg-card border border-line px-3 py-2 pr-9 scroll-mt-20"
+          <p className="mt-3 text-sm text-muted/80 max-w-md">
+            Open-source and under active development. It complements{" "}
+            <span className="font-mono">ifcopenshell</span> rather than
+            replacing it — different tradeoffs, different jobs.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#quickstart"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-fg text-bg text-sm font-medium hover:bg-fg/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <span className="text-xs font-mono text-muted">
-                $ pip install ifcfast
+              Install{" "}
+              <span className="hidden sm:inline font-mono text-xs opacity-70">
+                pip install ifcfast
               </span>
-              <CopyButton
-                value="pip install ifcfast"
-                label="Copy install command"
-                className="absolute top-1 right-1"
-              />
-            </div>
+            </a>
             <a
               href={REPO}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-md border border-line bg-card text-sm hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-line bg-card text-sm hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <Github size={14} /> Source
             </a>
           </div>
+          <div
+            id="quickstart"
+            className="mt-10 relative rounded-md bg-card border border-line px-4 py-3 pr-10 scroll-mt-20"
+          >
+            <pre className="text-xs font-mono text-muted leading-relaxed whitespace-pre-wrap break-words">
+{`$ pip install ifcfast
+$ python -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"`}
+            </pre>
+            <CopyButton
+              value={'pip install ifcfast\npython -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"'}
+              label="Copy install commands"
+              className="absolute top-2 right-2"
+            />
+          </div>
+        </div>
+        <div className="lg:col-span-7">
+          <HeroTerminal />
         </div>
       </div>
     </section>
@@ -578,27 +576,22 @@ function CodeShowcase() {
   return (
     <section className="border-b border-line">
       <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start mb-12">
-          <div className="lg:col-span-5">
-            <div className="text-xs uppercase tracking-wider text-muted mb-2">
-              The API
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-              Pandas and numpy out.
-            </h2>
-            <p className="mt-4 text-muted leading-relaxed">
-              Data layers are long-format DataFrames; geometry is numpy
-              arrays; summaries are JSON-friendly dicts; write calls hand
-              back STEP bytes or a stats dict. No{" "}
-              <span className="font-mono">ifcopenshell.open()</span> on the
-              hot path — <span className="font-mono">ifcopenshell</span> is
-              an <em>optional dev dependency</em>, used as the differential
-              oracle in the test suite.
-            </p>
+        <div className="max-w-2xl mb-10">
+          <div className="text-xs uppercase tracking-wider text-muted mb-2">
+            The API
           </div>
-          <div className="lg:col-span-7">
-            <HeroTerminal />
-          </div>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+            Pandas and numpy out.
+          </h2>
+          <p className="mt-4 text-muted leading-relaxed">
+            Data layers are long-format DataFrames; geometry is numpy
+            arrays; summaries are JSON-friendly dicts; write calls hand
+            back STEP bytes or a stats dict. No{" "}
+            <span className="font-mono">ifcopenshell.open()</span> on the
+            hot path — <span className="font-mono">ifcopenshell</span> is an{" "}
+            <em>optional dev dependency</em>, used as the differential
+            oracle in the test suite.
+          </p>
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
           <CodeCard kicker="Data layers" code={DATA_SNIPPET} />
