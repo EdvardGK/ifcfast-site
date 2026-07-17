@@ -5,16 +5,19 @@
   "project_name": "0001",
   "authoring_app": "Autodesk Revit Architecture 2011",
   "unit_scale": 1.0,
-  "cache_key": "027b2a6e185668e0",
-  "products": 268,
+  "unit_resolved": true,
+  "length_unit": "m",
+  "cache_key": "cc5b250e7633c4bc",
+  "products": 289,
   "storeys": 4,
-  "type_counts_total": 15,
+  "type_counts_total": 16,
   "top_types": {
     "IfcFurnishingElement": 61,
     "IfcWallStandardCase": 56,
     "IfcOpeningElement": 50,
     "IfcWindow": 24,
     "IfcSlab": 21,
+    "IfcSpace": 21,
     "IfcDoor": 14,
     "IfcCovering": 13,
     "IfcBeam": 8,
@@ -28,7 +31,7 @@
   },
   "tables": {
     "products": {
-      "rows": 268,
+      "rows": 289,
       "columns": [
         "guid",
         "entity",
@@ -61,12 +64,15 @@
       "rows": 21,
       "columns": [
         "guid",
-        "step_id"
+        "step_id",
+        "name",
+        "storey_guid",
+        "storey_name"
       ],
       "loaded": true
     },
     "type_objects": {
-      "rows": 25,
+      "rows": 37,
       "columns": [
         "guid",
         "entity",
@@ -79,7 +85,8 @@
       "rows": 146,
       "columns": [
         "product_guid",
-        "storey_guid"
+        "container_guid",
+        "container_kind"
       ],
       "loaded": true
     },
@@ -115,7 +122,8 @@
         "pset_name",
         "prop_name",
         "value",
-        "value_type"
+        "value_type",
+        "source"
       ],
       "loaded": true
     },
@@ -127,7 +135,8 @@
         "quantity_name",
         "value",
         "quantity_type",
-        "unit_step_id"
+        "unit_step_id",
+        "source"
       ],
       "loaded": true
     },
@@ -139,7 +148,8 @@
         "layer_index",
         "material_name",
         "layer_thickness_mm",
-        "category"
+        "category",
+        "fraction"
       ],
       "loaded": true
     },
@@ -163,23 +173,25 @@
         "entity",
         "source",
         "triangle_count",
-        "surface_area",
-        "volume_abs",
-        "placement_x",
-        "placement_y",
-        "placement_z",
-        "centroid_x",
-        "centroid_y",
-        "centroid_z",
-        "drift_distance",
-        "max_extent",
+        "surface_area_m2",
+        "volume_abs_m3",
+        "aabb_volume_m3",
+        "placement_x_m",
+        "placement_y_m",
+        "placement_z_m",
+        "centroid_x_m",
+        "centroid_y_m",
+        "centroid_z_m",
+        "drift_distance_m",
+        "max_extent_m",
         "drift_ratio",
-        "drift_severity"
+        "drift_severity",
+        "mesh_quality"
       ],
       "loaded": true
     },
     "segments": {
-      "rows": 493,
+      "rows": 486,
       "columns": [
         "guid",
         "product_index",
@@ -191,5 +203,6 @@
       "loaded": true
     }
   },
-  "parse_seconds": 0.19379591941833496
+  "parse_seconds": 0.02445197105407715,
+  "duplicate_step_ids": 0
 }

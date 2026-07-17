@@ -90,7 +90,8 @@
     "count": 21,
     "storeys": [
       "Level 1",
-      "Level 2"
+      "Level 2",
+      "Roof"
     ],
     "predefined_types": [
       "FLOOR",
@@ -108,6 +109,24 @@
       "2O2Fr$t4X7Zf8NOew3FK4F",
       "2O2Fr$t4X7Zf8NOew3FKcz",
       "1hOSvn6df7F8_7GcBWlRqU"
+    ]
+  },
+  {
+    "entity": "IfcSpace",
+    "count": 21,
+    "storeys": [
+      "Level 1",
+      "Level 2",
+      "Roof"
+    ],
+    "predefined_types": [
+      "INTERNAL"
+    ],
+    "object_types": [],
+    "sample_guids": [
+      "0BTBFw6f90Nfh9rP1dlXrr",
+      "0BTBFw6f90Nfh9rP1dlXri",
+      "0BTBFw6f90Nfh9rP1dl_3P"
     ]
   },
   {
@@ -188,7 +207,9 @@
   {
     "entity": "IfcMember",
     "count": 4,
-    "storeys": [],
+    "storeys": [
+      "Level 1"
+    ],
     "predefined_types": [],
     "object_types": [
       "stringer"
@@ -202,7 +223,9 @@
   {
     "entity": "IfcRailing",
     "count": 4,
-    "storeys": [],
+    "storeys": [
+      "Level 1"
+    ],
     "predefined_types": [
       "NOTDEFINED"
     ],
@@ -234,7 +257,9 @@
   {
     "entity": "IfcStairFlight",
     "count": 2,
-    "storeys": [],
+    "storeys": [
+      "Level 1"
+    ],
     "predefined_types": [],
     "object_types": [
       "Stair:Residential - 200mm Max Riser 250mm Tread"

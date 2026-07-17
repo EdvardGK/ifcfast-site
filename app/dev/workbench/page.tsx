@@ -74,7 +74,7 @@ function Header({
           QTO Workbench
         </h1>
         <span className="text-[11px] font-mono text-muted truncate">
-          duplex.ifc · 268 products · buildingSMART sample
+          duplex.ifc · 289 products · buildingSMART sample
         </span>
       </div>
       <div className="flex items-center gap-2">
