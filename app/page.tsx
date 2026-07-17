@@ -382,7 +382,7 @@ function WhatWeAreAttempting() {
             <p className="mt-4 text-muted leading-relaxed max-w-md">
               ifcfast is young, and trust is earned, not claimed. Geometry
               and quantity changes only ship through a differential gate —{" "}
-              <span className="font-mono">ifcopenshell</span> class by class
+              <span className="font-mono">ifcopenshell</span>{" "}class by class
               on real multi-discipline models, Solibri-authored ground truth
               for clash, byte-level round-trip oracles for writing. What the
               gates don&apos;t cover yet counts as unverified: cross-check
