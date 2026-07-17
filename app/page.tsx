@@ -20,6 +20,7 @@ function Github({ size = 16 }: { size?: number }) {
 }
 import { HeroTerminal } from "@/components/terminal";
 import { McpInstall } from "@/components/mcp-install";
+import { PypiVersion } from "@/components/pypi-version";
 import { ModelViewer } from "@/components/viewer";
 import { QtoPanel } from "@/components/qto-panel";
 import { VectorGraph } from "@/components/vector-graph";
@@ -124,8 +125,11 @@ function ThreeLensSection() {
               values, layer breakdowns. Interpreting them is the
               consumer&apos;s job: the numbers reflect the geometry the
               modeller authored (a lightbulb&apos;s mesh volume is its
-              envelope, not its glass), and they are not yet verified
-              against other tools — cross-check before relying on them.
+              envelope, not its glass). Geometric quantities are
+              differential-tested against{" "}
+              <span className="font-mono">ifcopenshell</span> on real
+              multi-discipline models, but interpretation is still on you —
+              cross-check anything you&apos;re about to rely on.
             </span>
           </span>
         </div>
@@ -144,6 +148,7 @@ function Header() {
           <span className="text-[10px] font-mono text-muted ml-1 border border-line rounded-full px-1.5 py-0.5">
             experimental
           </span>
+          <PypiVersion className="text-[10px] font-mono text-muted border border-line rounded-full px-1.5 py-0.5 hover:text-fg" />
         </div>
         <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-4 text-sm">
           <a
@@ -205,9 +210,10 @@ function Hero() {
           <p className="mt-6 text-base sm:text-lg text-muted leading-relaxed max-w-md">
             A native IFC parser with a Python API. It reads a model&apos;s{" "}
             <span className="text-fg font-medium">data and geometry</span> into
-            pandas tables, triangle meshes, and point clouds — no geometry
-            kernel on the hot path. Built for AI agents, analytics, and
-            pipelines.
+            pandas tables, triangle meshes, and point clouds — and writes{" "}
+            <span className="text-fg font-medium">surgical edits</span> back
+            out as valid IFC. No geometry kernel on the hot path. Built for AI
+            agents, analytics, and pipelines.
           </p>
           <p className="mt-3 text-sm text-muted/80 max-w-md">
             Open-source and under active development. It complements{" "}
@@ -282,10 +288,28 @@ const CAPABILITIES = [
       "Per-product triangle meshes, area-weighted point-cloud sampling with normals, and geometric quantities — handed back as numpy / pandas. Drops straight into trimesh, Open3D, or your own pipeline.",
   },
   {
+    kicker: "Write",
+    title: "Surgical round-trips",
+    body:
+      "m.subset() carves a valid standalone IFC from any element set; m.hotswap() swaps a single body mesh; m.mutate() edits properties, names, and placements. Everything an edit doesn't touch is written back byte-for-byte.",
+  },
+  {
+    kicker: "Clash",
+    title: "Interference checking",
+    body:
+      "ifcfast.clash() runs broad- and narrow-phase mesh checks over the substrate — hard clashes by default, clearance pairs at a tolerance when asked, and every hit categorised (clash / insulation / connection / non-physical) rather than silently dropped.",
+  },
+  {
     kicker: "Substrate",
     title: "Geometry + semantics, joined",
     body:
       "An optional GeoParquet export that pairs each product's geometry with its data, so a model becomes something DuckDB or pandas can query like any other table.",
+  },
+  {
+    kicker: "Viewer",
+    title: "One call to glTF",
+    body:
+      "m.to_gltf() writes a viewer-ready binary — openings cut, repeated geometry GPU-instanced, vertices quantized, authored surface colours carried through. Drops into model-viewer, three.js, or any glTF pipeline.",
   },
   {
     kicker: "Agents",
@@ -356,10 +380,13 @@ function WhatWeAreAttempting() {
               kernel.
             </p>
             <p className="mt-4 text-muted leading-relaxed max-w-md">
-              ifcfast is early and not yet verified against established
-              tools. Treat its output as provisional and cross-check it
-              against <span className="font-mono">ifcopenshell</span> or
-              your existing toolchain before you rely on it.
+              ifcfast is young, and trust is earned, not claimed. Geometry
+              and quantity changes only ship through a differential gate —{" "}
+              <span className="font-mono">ifcopenshell</span> class by class
+              on real multi-discipline models, Solibri-authored ground truth
+              for clash, byte-level round-trip oracles for writing. What the
+              gates don&apos;t cover yet counts as unverified: cross-check
+              against your toolchain, and tell us where the numbers disagree.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a
@@ -430,6 +457,11 @@ const ATTEMPTS = [
       "Meshes, point clouds, and geometric quantities that are good enough to measure, sample, and compare — without trying to be a CAD kernel.",
   },
   {
+    title: "Gate changes on oracles, not vibes",
+    body:
+      "Every geometry or quantity change runs a differential sweep before it ships — ifcopenshell for meshes and QTO, Solibri ground truth for clash, byte-identical round-trips for the writer. Unattributed drift doesn't merge.",
+  },
+  {
     title: "Stay honest about limits",
     body:
       "Surface what the parser can't yet handle as explicit, visible gaps rather than hiding them — so you always know what you're looking at.",
@@ -452,7 +484,7 @@ function McpSection() {
             </h2>
             <p className="mt-5 text-muted leading-relaxed max-w-md">
               <span className="font-mono text-fg">ifcfast-mcp</span> exposes
-              the parse, data, and geometry surface as Model Context
+              the parse, data, and spatial-graph surface as Model Context
               Protocol tools. Add one block to your MCP client config and
               your agent can drive IFCs directly — no per-tool wiring to
               write.
@@ -506,6 +538,40 @@ pc = m.point_cloud(per_m2=1000)  # x,y,z,nx,ny,nz,guid,entity
 # Geometric quantities
 m.mesh_qto()                     # volume, area, orientation`;
 
+const WRITE_SNIPPET = `# Write — untouched bytes stay byte-for-byte
+m.subset([g1, g2], out_path="part.ifc")  # valid standalone IFC
+m.hotswap(guid, verts, tris)             # swap one body mesh
+
+m.mutate([                               # batch, atomic
+  {"op": "set_property", "guid": g,
+   "pset": "Pset_WallCommon",
+   "name": "FireRating", "value": "REI 60"},
+  {"op": "translate", "guid": g, "delta": [0, 0, 150.0]},
+])`;
+
+const CLASH_SNIPPET = `# Parquet substrate → clash facts
+ifcfast.bundle("model.ifc")        # → model.bundle/
+
+df = ifcfast.clash("model.bundle/")   # hard clashes
+df = ifcfast.clash("model.bundle/",
+                   tolerance_m=0.05)  # + clearance pairs
+
+# every row categorised, none silently dropped:
+# clash / insulation / connection / non_physical
+df["category"].value_counts()`;
+
+const PIPELINE_SNIPPET = `# One call to a viewer-ready binary
+m.to_gltf("model.glb")   # openings cut, GPU-instanced,
+                         # quantized, authored colours
+
+# Revision diff
+m.diff("model_v2.ifc")   # added / removed / changed
+
+# Same surface from a shell pipeline:
+#   ifcfast index model.ifc --json
+#   ifcfast schema model.ifc --json
+#   ifcfast bundle model.ifc`;
+
 function CodeShowcase() {
   return (
     <section className="border-b border-line">
@@ -519,17 +585,21 @@ function CodeShowcase() {
           </h2>
           <p className="mt-4 text-muted leading-relaxed">
             Data layers are long-format DataFrames; geometry is numpy
-            arrays; summaries are JSON-friendly dicts. No{" "}
+            arrays; summaries are JSON-friendly dicts; write calls hand
+            back STEP bytes or a stats dict. No{" "}
             <span className="font-mono">ifcopenshell.open()</span> on the
             hot path — <span className="font-mono">ifcopenshell</span> is an{" "}
-            <em>optional dev dependency</em>, used to cross-check output in
-            tests.
+            <em>optional dev dependency</em>, used as the differential
+            oracle in the test suite.
           </p>
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
           <CodeCard kicker="Data layers" code={DATA_SNIPPET} />
           <CodeCard kicker="Spatial graph" code={GRAPH_SNIPPET} />
           <CodeCard kicker="Geometry" code={GEOMETRY_SNIPPET} />
+          <CodeCard kicker="Write" code={WRITE_SNIPPET} />
+          <CodeCard kicker="Substrate → clash" code={CLASH_SNIPPET} />
+          <CodeCard kicker="Viewer & diff" code={PIPELINE_SNIPPET} />
         </div>
       </div>
     </section>
@@ -559,6 +629,11 @@ function Footer() {
           <span className="font-semibold tracking-tight">ifcfast</span>
           <span className="text-muted ml-2 text-xs">
             MIT · open source · Rust core, Python API
+            <PypiVersion
+              prefix=" · "
+              suffix=" on PyPI"
+              className="hover:text-fg"
+            />
           </span>
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">

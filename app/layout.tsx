@@ -13,24 +13,27 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const SITE_URL = "https://ifcfast.com";
+const SITE_TITLE = "ifcfast — an open IFC parser for data, geometry, and writing";
 const OG_DESCRIPTION =
-  "An open, experimental IFC parser. IFC → pandas, meshes, point clouds. Early and under active development — contributions welcome.";
+  "An open IFC toolkit. IFC → pandas, meshes, point clouds, clash facts — and surgical edits written back as valid IFC. Under active development — contributions welcome.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "ifcfast — an open IFC parser for data and geometry",
+  title: SITE_TITLE,
   description:
-    "An open, experimental IFC parser with a Python API. Reads IFC data and geometry into pandas, meshes, and point clouds — no geometry kernel on the hot path. Built for agents, analytics, and pipelines. Early and under active development.",
+    "An open IFC toolkit with a Python API. Reads IFC data and geometry into pandas, meshes, and point clouds; writes surgical subsets, mesh swaps, and attribute edits back to valid IFC; runs clash detection over a parquet substrate. Differential-tested against ifcopenshell and Solibri on real models. Built for agents, analytics, and pipelines.",
   keywords: [
     "IFC", "BIM", "parser", "AEC", "Rust", "Python", "MCP",
     "AI agents", "ifcopenshell", "spatial graph", "point cloud", "mesh",
+    "clash detection", "IFC writer", "glTF", "parquet", "DuckDB",
+    "quantity takeoff",
   ],
   authors: [{ name: "Edvard Granskogen Kjorstad" }],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "ifcfast — an open IFC parser for data and geometry",
+    title: SITE_TITLE,
     description: OG_DESCRIPTION,
     type: "website",
     url: SITE_URL,
@@ -39,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ifcfast — an open IFC parser for data and geometry",
+    title: SITE_TITLE,
     description: OG_DESCRIPTION,
     // twitter:image reuses the generated Open Graph image.
     images: ["/opengraph-image"],
@@ -53,7 +56,7 @@ const JSON_LD = {
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Linux, macOS, Windows",
   description:
-    "An open, experimental IFC parser with a Python API. Reads IFC data and geometry into pandas, meshes, and point clouds — no geometry kernel on the hot path.",
+    "An open IFC toolkit with a Python API. Reads IFC data and geometry into pandas, meshes, and point clouds; writes surgical subsets, mesh swaps, and attribute edits back to valid IFC; runs clash detection over a parquet substrate.",
   url: SITE_URL,
   author: { "@type": "Person", name: "Edvard Granskogen Kjorstad" },
   license: "https://opensource.org/licenses/MIT",

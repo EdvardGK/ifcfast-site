@@ -102,10 +102,11 @@ export function McpInstall() {
         </Step>
         <Step n={3} title="Restart, then verify">
           <p className="text-sm text-muted">
-            ifcfast appears as <span className="font-mono">18 tools</span> +{" "}
+            ifcfast appears as <span className="font-mono">22 tools</span> +{" "}
             <span className="font-mono">ifcfast://agents-guide</span> resource —
-            your agent can open IFCs, walk the spatial graph, run drift, and
-            extract type catalogues.
+            your agent can open IFCs, query psets, quantities and materials,
+            walk the spatial graph, diff revisions, and extract type
+            catalogues.
           </p>
           {client.verify && (
             <p className="text-xs text-muted mt-2">{client.verify}</p>

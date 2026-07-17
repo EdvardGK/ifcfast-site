@@ -22,7 +22,11 @@ m.meshes()               # per-product triangles (vertices, faces)
 m.point_cloud(per_m2=1000)   # sampled surface points + normals
 
 # Spatial graph
-m.ancestors(wall_guid)   # storey → building → site → project`;
+m.ancestors(wall_guid)   # storey → building → site → project
+
+# Write it back — untouched bytes stay byte-for-byte
+m.subset([guid, ...])         # carve a valid standalone IFC
+m.hotswap(guid, verts, tris)  # swap one element's body mesh`;
 
 export function HeroTerminal() {
   const [shown, setShown] = useState(0);
