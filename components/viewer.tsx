@@ -148,7 +148,12 @@ export function ModelViewer({
     const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
 
     for (const m of mats) {
-      const meta = guidLookup.current.get(m.name);
+      // Multi-segment products carry per-segment material clones named
+      // "<guid>#1", "<guid>#2", … — normalize to the product guid.
+      const guidKey = m.name.includes("#")
+        ? m.name.slice(0, m.name.indexOf("#"))
+        : m.name;
+      const meta = guidLookup.current.get(guidKey);
       const orig = originals.current.get(m.name);
       if (!orig) continue;
       const isGhostEntity = !!meta && GHOST_ENTITIES.has(meta.entity.toLowerCase());
@@ -182,8 +187,9 @@ export function ModelViewer({
         }
       } else if (selection?.kind === "instance") {
         // Exact guid match — the material name in the GLB is the
-        // product guid for elements ifcfast-mesh tagged.
-        isMatch = m.name === selection.value;
+        // product guid for elements ifcfast-mesh tagged (per-segment
+        // clones normalized above).
+        isMatch = guidKey === selection.value;
       }
 
       if (!selection) {
