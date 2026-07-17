@@ -6,17 +6,28 @@
  * A combined experience merging the two approved mockups:
  *   • Concept A ("The Scene") — a dark cinematic scroll-film hosts the page.
  *     Chapters 01 OPEN → 02 TYPES → 03 COUNT → 04 TRACE → 05 WRITE play over a
- *     fixed full-viewport model-viewer scene of the Duplex model.
+ *     custom three.js scene (FilmScene) that choreographs the Duplex model:
+ *     it assembles from a real point cloud, explodes into hard component
+ *     groups by entity class, splits into storey slabs, dissolves back into
+ *     the point cloud regrouped into storey bands, and reassembles — the
+ *     product story (per-class subsets, storey splits, m.point_cloud()) told
+ *     as motion, sat modestly off-centre behind the text.
  *   • Concept B ("The Instrument") — a graphite terminal panel becomes the final
  *     chapter 06 COMMAND you scroll into. The film's last cut "boots" it.
  *
  * One background family (near-black → graphite) and ONE accent (amber #ff8f3a)
- * unify both halves. When chapter 06 becomes active, A's fixed scene unmounts so
- * the instrument's own viewport is the only live 3D; scrolling back up restores
- * it. B's boot veil fires the first time chapter 06 enters the viewport. The
- * instrument cross-filters its viewport: clicking a storey / entity bar / type
- * register row highlights the matching product primitives in the GLB (materials
- * are named by product GUID) and ghosts the rest.
+ * unify both halves. When chapter 06 becomes active, the film's three.js loop
+ * pauses so the instrument's own model-viewer is the only live 3D; scrolling
+ * back up resumes it. B's boot veil fires the first time chapter 06 enters the
+ * viewport. The instrument cross-filters its viewport: clicking a storey /
+ * entity bar / type register row highlights the matching product primitives in
+ * the GLB (materials are named by product GUID) and ghosts the rest.
+ *
+ * Assets (all real, all ifcfast-generated):
+ *   /sample/duplex.glb          — per-product nodes with extras.guid / .entity
+ *   /sample/duplex.graph.json   — guid → entity, storey_guid
+ *   /sample/duplex.points.bin   — m.point_cloud(per_m2=10), 51,093 points
+ *   /sample/duplex.points.json  — entities[], storeys[], center_world, …
  *
  * Self-contained: imports no existing site components; adapts code from both
  * mockup sources. The model-viewer JSX declaration is copied verbatim from
@@ -26,6 +37,8 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, ArrowLeft, Copy, Check } from "lucide-react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /* ------------------------------------------------------------------ */
 /* model-viewer custom-element JSX declaration (from components/viewer.tsx) */
@@ -125,17 +138,16 @@ type Highlight =
   | null;
 
 /* ------------------------------------------------------------------ */
-/* Chapter camera choreography (film chapters 01–05; 06 unmounts scene) */
-/* camera-orbit = "theta phi radius", fov re-aims the fixed scene.      */
+/* Chapter rail (labels only — the film's camera choreography now lives */
+/* in FilmScene as lerped three.js camera targets).                     */
 /* ------------------------------------------------------------------ */
-type Cam = { orbit: string; fov: string };
-const CHAPTERS: { id: string; label: string; cam: Cam }[] = [
-  { id: "01", label: "OPEN", cam: { orbit: "28deg 74deg 118%", fov: "31deg" } },
-  { id: "02", label: "TYPES", cam: { orbit: "-42deg 76deg 102%", fov: "28deg" } },
-  { id: "03", label: "COUNT", cam: { orbit: "14deg 60deg 92%", fov: "35deg" } },
-  { id: "04", label: "TRACE", cam: { orbit: "2deg 20deg 138%", fov: "28deg" } },
-  { id: "05", label: "WRITE", cam: { orbit: "48deg 70deg 108%", fov: "28deg" } },
-  { id: "06", label: "COMMAND", cam: { orbit: "0deg 70deg 120%", fov: "30deg" } },
+const CHAPTERS: { id: string; label: string }[] = [
+  { id: "01", label: "OPEN" },
+  { id: "02", label: "TYPES" },
+  { id: "03", label: "COUNT" },
+  { id: "04", label: "TRACE" },
+  { id: "05", label: "WRITE" },
+  { id: "06", label: "COMMAND" },
 ];
 /* index of the instrument chapter */
 const INST_INDEX = 5;
@@ -144,6 +156,70 @@ const ACCENT = "#ff8f3a";
 /* viewport material factors (sRGB/255, matching components/viewer.tsx) */
 const HL_ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
 const HL_DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
+
+/* ================================================================== */
+/* FilmScene choreography constants                                    */
+/* All per-node/per-point offsets are in the model's LOCAL Z-up metric */
+/* space (metres). The GLB's ifcfast_root applies a −90°X rotation so    */
+/* local +Z (height) → world +Y; the point cloud shares that rotation.  */
+/* ================================================================== */
+const TARGET_SIZE = 7; // normalised world size of the model's largest dim
+const POINT_SIZE = 0.12; // world units, sizeAttenuation on (tuned to framing)
+const EXPAND_AMP = 1.7; // metres of scatter when points are fully expanded
+const SPLIT_GAP = 2.6; // metres per storey-rank for the mesh storey split
+const BAND_GAP = 3.0; // metres between point-cloud storey bands
+const EASE_K = 3.1; // exponential ease rate (~1.2 s settle)
+const SCREEN_BIAS = 0.15; // fraction of width the model is pushed off-centre
+
+/* per-entity explode vector (local Z-up metres) — a clean layered axon  */
+const ENTITY_EXPLODE: Record<string, [number, number, number]> = {
+  IfcWallStandardCase: [5.0, 0, 0],
+  IfcWall: [5.0, 0, 0],
+  IfcSlab: [0, 0, 4.5],
+  IfcCovering: [0, 0, 6.0],
+  IfcWindow: [-5.0, 0, 1.5],
+  IfcDoor: [0, 4.5, 0.5],
+  IfcFurnishingElement: [0, -5.5, -1.0],
+  IfcBeam: [4.0, 0, 5.5],
+  IfcMember: [4.5, 2.0, 4.0],
+  IfcRailing: [-3.0, 3.5, 2.5],
+  IfcStairFlight: [-4.5, -2.0, 2.0],
+  IfcStair: [-4.5, -2.0, 2.0],
+  IfcFooting: [0, 0, -4.5],
+  IfcSpace: [0, 0, -6.0],
+  IfcOpeningElement: [0, 0, -6.0],
+};
+const ENTITY_EXPLODE_DEFAULT: [number, number, number] = [0, 0, 3.0];
+
+/* choreography state per film chapter (index 0–4) */
+type FilmTarget = {
+  mesh: number; // mesh opacity 0..1
+  pts: number; // point-cloud opacity 0..1
+  expand: number; // point scatter 0..1
+  expEnt: number; // entity-explode amount 0..1
+  expStorey: number; // storey-split amount 0..1
+  band: number; // point storey-band flatten 0..1
+  dir: [number, number, number]; // camera direction (world), normalised on use
+  dist: number; // camera distance multiplier
+};
+const CH_T: FilmTarget[] = [
+  // 01 OPEN — materialised solid (tweens in from the point-cloud preroll)
+  { mesh: 1, pts: 0, expand: 0, expEnt: 0, expStorey: 0, band: 0, dir: [0.55, 0.4, 0.73], dist: 2.35 },
+  // 02 TYPES — exploded into hard component groups by entity class
+  { mesh: 1, pts: 0, expand: 0, expEnt: 1, expStorey: 0, band: 0, dir: [-0.6, 0.48, 0.64], dist: 2.85 },
+  // 03 COUNT — regroup, then split into storey slabs
+  { mesh: 1, pts: 0, expand: 0, expEnt: 0, expStorey: 1, band: 0, dir: [0.32, 0.3, 0.9], dist: 2.75 },
+  // 04 TRACE — dissolve into the real point cloud, regrouped into storey bands
+  { mesh: 0, pts: 1, expand: 0, expEnt: 0, expStorey: 0, band: 1, dir: [0.12, 0.16, 0.98], dist: 2.55 },
+  // 05 WRITE — reassembled solid hero angle for the CTA handoff into 06
+  { mesh: 1, pts: 0, expand: 0, expEnt: 0, expStorey: 0, band: 0, dir: [0.6, 0.34, 0.72], dist: 2.3 },
+];
+/* preroll (before chapter 01 settles): the file as an expanded point cloud */
+const FILM_PREROLL: Omit<FilmTarget, "dir" | "dist"> = {
+  mesh: 0, pts: 1, expand: 1, expEnt: 0, expStorey: 0, band: 0,
+};
+/* storey_idx (points.json order) → elevation rank; 255 = unplaced → −1     */
+const STOREY_IDX_RANK: Record<number, number> = { 1: 0, 0: 1, 2: 2, 3: 3, 255: -1 };
 
 /* deterministic seeded RNG so the constellation is stable */
 function mulberry32(seed: number) {
@@ -165,7 +241,6 @@ const short = (e: string) => e.replace(/^Ifc/i, "").toUpperCase();
 /* Page                                                                */
 /* ================================================================== */
 export default function SceneInstrumentMockup() {
-  const mvRef = useRef<HTMLElement | null>(null);
   const [ready, setReady] = useState(false);
   const [active, setActive] = useState(0);
 
@@ -192,16 +267,6 @@ export default function SceneInstrumentMockup() {
     j<Manifest>("/sample/types/manifest.json").then(setManifest).catch(() => {});
     j<Graph>("/sample/duplex.graph.json").then(setGraph).catch(() => {});
   }, []);
-
-  // re-aim the fixed camera when the active chapter changes (film chapters only;
-  // the scene is unmounted at chapter 06, so mvRef is null there)
-  useEffect(() => {
-    const mv = mvRef.current;
-    if (!mv || !ready || active === INST_INDEX) return;
-    const cam = CHAPTERS[active].cam;
-    mv.setAttribute("camera-orbit", cam.orbit);
-    mv.setAttribute("field-of-view", cam.fov);
-  }, [active, ready]);
 
   // chapter detection — section crossing viewport centre becomes active
   const registerSection = useCallback((el: HTMLElement | null, index: number) => {
@@ -287,45 +352,12 @@ export default function SceneInstrumentMockup() {
       <style>{CSS}</style>
       <StyleBlock />
 
-      {/* ---------- fixed 3D scene (film chapters 01–05) ---------- */}
-      {/* Unmounted at chapter 06 so the instrument's viewport is the only    */}
-      {/* live 3D — two heavy scenes must not fight. Restored on scroll-up.   */}
-      <motion.div
-        className="scene-stage"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: ready && !onInstrument ? 1 : 0 }}
-        transition={{ duration: onInstrument ? 0.6 : 1.6, ease: "easeOut" }}
-      >
-        {ready && !onInstrument && (
-          /* @ts-expect-error — model-viewer is a custom element */
-          <model-viewer
-            ref={mvRef as React.MutableRefObject<HTMLElement | null>}
-            src="/sample/duplex.glb"
-            alt="The Duplex sample building, parsed by ifcfast"
-            camera-controls
-            disable-pan
-            interaction-prompt="none"
-            environment-image="neutral"
-            exposure="0.92"
-            shadow-intensity="1.1"
-            shadow-softness="1"
-            tone-mapping="commerce"
-            camera-orbit={CHAPTERS[0].cam.orbit}
-            field-of-view={CHAPTERS[0].cam.fov}
-            min-camera-orbit="auto auto 55%"
-            max-camera-orbit="auto auto 300%"
-            style={{
-              width: "100%",
-              height: "100%",
-              background:
-                "radial-gradient(ellipse 120% 90% at 50% 38%, #191c22 0%, #0c0e12 52%, #060708 100%)",
-              "--poster-color": "transparent",
-            } as React.CSSProperties}
-          />
-        )}
-        <div className="scene-vignette" />
-        <div className="scene-grain" />
-      </motion.div>
+      {/* ---------- choreographed three.js film scene (chapters 01–05) ---------- */}
+      {/* Loop pauses at chapter 06 so the instrument's model-viewer is the only  */}
+      {/* live 3D — two heavy scenes must not fight. Resumes on scroll-up.        */}
+      <FilmScene active={active} paused={onInstrument} />
+      <div className="scene-vignette" />
+      <div className="scene-grain" />
 
       {/* ---------- fixed HUD: chapter rail + brand (spans film + instrument) ---------- */}
       <div className="hud-brand">
@@ -518,6 +550,401 @@ export default function SceneInstrumentMockup() {
         </footer>
       </main>
     </>
+  );
+}
+
+/* ================================================================== */
+/* FilmScene — custom three.js scene choreographing the Duplex model    */
+/* across chapters 01–05. One WebGL context; the render loop pauses when */
+/* `paused` (chapter 06 active) so it never fights the instrument's      */
+/* model-viewer. Degrades to nothing if WebGL/asset load fails.          */
+/* ================================================================== */
+type PartNode = {
+  mesh: THREE.Object3D;
+  base: THREE.Vector3;
+  ent: THREE.Vector3; // entity-explode offset (local metres)
+  storey: THREE.Vector3; // storey-split offset (local metres)
+};
+type FilmCur = {
+  mesh: number;
+  pts: number;
+  expand: number;
+  expEnt: number;
+  expStorey: number;
+  band: number;
+  camPos: THREE.Vector3;
+};
+
+function FilmScene({ active, paused }: { active: number; paused: boolean }) {
+  const mountRef = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false); // fades in once the scene is live
+  const activeRef = useRef(active);
+  const pausedRef = useRef(paused);
+  // resume/pause the loop and steer the target when props change
+  const controlRef = useRef<{ setChapter: (i: number) => void; setPaused: (b: boolean) => void } | null>(null);
+
+  useEffect(() => {
+    activeRef.current = active;
+    controlRef.current?.setChapter(active);
+  }, [active]);
+  useEffect(() => {
+    pausedRef.current = paused;
+    controlRef.current?.setPaused(paused);
+  }, [paused]);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return;
+    let disposed = false;
+
+    // ---- renderer / scene / camera ------------------------------------
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    } catch {
+      return; // WebGL unavailable → film text still reads
+    }
+    const w = mount.clientWidth || window.innerWidth;
+    const h = mount.clientHeight || window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(w, h);
+    renderer.setClearColor(0x000000, 0); // CSS gradient shows through
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    mount.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, w / h, 0.1, 2000);
+
+    // amber/graphite lighting
+    scene.add(new THREE.HemisphereLight(0xbfc6cf, 0x0a0b0d, 1.05));
+    const key = new THREE.DirectionalLight(0xffe6cf, 1.35);
+    key.position.set(6, 10, 8);
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0xff8f3a, 0.5);
+    rim.position.set(-8, 4, -6);
+    scene.add(rim);
+
+    function applyViewBias() {
+      const cw = mount!.clientWidth || window.innerWidth;
+      const ch = mount!.clientHeight || window.innerHeight;
+      camera.aspect = cw / ch;
+      camera.updateProjectionMatrix();
+      if (cw >= 900) {
+        // push the model to the right, off-centre behind the left-aligned text
+        camera.setViewOffset(cw, ch, -cw * SCREEN_BIAS, 0, cw, ch);
+      } else {
+        camera.clearViewOffset();
+      }
+    }
+    applyViewBias();
+
+    // ---- scene graph: pivot → recenter → { mesh root, points pivot } ---
+    const pivot = new THREE.Group();
+    const recenter = new THREE.Group();
+    pivot.add(recenter);
+    scene.add(pivot);
+
+    // ---- animation state ----------------------------------------------
+    const cur: FilmCur = {
+      mesh: FILM_PREROLL.mesh,
+      pts: FILM_PREROLL.pts,
+      expand: FILM_PREROLL.expand,
+      expEnt: FILM_PREROLL.expEnt,
+      expStorey: FILM_PREROLL.expStorey,
+      band: FILM_PREROLL.band,
+      camPos: new THREE.Vector3(0, 0, 40),
+    };
+    const parts: PartNode[] = [];
+    const meshMats = new Set<THREE.Material>();
+    let meshRoot: THREE.Object3D | null = null;
+    let pointsObj: THREE.Points | null = null;
+    let ptsMat: THREE.PointsMaterial | null = null;
+    let ptsBase: Float32Array | null = null; // pristine positions (local, aligned)
+    let ptsExpandDir: Float32Array | null = null; // per-point scatter direction
+    let ptsBandOff: Float32Array | null = null; // per-point Z delta to its band
+    let pointCount = 0;
+    let lastExpand = -1;
+    let lastBand = -1;
+    let frameDist = TARGET_SIZE; // world radius used for camera framing
+    let ready = false;
+
+    const tmp = new THREE.Vector3();
+    const dirV = new THREE.Vector3(); // reused each frame — no per-frame alloc
+    const lookTarget = new THREE.Vector3(0, 0, 0);
+
+    function currentTarget(): FilmTarget {
+      const i = Math.max(0, Math.min(CH_T.length - 1, activeRef.current));
+      return CH_T[i];
+    }
+
+    // ---- assets: glb + graph (guid→storey) + point cloud ---------------
+    const loader = new GLTFLoader();
+    Promise.all([
+      new Promise<THREE.Object3D>((res, rej) =>
+        loader.load("/sample/duplex.glb", (g) => res(g.scene), undefined, rej)
+      ),
+      fetch("/sample/duplex.graph.json").then((r) => r.json() as Promise<Graph>),
+      fetch("/sample/duplex.points.bin").then((r) => r.arrayBuffer()),
+      fetch("/sample/duplex.points.json").then((r) => r.json()),
+    ])
+      .then(([gscene, graph, pbuf, pmeta]) => {
+        if (disposed) return;
+
+        // guid → elevation rank (mesh storey split)
+        const rankByStorey = new Map<string, number>();
+        [...graph.storeys]
+          .sort((a, b) => a.elevation - b.elevation)
+          .forEach((s, i) => rankByStorey.set(s.guid, i));
+        const guidStorey = new Map<string, string | null>();
+        graph.products.forEach((p) => guidStorey.set(p.guid, p.storey_guid));
+
+        // mesh root
+        meshRoot = gscene;
+        recenter.add(gscene);
+
+        // buckets + per-node offsets
+        gscene.traverse((o) => {
+          const m = o as THREE.Mesh;
+          if (!(m as THREE.Mesh).isMesh) return;
+          const guid = (o.userData?.guid as string) ?? o.name;
+          const entity =
+            (o.userData?.entity as string) ?? "";
+          const eo = ENTITY_EXPLODE[entity] ?? ENTITY_EXPLODE_DEFAULT;
+          // storey rank: placed → by guid; unplaced → from local height (Z)
+          const sg = guidStorey.get(guid) ?? null;
+          let rank = sg != null ? rankByStorey.get(sg) : undefined;
+          if (rank === undefined) {
+            const z = o.position.z;
+            rank = z < 0 ? 0 : z < 1.5 ? 1 : z < 4.5 ? 2 : 3;
+          }
+          parts.push({
+            mesh: o,
+            base: o.position.clone(),
+            ent: new THREE.Vector3(eo[0], eo[1], eo[2]),
+            storey: new THREE.Vector3(0, 0, (rank - 1.5) * SPLIT_GAP),
+          });
+          const mat = m.material;
+          (Array.isArray(mat) ? mat : [mat]).forEach((mm) => {
+            if (mm) {
+              mm.transparent = true;
+              meshMats.add(mm);
+            }
+          });
+        });
+
+        // point cloud — decode binary (u32 count | f32 xyz | u8 ent | u8 storey)
+        const dv = new DataView(pbuf);
+        const count = dv.getUint32(0, true);
+        pointCount = count;
+        const posOff = 4;
+        const entOff = 4 + count * 12;
+        const storOff = entOff + count;
+        ptsBase = new Float32Array(pbuf, posOff, count * 3).slice(); // aligned copy
+        ptsExpandDir = new Float32Array(count * 3);
+        ptsBandOff = new Float32Array(count);
+        const rand = mulberry32(20110907);
+        for (let i = 0; i < count; i++) {
+          const b = i * 3;
+          // scatter direction (unit-ish) for the "expanded" preroll
+          const dx = rand() * 2 - 1, dy = rand() * 2 - 1, dz = rand() * 2 - 1;
+          const len = Math.hypot(dx, dy, dz) || 1;
+          ptsExpandDir[b] = (dx / len) * EXPAND_AMP * (0.4 + rand());
+          ptsExpandDir[b + 1] = (dy / len) * EXPAND_AMP * (0.4 + rand());
+          ptsExpandDir[b + 2] = (dz / len) * EXPAND_AMP * (0.4 + rand());
+          // storey band: flatten each storey's points to a distinct Z sheet
+          const sidx = dv.getUint8(storOff + i);
+          const srank = STOREY_IDX_RANK[sidx] ?? -1;
+          const bandZ = (srank - 1.5) * BAND_GAP; // −1 (unplaced) sinks below
+          ptsBandOff[i] = bandZ - ptsBase[b + 2];
+        }
+
+        const geo = new THREE.BufferGeometry();
+        const posArr = ptsBase.slice();
+        geo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+        // per-point warm colour, brighter with height, for band legibility
+        const col = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          const b = i * 3;
+          const sidx = dv.getUint8(storOff + i);
+          const srank = STOREY_IDX_RANK[sidx] ?? -1;
+          const lum = 0.55 + Math.max(0, srank) * 0.13;
+          col[b] = 1.0 * lum;
+          col[b + 1] = 0.56 * lum;
+          col[b + 2] = 0.24 * lum;
+        }
+        geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+        ptsMat = new THREE.PointsMaterial({
+          size: POINT_SIZE,
+          sizeAttenuation: true,
+          vertexColors: true,
+          transparent: true,
+          opacity: 1,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        pointsObj = new THREE.Points(geo, ptsMat);
+        // points share the model's Z-up→Y-up rotation and undo the centroid rebase
+        const rotQuat = new THREE.Quaternion(-0.70710677, 0, 0, 0.70710677);
+        const ptsPivot = new THREE.Group();
+        ptsPivot.quaternion.copy(rotQuat);
+        const cw = (pmeta.center_world as number[]) ?? [0, 0, 0];
+        pointsObj.position.set(cw[0], cw[1], cw[2]);
+        ptsPivot.add(pointsObj);
+        recenter.add(ptsPivot);
+
+        // centre + normalise the whole composition
+        const box = new THREE.Box3().setFromObject(gscene);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        recenter.position.copy(center).multiplyScalar(-1);
+        pivot.scale.setScalar(TARGET_SIZE / maxDim);
+        frameDist = TARGET_SIZE;
+
+        ready = true;
+        setVisible(true);
+        start();
+      })
+      .catch(() => {
+        /* asset/init failure → film text still reads */
+      });
+
+    // ---- render loop ---------------------------------------------------
+    let raf = 0;
+    let last = 0;
+    let running = false;
+
+    function applyScene() {
+      // mesh opacity + explode
+      if (meshRoot) meshRoot.visible = cur.mesh > 0.01;
+      meshMats.forEach((mm) => {
+        (mm as THREE.MeshStandardMaterial).opacity = cur.mesh;
+        mm.depthWrite = cur.mesh > 0.95;
+      });
+      for (const p of parts) {
+        tmp.copy(p.base)
+          .addScaledVector(p.ent, cur.expEnt)
+          .addScaledVector(p.storey, cur.expStorey);
+        p.mesh.position.copy(tmp);
+      }
+      // points opacity + scatter/band (recompute positions only when changing)
+      if (pointsObj && ptsMat && ptsBase && ptsExpandDir && ptsBandOff) {
+        ptsMat.opacity = cur.pts;
+        pointsObj.visible = cur.pts > 0.01;
+        if (Math.abs(cur.expand - lastExpand) > 1e-4 || Math.abs(cur.band - lastBand) > 1e-4) {
+          const attr = pointsObj.geometry.getAttribute("position") as THREE.BufferAttribute;
+          const arr = attr.array as Float32Array;
+          for (let i = 0; i < pointCount; i++) {
+            const b = i * 3;
+            arr[b] = ptsBase[b] + ptsExpandDir[b] * cur.expand;
+            arr[b + 1] = ptsBase[b + 1] + ptsExpandDir[b + 1] * cur.expand;
+            arr[b + 2] = ptsBase[b + 2] + ptsExpandDir[b + 2] * cur.expand + ptsBandOff[i] * cur.band;
+          }
+          attr.needsUpdate = true;
+          lastExpand = cur.expand;
+          lastBand = cur.band;
+        }
+      }
+    }
+
+    function frame(now: number) {
+      if (!running) return;
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const t = currentTarget();
+      const k = 1 - Math.exp(-dt * EASE_K);
+      cur.mesh += (t.mesh - cur.mesh) * k;
+      cur.pts += (t.pts - cur.pts) * k;
+      cur.expand += (t.expand - cur.expand) * k;
+      cur.expEnt += (t.expEnt - cur.expEnt) * k;
+      cur.expStorey += (t.expStorey - cur.expStorey) * k;
+      cur.band += (t.band - cur.band) * k;
+
+      // camera: lerp toward the chapter's framing, with a slow idle drift
+      dirV.set(t.dir[0], t.dir[1], t.dir[2]).normalize();
+      const ang = now * 0.00004;
+      const ca = Math.cos(ang), sa = Math.sin(ang);
+      const rx = dirV.x * ca - dirV.z * sa;
+      const rz = dirV.x * sa + dirV.z * ca;
+      const camTarget = tmp.set(rx, dirV.y, rz).multiplyScalar(frameDist * t.dist);
+      cur.camPos.lerp(camTarget, k);
+      camera.position.copy(cur.camPos);
+      camera.lookAt(lookTarget);
+
+      applyScene();
+      renderer.render(scene, camera);
+    }
+
+    function start() {
+      if (running || disposed || pausedRef.current || document.hidden || !ready) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    }
+
+    // expose controls to the React effects
+    controlRef.current = {
+      setChapter: () => {
+        /* target is read from activeRef each frame; ensure loop is running */
+        start();
+      },
+      setPaused: (b: boolean) => {
+        if (b) stop();
+        else start();
+      },
+    };
+
+    const onResize = () => {
+      const cw = mount.clientWidth || window.innerWidth;
+      const ch = mount.clientHeight || window.innerHeight;
+      renderer.setSize(cw, ch);
+      applyViewBias();
+    };
+    const onVis = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", onVis);
+
+    // ---- cleanup -------------------------------------------------------
+    return () => {
+      disposed = true;
+      stop();
+      controlRef.current = null;
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVis);
+      scene.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if ((m as THREE.Mesh).isMesh || (o as THREE.Points).isPoints) {
+          m.geometry?.dispose();
+          const mat = (m as THREE.Mesh).material;
+          (Array.isArray(mat) ? mat : [mat]).forEach((mm) => mm?.dispose());
+        }
+      });
+      renderer.dispose();
+      if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <motion.div
+      className="scene-stage"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: visible && !paused ? 1 : 0 }}
+      transition={{ duration: paused ? 0.55 : 1.4, ease: "easeOut" }}
+    >
+      <div ref={mountRef} className="scene-canvas" />
+    </motion.div>
   );
 }
 
@@ -1449,9 +1876,11 @@ const CSS = `
 
 .scene-stage {
   position: fixed; inset: 0; z-index: 0;
-  background: #060708;
+  background:
+    radial-gradient(ellipse 120% 90% at 62% 40%, #16191f 0%, #0b0d11 52%, #060708 100%);
 }
-.scene-stage model-viewer { display:block; }
+.scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scene-canvas canvas { display: block; }
 .scene-vignette {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
   box-shadow: inset 0 0 clamp(120px,18vw,340px) clamp(40px,8vw,160px) rgba(0,0,0,0.72);
