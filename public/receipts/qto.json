@@ -1,0 +1,130 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "machine": "PLACEHOLDER",
+  "model": "Clinic_Architectural.ifc",
+  "mesh_qto_s": 1.63,
+  "products": 2855,
+  "volume_reliable_share": 0.986,
+  "ifcopenshell_version": "0.8.5",
+  "classes": [
+    {
+      "entity": "IfcSpace",
+      "n": 269,
+      "ifcfast_m3": 22674.3,
+      "ifcopenshell_m3": 22674.2,
+      "ratio": 1.0,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcWallStandardCase",
+      "n": 1065,
+      "ifcfast_m3": 1657.7,
+      "ifcopenshell_m3": 1657.0,
+      "ratio": 1.0004,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcCovering",
+      "n": 250,
+      "ifcfast_m3": 77.4,
+      "ifcopenshell_m3": 6585.9,
+      "ratio": 0.0118,
+      "open_shell": 250,
+      "reference_exceeds_aabb": 250
+    },
+    {
+      "entity": "IfcMember",
+      "n": 533,
+      "ifcfast_m3": 6.8,
+      "ifcopenshell_m3": 272.3,
+      "ratio": 0.0251,
+      "open_shell": 55,
+      "reference_exceeds_aabb": 2
+    },
+    {
+      "entity": "IfcFurnishingElement",
+      "n": 118,
+      "ifcfast_m3": 26.5,
+      "ifcopenshell_m3": 31.6,
+      "ratio": 0.8392,
+      "open_shell": 68,
+      "reference_exceeds_aabb": 42
+    },
+    {
+      "entity": "IfcDoor",
+      "n": 254,
+      "ifcfast_m3": 30.2,
+      "ifcopenshell_m3": 30.0,
+      "ratio": 1.0057,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcWall",
+      "n": 15,
+      "ifcfast_m3": 16.2,
+      "ifcopenshell_m3": 19.8,
+      "ratio": 0.8158,
+      "open_shell": 15,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcFlowTerminal",
+      "n": 102,
+      "ifcfast_m3": 12.9,
+      "ifcopenshell_m3": 18.4,
+      "ratio": 0.7034,
+      "open_shell": 70,
+      "reference_exceeds_aabb": 22
+    },
+    {
+      "entity": "IfcRailing",
+      "n": 9,
+      "ifcfast_m3": 10.1,
+      "ifcopenshell_m3": 11.1,
+      "ratio": 0.9174,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcPlate",
+      "n": 172,
+      "ifcfast_m3": 6.67,
+      "ifcopenshell_m3": 6.64,
+      "ratio": 1.0039,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcWindow",
+      "n": 58,
+      "ifcfast_m3": 3.95,
+      "ifcopenshell_m3": 3.95,
+      "ratio": 1.0,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcStairFlight",
+      "n": 6,
+      "ifcfast_m3": 1.28,
+      "ifcopenshell_m3": 1.28,
+      "ratio": 1.0,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    },
+    {
+      "entity": "IfcSlab",
+      "n": 3,
+      "ifcfast_m3": 0.41,
+      "ifcopenshell_m3": 0.41,
+      "ratio": 1.0,
+      "open_shell": 0,
+      "reference_exceeds_aabb": 0
+    }
+  ],
+  "command": "products, surfaces = m.mesh_qto()  # volume_reliable flags the rows to route to ifcopenshell"
+}

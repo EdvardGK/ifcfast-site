@@ -1,0 +1,55 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "tools": 23,
+  "groups": {
+    "ramp": [
+      "system_prompt",
+      "example_path"
+    ],
+    "model": [
+      "open_ifc",
+      "summary",
+      "schemas",
+      "preview",
+      "types",
+      "by_type",
+      "diff"
+    ],
+    "graph": [
+      "parent",
+      "children",
+      "ancestors",
+      "descendants",
+      "storey_of",
+      "building_of",
+      "products_in"
+    ],
+    "data": [
+      "psets",
+      "quantities",
+      "materials",
+      "classifications",
+      "product_card"
+    ],
+    "session": [
+      "list_open",
+      "close"
+    ]
+  },
+  "resource": "ifcfast://agents-guide",
+  "row_limit_default": 200,
+  "model_cache": 8,
+  "config": {
+    "mcpServers": {
+      "ifcfast": {
+        "command": "uvx",
+        "args": [
+          "--from",
+          "ifcfast[mcp]",
+          "ifcfast-mcp"
+        ]
+      }
+    }
+  }
+}

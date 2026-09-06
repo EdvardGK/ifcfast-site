@@ -1,0 +1,26 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "machine": "PLACEHOLDER",
+  "model": "Clinic_Architectural.ifc",
+  "subset": {
+    "guids": 1,
+    "storey": "First Floor",
+    "products_out": 812,
+    "bytes_out": 3456789,
+    "seconds": 0.4
+  },
+  "hotswap": {
+    "guid": "PLACEHOLDER",
+    "class": "IfcWallStandardCase",
+    "seconds": 0.05,
+    "untouched_bytes_identical": true,
+    "round_trip": "byte-identical outside the swapped body"
+  },
+  "mutate": {
+    "ops": 3,
+    "seconds": 0.03,
+    "placements_cloned": 0
+  },
+  "command": "m.subset(guids, 'floor1.ifc'); m.hotswap(guid, verts, tris, 'out.ifc'); m.mutate([...])"
+}

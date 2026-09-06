@@ -1,0 +1,514 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "scope": "First Floor, all five disciplines",
+  "poster": "/receipts/model/clinic-floor1.webp",
+  "models": [
+    {
+      "name": "Architectural",
+      "glb": "/receipts/model/clinic-floor1-architectural.glb",
+      "products": 812,
+      "bytes": 903000
+    },
+    {
+      "name": "Structural",
+      "glb": "/receipts/model/clinic-floor1-structural.glb",
+      "products": 268,
+      "bytes": 412000
+    },
+    {
+      "name": "HVAC",
+      "glb": "/receipts/model/clinic-floor1-hvac.glb",
+      "products": 944,
+      "bytes": 688000
+    },
+    {
+      "name": "Plumbing",
+      "glb": "/receipts/model/clinic-floor1-plumbing.glb",
+      "products": 1216,
+      "bytes": 741000
+    },
+    {
+      "name": "Electrical",
+      "glb": "/receipts/model/clinic-floor1-electrical.glb",
+      "products": 331,
+      "bytes": 196000
+    }
+  ],
+  "storeys": [
+    {
+      "guid": "ldwC5W16PWcJFE6SUqmLAj",
+      "name": "Roof",
+      "elevation_m": 12.8,
+      "products": 214
+    },
+    {
+      "guid": "uA_X7_tNiUNQ650my4zqdM",
+      "name": "Second Floor",
+      "elevation_m": 7.6,
+      "products": 9902
+    },
+    {
+      "guid": "O7RobsHAEJwDXEOWL3AxSm",
+      "name": "First Floor",
+      "elevation_m": 3.8,
+      "products": 11784
+    },
+    {
+      "guid": "iOJrx7hiN25z0S$tIL$j$$",
+      "name": "Ground Floor",
+      "elevation_m": 0.0,
+      "products": 9640
+    }
+  ],
+  "classes": [
+    {
+      "entity": "IfcWallStandardCase",
+      "model": "Architectural",
+      "n": 312,
+      "volume_m3": 410.2
+    },
+    {
+      "entity": "IfcSpace",
+      "model": "Architectural",
+      "n": 71,
+      "volume_m3": 5842.1
+    },
+    {
+      "entity": "IfcCovering",
+      "model": "Architectural",
+      "n": 118,
+      "volume_m3": 22.4
+    },
+    {
+      "entity": "IfcDoor",
+      "model": "Architectural",
+      "n": 84,
+      "volume_m3": 9.9
+    },
+    {
+      "entity": "IfcWindow",
+      "model": "Architectural",
+      "n": 22,
+      "volume_m3": 1.34
+    },
+    {
+      "entity": "IfcSlab",
+      "model": "Structural",
+      "n": 14,
+      "volume_m3": 288.6
+    },
+    {
+      "entity": "IfcBeam",
+      "model": "Structural",
+      "n": 186,
+      "volume_m3": 62.1
+    },
+    {
+      "entity": "IfcColumn",
+      "model": "Structural",
+      "n": 52,
+      "volume_m3": 33.8
+    },
+    {
+      "entity": "IfcFlowSegment",
+      "model": "HVAC",
+      "n": 402,
+      "volume_m3": 18.7
+    },
+    {
+      "entity": "IfcFlowFitting",
+      "model": "HVAC",
+      "n": 388,
+      "volume_m3": 6.2
+    },
+    {
+      "entity": "IfcFlowTerminal",
+      "model": "HVAC",
+      "n": 126,
+      "volume_m3": 2.1
+    },
+    {
+      "entity": "IfcFlowSegment",
+      "model": "Plumbing",
+      "n": 596,
+      "volume_m3": 7.4
+    },
+    {
+      "entity": "IfcFlowFitting",
+      "model": "Plumbing",
+      "n": 512,
+      "volume_m3": 2.9
+    },
+    {
+      "entity": "IfcFlowTerminal",
+      "model": "Plumbing",
+      "n": 74,
+      "volume_m3": 1.6
+    },
+    {
+      "entity": "IfcFlowTerminal",
+      "model": "Electrical",
+      "n": 268,
+      "volume_m3": 0.84
+    },
+    {
+      "entity": "IfcDistributionElement",
+      "model": "Electrical",
+      "n": 48,
+      "volume_m3": 0.31
+    }
+  ],
+  "materials": [
+    {
+      "name": "Copper",
+      "n": 1108
+    },
+    {
+      "name": "Galvanized Steel",
+      "n": 790
+    },
+    {
+      "name": "Gypsum Wall Board",
+      "n": 312
+    },
+    {
+      "name": "Polycarbonate",
+      "n": 268
+    },
+    {
+      "name": "Steel - Wide Flange",
+      "n": 186
+    },
+    {
+      "name": "Aluminium",
+      "n": 126
+    },
+    {
+      "name": "Acoustic Ceiling Tile",
+      "n": 118
+    },
+    {
+      "name": "Wood - Birch",
+      "n": 84
+    },
+    {
+      "name": "Porcelain",
+      "n": 74
+    },
+    {
+      "name": "Concrete - Cast In Situ",
+      "n": 66
+    },
+    {
+      "name": "Steel - Painted",
+      "n": 48
+    },
+    {
+      "name": "Glass",
+      "n": 22
+    }
+  ],
+  "products": {
+    "9Eu8wTWL657t$B0DpXkiW6": {
+      "entity": "IfcWallStandardCase",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.9951,
+      "volume_reliable": true,
+      "material": "Gypsum Wall Board",
+      "clash_partners": []
+    },
+    "Ob7KJfUZarpZvA4gd64xgk": {
+      "entity": "IfcWallStandardCase",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 1.2207,
+      "volume_reliable": true,
+      "material": "Gypsum Wall Board",
+      "clash_partners": [
+        "vSCFK7kf8c6payhvgEz0X0"
+      ]
+    },
+    "Uhzu_HPwMwLuHieNx6zB_Y": {
+      "entity": "IfcSpace",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 69.9823,
+      "volume_reliable": true,
+      "material": null,
+      "clash_partners": []
+    },
+    "LAM8XpHoiQ3Fv4w__KqtY2": {
+      "entity": "IfcSpace",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 75.8794,
+      "volume_reliable": true,
+      "material": null,
+      "clash_partners": []
+    },
+    "V92wFgO76nqzc$O_NVzBRu": {
+      "entity": "IfcCovering",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.2271,
+      "volume_reliable": true,
+      "material": "Acoustic Ceiling Tile",
+      "clash_partners": []
+    },
+    "H4kJacyOFfYovyQVWOeUD7": {
+      "entity": "IfcCovering",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.171,
+      "volume_reliable": false,
+      "material": "Acoustic Ceiling Tile",
+      "clash_partners": []
+    },
+    "CHmb2QuhAXUUyv6tj6f6Vq": {
+      "entity": "IfcDoor",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.1412,
+      "volume_reliable": true,
+      "material": "Wood - Birch",
+      "clash_partners": []
+    },
+    "KzZypo6etyxX4LN80Or2_G": {
+      "entity": "IfcDoor",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.0959,
+      "volume_reliable": true,
+      "material": "Wood - Birch",
+      "clash_partners": []
+    },
+    "RpCclVlLwXrn26yzGAjelH": {
+      "entity": "IfcWindow",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.0551,
+      "volume_reliable": true,
+      "material": "Glass",
+      "clash_partners": []
+    },
+    "_fLrppZd0pTfGKnbcCvx$i": {
+      "entity": "IfcWindow",
+      "model": "Architectural",
+      "storey": "First Floor",
+      "volume_m3": 0.0582,
+      "volume_reliable": true,
+      "material": "Glass",
+      "clash_partners": []
+    },
+    "JMHIJhNx92u_FBq1EknIj7": {
+      "entity": "IfcSlab",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 21.6235,
+      "volume_reliable": true,
+      "material": "Concrete - Cast In Situ",
+      "clash_partners": []
+    },
+    "HoSLRAQF1xpX1fJrNtaure": {
+      "entity": "IfcSlab",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 16.1014,
+      "volume_reliable": true,
+      "material": "Concrete - Cast In Situ",
+      "clash_partners": []
+    },
+    "m2CAG4kGw13Dh92RYhTACy": {
+      "entity": "IfcBeam",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 0.4138,
+      "volume_reliable": true,
+      "material": "Steel - Wide Flange",
+      "clash_partners": []
+    },
+    "etRZdt8DKsDf8HyRmN5r_w": {
+      "entity": "IfcBeam",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 0.4058,
+      "volume_reliable": true,
+      "material": "Steel - Wide Flange",
+      "clash_partners": [
+        "Y29IgllJI8QQ5B6cg44yIA"
+      ]
+    },
+    "$L9jzxZD11rbKcrrt4HFJH": {
+      "entity": "IfcColumn",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 0.5909,
+      "volume_reliable": true,
+      "material": "Concrete - Cast In Situ",
+      "clash_partners": []
+    },
+    "ml0AnvhcKaJx7A3LojLgcW": {
+      "entity": "IfcColumn",
+      "model": "Structural",
+      "storey": "First Floor",
+      "volume_m3": 0.8009,
+      "volume_reliable": true,
+      "material": "Concrete - Cast In Situ",
+      "clash_partners": []
+    },
+    "8YIsxjvRdzu8oucI5cOSN_": {
+      "entity": "IfcFlowSegment",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0544,
+      "volume_reliable": true,
+      "material": "Galvanized Steel",
+      "clash_partners": []
+    },
+    "Y29IgllJI8QQ5B6cg44yIA": {
+      "entity": "IfcFlowSegment",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0387,
+      "volume_reliable": false,
+      "material": "Galvanized Steel",
+      "clash_partners": [
+        "etRZdt8DKsDf8HyRmN5r_w"
+      ]
+    },
+    "h07hxPaFF2_If6nQIxKxil": {
+      "entity": "IfcFlowFitting",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0183,
+      "volume_reliable": true,
+      "material": "Galvanized Steel",
+      "clash_partners": []
+    },
+    "Gzs3DfxzFVeufnqAwpMl0x": {
+      "entity": "IfcFlowFitting",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0196,
+      "volume_reliable": false,
+      "material": "Galvanized Steel",
+      "clash_partners": [
+        "f00DAZsLJz8TKYw5QfHf93"
+      ]
+    },
+    "beLdp89HSa6W8wWpjeGAhC": {
+      "entity": "IfcFlowTerminal",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0188,
+      "volume_reliable": true,
+      "material": "Aluminium",
+      "clash_partners": []
+    },
+    "smRBc4uzHvEJivCiR9mYdx": {
+      "entity": "IfcFlowTerminal",
+      "model": "HVAC",
+      "storey": "First Floor",
+      "volume_m3": 0.0202,
+      "volume_reliable": false,
+      "material": "Aluminium",
+      "clash_partners": []
+    },
+    "WBdC2tEPiPBi3gIlFS_wq_": {
+      "entity": "IfcFlowSegment",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.0095,
+      "volume_reliable": true,
+      "material": "Copper",
+      "clash_partners": []
+    },
+    "vSCFK7kf8c6payhvgEz0X0": {
+      "entity": "IfcFlowSegment",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.0156,
+      "volume_reliable": true,
+      "material": "Copper",
+      "clash_partners": [
+        "Ob7KJfUZarpZvA4gd64xgk"
+      ]
+    },
+    "s5febRHkhM_YRQHTxZgSu4": {
+      "entity": "IfcFlowFitting",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.0042,
+      "volume_reliable": true,
+      "material": "Copper",
+      "clash_partners": []
+    },
+    "f00DAZsLJz8TKYw5QfHf93": {
+      "entity": "IfcFlowFitting",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.0056,
+      "volume_reliable": true,
+      "material": "Copper",
+      "clash_partners": [
+        "Gzs3DfxzFVeufnqAwpMl0x"
+      ]
+    },
+    "eoT7j7oIEWuHRhcKU7IIDy": {
+      "entity": "IfcFlowTerminal",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.0154,
+      "volume_reliable": true,
+      "material": "Porcelain",
+      "clash_partners": []
+    },
+    "EJGLB45Xc9f0QWoCPdIQjU": {
+      "entity": "IfcFlowTerminal",
+      "model": "Plumbing",
+      "storey": "First Floor",
+      "volume_m3": 0.027,
+      "volume_reliable": true,
+      "material": "Porcelain",
+      "clash_partners": []
+    },
+    "Rd6AxDk8wWodVIBgA2hzsB": {
+      "entity": "IfcFlowTerminal",
+      "model": "Electrical",
+      "storey": "First Floor",
+      "volume_m3": 0.0026,
+      "volume_reliable": true,
+      "material": "Polycarbonate",
+      "clash_partners": []
+    },
+    "hI3O9wZFyTnLebmND3oRGs": {
+      "entity": "IfcFlowTerminal",
+      "model": "Electrical",
+      "storey": "First Floor",
+      "volume_m3": 0.0023,
+      "volume_reliable": true,
+      "material": "Polycarbonate",
+      "clash_partners": []
+    },
+    "9Zk_E3I_lFJ7h$U8xNtGDn": {
+      "entity": "IfcDistributionElement",
+      "model": "Electrical",
+      "storey": "First Floor",
+      "volume_m3": 0.006,
+      "volume_reliable": true,
+      "material": "Steel - Painted",
+      "clash_partners": []
+    },
+    "4fsmRJD_rLXbwuaMohGzkJ": {
+      "entity": "IfcDistributionElement",
+      "model": "Electrical",
+      "storey": "First Floor",
+      "volume_m3": 0.0063,
+      "volume_reliable": true,
+      "material": "Steel - Painted",
+      "clash_partners": []
+    }
+  }
+}

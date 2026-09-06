@@ -1,0 +1,105 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "machine": "PLACEHOLDER",
+  "project": "buildingSMART Medical-Dental Clinic",
+  "license": "CC BY 4.0",
+  "models": [
+    {
+      "discipline": "Architectural",
+      "file": "Clinic_Architectural.ifc",
+      "size_mb": 13.0,
+      "schema": "IFC2X3",
+      "authoring_app": "Autodesk Revit Architecture 2011",
+      "products": 3292,
+      "storeys": 4,
+      "unit": "m",
+      "open_cold_s": 0.135,
+      "open_warm_s": null,
+      "bundle_s": 2.12,
+      "top_types": [
+        ["IfcWallStandardCase", 1065],
+        ["IfcMember", 534],
+        ["IfcOpeningElement", 403],
+        ["IfcSpace", 269],
+        ["IfcDoor", 254]
+      ]
+    },
+    {
+      "discipline": "Structural",
+      "file": "Clinic_Structural.ifc",
+      "size_mb": 19.1,
+      "schema": "IFC2X3",
+      "authoring_app": null,
+      "products": 1094,
+      "storeys": 4,
+      "unit": "m",
+      "open_cold_s": 0.146,
+      "open_warm_s": null,
+      "bundle_s": 1.90,
+      "top_types": [
+        ["IfcBeam", 738],
+        ["IfcColumn", 195],
+        ["IfcFooting", 96]
+      ]
+    },
+    {
+      "discipline": "HVAC",
+      "file": "Clinic_HVAC.ifc",
+      "size_mb": 26.9,
+      "schema": "IFC2X3",
+      "authoring_app": "Autodesk Revit MEP 2013",
+      "products": 11357,
+      "storeys": 4,
+      "unit": "mm",
+      "open_cold_s": 0.217,
+      "open_warm_s": null,
+      "bundle_s": 12.17,
+      "top_types": [
+        ["IfcDistributionPort", 7390],
+        ["IfcFlowFitting", 1590],
+        ["IfcFlowSegment", 1548],
+        ["IfcFlowTerminal", 440]
+      ]
+    },
+    {
+      "discipline": "Plumbing",
+      "file": "Clinic_Plumbing.ifc",
+      "size_mb": 55.8,
+      "schema": "IFC2X3",
+      "authoring_app": "Autodesk Revit 2013",
+      "products": 19645,
+      "storeys": 3,
+      "unit": "mm",
+      "open_cold_s": 0.461,
+      "open_warm_s": null,
+      "bundle_s": 20.87,
+      "top_types": [
+        ["IfcDistributionPort", 13058],
+        ["IfcFlowFitting", 3318],
+        ["IfcFlowSegment", 2893]
+      ]
+    },
+    {
+      "discipline": "Electrical",
+      "file": "Clinic_Electrical.ifc",
+      "size_mb": 6.8,
+      "schema": "IFC2X3",
+      "authoring_app": "Autodesk Revit 2013",
+      "products": 2384,
+      "storeys": 3,
+      "unit": "m",
+      "open_cold_s": 0.071,
+      "open_warm_s": null,
+      "bundle_s": 3.16,
+      "top_types": [
+        ["IfcFlowTerminal", 2081],
+        ["IfcSpace", 266]
+      ]
+    }
+  ],
+  "total_size_mb": 121.6,
+  "total_products": 37772,
+  "total_open_cold_s": 1.03,
+  "command": "m = ifcfast.open('Clinic_Plumbing.ifc'); m.summary()"
+}

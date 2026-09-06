@@ -1,0 +1,140 @@
+{
+  "generated": "PLACEHOLDER",
+  "ifcfast_version": "0.4.42",
+  "machine": "PLACEHOLDER",
+  "federate_s": 1.2,
+  "clash_s": 8.4,
+  "tolerance_m": 0.0,
+  "unit_note": "3 models in m, 2 in mm - federate() rejects a mixed-unit merge; the substrate records unit_scale and clash converts at load",
+  "pairs_total": 12345,
+  "pairs_cross_model": 2345,
+  "by_category": {
+    "clash": 1200,
+    "insulation": 300,
+    "connection": 800,
+    "non_physical": 45
+  },
+  "by_model_pair": [
+    [
+      "HVAC",
+      "Plumbing",
+      900
+    ],
+    [
+      "Architectural",
+      "HVAC",
+      600
+    ],
+    [
+      "Structural",
+      "Plumbing",
+      420
+    ],
+    [
+      "Architectural",
+      "Electrical",
+      260
+    ],
+    [
+      "HVAC",
+      "Structural",
+      165
+    ]
+  ],
+  "by_class_pair": [
+    [
+      "DuctSegment",
+      "PipeSegment",
+      400
+    ],
+    [
+      "PipeSegment",
+      "Beam",
+      240
+    ],
+    [
+      "DuctFitting",
+      "Wall",
+      180
+    ],
+    [
+      "FlowTerminal",
+      "Covering",
+      120
+    ]
+  ],
+  "top_rows": [
+    {
+      "guid_a": "PLACEHOLDER-A1",
+      "class_a": "DuctSegment",
+      "model_a": "HVAC",
+      "guid_b": "PLACEHOLDER-B1",
+      "class_b": "Beam",
+      "model_b": "Structural",
+      "category": "clash",
+      "kind": "hard",
+      "storey": "First Floor"
+    },
+    {
+      "guid_a": "PLACEHOLDER-A2",
+      "class_a": "PipeSegment",
+      "model_a": "Plumbing",
+      "guid_b": "PLACEHOLDER-B2",
+      "class_b": "WallStandardCase",
+      "model_b": "Architectural",
+      "category": "clash",
+      "kind": "hard",
+      "storey": "First Floor"
+    },
+    {
+      "guid_a": "PLACEHOLDER-A3",
+      "class_a": "PipeFitting",
+      "model_a": "Plumbing",
+      "guid_b": "PLACEHOLDER-B3",
+      "class_b": "PipeSegment",
+      "model_b": "Plumbing",
+      "category": "connection",
+      "kind": "hard",
+      "storey": "Second Floor"
+    },
+    {
+      "guid_a": "PLACEHOLDER-A4",
+      "class_a": "DuctSegment",
+      "model_a": "HVAC",
+      "guid_b": "PLACEHOLDER-B4",
+      "class_b": "Covering",
+      "model_b": "Architectural",
+      "category": "insulation",
+      "kind": "hard",
+      "storey": "Second Floor"
+    }
+  ],
+  "oracle": {
+    "project": "a live hospital project (client data, not shown)",
+    "rounds": 5,
+    "pair_recall": [
+      [
+        13,
+        13
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        14,
+        15
+      ],
+      [
+        18,
+        19
+      ]
+    ],
+    "truth": "Solibri TMK BCF ground truth"
+  },
+  "command": "fed = ifcfast.federate([...5 bundles...], 'clinic.fed'); df = ifcfast.clash(fed)"
+}
