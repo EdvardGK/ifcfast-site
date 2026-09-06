@@ -1,0 +1,527 @@
+/* ------------------------------------------------------------------ *
+ * Instrument - a graphite device set into a paper page.
+ *
+ * Self-contained: no Tailwind, no tokens from the host app. The only
+ * things it inherits are the two font stacks, and it falls back to
+ * system faces if the host does not define them.
+ *
+ * Phone: one column, cells in DOM order (title, quantities, viewport,
+ * selection, storeys, classes, materials, products). Desktop: the grid.
+ * Every cell is min-width 0, every long string ellipses, so the device
+ * can never make the page scroll sideways.
+ * ------------------------------------------------------------------ */
+
+.instrument {
+  --ink: #0b0c0e;
+  --sheet: #101215;
+  --sheet-2: #0d0f12;
+  --line: #23272d;
+  --line-2: #2e343c;
+  --fg: #e7e8ea;
+  --fg-2: #9aa0a8;
+  --fg-3: #71777f;
+  --steel: #4a515a;
+  --steel-2: #626a74;
+  --acc: #a794ff;
+  --acc-2: #6f5ae0;
+  --warn: #e0b25a;
+
+  --mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+  --sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+
+  color: var(--fg);
+  font-family: var(--mono);
+  background: var(--ink);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.instrument *,
+.instrument *::before,
+.instrument *::after {
+  box-sizing: border-box;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--line);
+  gap: 1px;
+}
+
+.cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--sheet);
+}
+
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns:
+      minmax(0, 0.86fr) minmax(0, 1.5fr)
+      minmax(0, 1.05fr) minmax(0, 1.1fr);
+    grid-template-rows: auto minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-areas:
+      "title  title  quant  quant"
+      "storey view   dist   reg"
+      "storey sel    mat    reg";
+    height: clamp(560px, 74svh, 760px);
+  }
+  .title {
+    grid-area: title;
+  }
+  .quant {
+    grid-area: quant;
+  }
+  .view {
+    grid-area: view;
+  }
+  .sel {
+    grid-area: sel;
+  }
+  .storey {
+    grid-area: storey;
+  }
+  .dist {
+    grid-area: dist;
+  }
+  .mat {
+    grid-area: mat;
+  }
+  .reg {
+    grid-area: reg;
+  }
+}
+
+/* ── cell header ─────────────────────────────────────────────── */
+
+.head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.45rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--sheet-2);
+}
+.headL {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+.headM,
+.headBtn {
+  font-size: 0.6875rem;
+  color: var(--fg-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+.headAcc {
+  color: var(--acc);
+}
+.headBtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--acc);
+  cursor: pointer;
+  font-family: inherit;
+}
+.headBtn:hover {
+  color: var(--fg);
+}
+
+/* ── title block ─────────────────────────────────────────────── */
+
+.tb {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 40rem) {
+  .tb {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.field {
+  min-width: 0;
+  background: var(--sheet);
+  padding: 0.5rem 0.75rem;
+}
+.fieldWide {
+  grid-column: 1 / -1;
+}
+.fieldK {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  color: var(--fg-3);
+  margin: 0 0 0.15rem;
+}
+.fieldV {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fieldMono {
+  font-size: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.fieldAcc {
+  color: var(--warn);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  background: var(--line);
+  padding: 1px 0 0;
+}
+.chip {
+  flex: 1 1 7.5rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.45rem 0.6rem 0.5rem;
+  background: var(--sheet-2);
+  border: 0;
+  border-top: 2px solid transparent;
+  color: var(--fg-3);
+  font-family: inherit;
+  font-size: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+.chip:hover {
+  color: var(--fg-2);
+}
+.chipOn {
+  background: var(--sheet);
+  border-top-color: var(--acc);
+  color: var(--fg);
+}
+.chipName {
+  font-family: var(--sans);
+  font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chipMeta {
+  font-size: 0.6875rem;
+  color: var(--fg-3);
+}
+.chipHeavy {
+  font-size: 0.625rem;
+  color: var(--warn);
+}
+
+/* ── quantities ──────────────────────────────────────────────── */
+
+.readouts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  flex: 1 1 auto;
+}
+@media (min-width: 30rem) {
+  .readouts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.ro {
+  min-width: 0;
+  background: var(--sheet);
+  padding: 0.7rem 0.75rem 0.8rem;
+}
+.roV {
+  font-size: 1.375rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.roU {
+  font-size: 0.75rem;
+  color: var(--fg-3);
+  margin-left: 0.2rem;
+  letter-spacing: 0;
+}
+.roK {
+  margin-top: 0.35rem;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  color: var(--fg-3);
+}
+
+/* ── viewport ────────────────────────────────────────────────── */
+
+.viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 15rem;
+  aspect-ratio: 4 / 3;
+  background: var(--ink);
+}
+@media (min-width: 64rem) {
+  .viewport {
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+}
+.canvasHost {
+  position: absolute;
+  inset: 0;
+}
+.posterLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  background-color: var(--ink);
+  background-size: cover;
+  background-position: center;
+}
+.posterGhost {
+  background-color: rgba(11, 12, 14, 0.72);
+}
+.loadBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.7rem 1.1rem;
+  background: var(--acc-2);
+  color: #fff;
+  border: 0;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.loadBtn:hover {
+  background: var(--acc);
+  color: var(--ink);
+}
+.loadHint {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  opacity: 0.85;
+}
+.posterMsg {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--fg-3);
+  max-width: 26rem;
+}
+.posterMsgBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: center;
+}
+.posterMsgStrong {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* ── selection receipt ───────────────────────────────────────── */
+
+.selBody {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  overflow-y: auto;
+}
+.partners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.partner,
+.clear {
+  background: var(--sheet-2);
+  border: 1px solid var(--line-2);
+  color: var(--acc);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.partner:hover,
+.clear:hover {
+  border-color: var(--acc);
+}
+.clear {
+  color: var(--fg-2);
+}
+
+.empty {
+  margin: 0;
+  padding: 0.9rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+/* ── bar rows, shared by storeys / classes / materials / products ── */
+
+.rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+.rows::-webkit-scrollbar {
+  width: 6px;
+}
+.rows::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+}
+
+.row {
+  width: 100%;
+  display: grid;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: none;
+  border: 0;
+  border-left: 2px solid transparent;
+  color: var(--fg-2);
+  font-family: inherit;
+  font-size: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+.row:hover {
+  background: rgba(167, 148, 255, 0.06);
+  color: var(--fg);
+}
+.rowOn {
+  border-left-color: var(--acc);
+  background: rgba(167, 148, 255, 0.1);
+  color: var(--fg);
+}
+
+.rowName {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--sans);
+}
+.rowSub {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  color: var(--fg-3);
+  flex: 0 0 auto;
+}
+.rowElev,
+.rowN,
+.rowV {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.rowElev {
+  text-align: left;
+  color: var(--fg-3);
+  font-size: 0.6875rem;
+}
+.rowN {
+  color: var(--fg);
+}
+.rowV {
+  color: var(--fg-3);
+  font-size: 0.6875rem;
+}
+
+.track {
+  height: 0.5rem;
+  min-width: 0;
+  background: #08090b;
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--steel), var(--steel-2));
+}
+.rowOn .fill,
+.row:hover .fill {
+  background: linear-gradient(90deg, var(--acc-2), var(--acc));
+}
+
+.storey .row {
+  grid-template-columns: 3.2rem minmax(0, 1fr) 26% 3.2rem;
+}
+.dist .row {
+  grid-template-columns: minmax(0, 1fr) 24% 2.8rem 3.2rem;
+}
+.mat .row {
+  grid-template-columns: minmax(0, 1fr) 26% 2.8rem;
+}
+.reg .row {
+  grid-template-columns: minmax(0, 1fr) 4rem 2.8rem;
+}
+
+.flag {
+  font-size: 0.625rem;
+  text-align: right;
+  white-space: nowrap;
+}
+.flagOk {
+  color: var(--fg-3);
+}
+.flagWarn {
+  color: var(--warn);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instrument * {
+    transition: none !important;
+  }
+}

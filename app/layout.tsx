@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Inter } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-sans",
+// IBM Plex was drawn for technical communication: the sans and the mono
+// are the same design, so a table of numbers and the sentence above it
+// look like one document rather than two fonts sharing a page.
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
+  display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500"],
   subsets: ["latin"],
+  display: "swap",
 });
 
 const SITE_URL = "https://ifcfast.com";
@@ -74,12 +81,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
+      className={`${plexSans.variable} ${plexMono.variable} antialiased`}
     >
-      <body className="bg-bg text-fg font-sans min-h-screen flex flex-col selection:bg-accent/40 selection:text-fg">
+      <body className="bg-paper text-ink font-sans min-h-screen selection:bg-accent-tint selection:text-ink">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-fg focus:px-4 focus:py-2 focus:text-sm focus:text-bg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-paper"
         >
           Skip to content
         </a>

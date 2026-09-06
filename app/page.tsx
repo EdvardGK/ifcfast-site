@@ -1,648 +1,619 @@
-import { ArrowUpRight } from "lucide-react";
+import { Suspense } from "react";
 
-import { Code } from "@/components/code";
-import { CopyButton } from "@/components/copy-button";
-
-function Github({ size = 16 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      role="img"
-      aria-label="GitHub"
-    >
-      <title>GitHub</title>
-      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.1c-3.2.69-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.74-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39s1.97.13 2.89.39c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
-    </svg>
-  );
-}
-import { HeroTerminal } from "@/components/terminal";
-import { McpInstall } from "@/components/mcp-install";
-import { PypiVersion } from "@/components/pypi-version";
-import { ModelViewer } from "@/components/viewer";
-import { QtoPanel } from "@/components/qto-panel";
-import { VectorGraph } from "@/components/vector-graph";
-import { SelectionProvider } from "@/components/selection-context";
-import { DashTile } from "./dev/workbench/dash-tile";
+import {
+  Command,
+  Fig,
+  Figures,
+  Link,
+  Note,
+  Prose,
+  Receipt,
+  Scroller,
+  Shell,
+  Stamp,
+} from "@/components/receipts/primitives";
+import { InstrumentSection } from "@/components/receipts/instrument-section";
+import { PypiBadge } from "@/components/receipts/pypi";
+import {
+  bytes,
+  clash,
+  dec,
+  int,
+  m3,
+  mcp,
+  parse,
+  qto,
+  write,
+} from "@/components/receipts/data";
 
 const REPO = "https://github.com/EdvardGK/ifcfast";
-const ISSUES = "https://github.com/EdvardGK/ifcfast/issues";
+const ISSUES = `${REPO}/issues`;
+const PYPI = "https://pypi.org/project/ifcfast/";
+const AGENTS = `${REPO}/blob/main/AGENTS.md`;
 
 export default function Home() {
   return (
-    <div className="relative z-10">
-      <Header />
+    <>
+      <Masthead />
       <main id="main">
         <Hero />
-        <WhatItIs />
-        <ThreeLensSection />
-        <WhatWeAreAttempting />
-        <McpSection />
-        <CodeShowcase />
+        <Speed />
+        <Federation />
+        <Quantities />
+        <Writing />
+        <Agents />
+        <Status />
       </main>
       <Footer />
-    </div>
+    </>
   );
 }
 
-function ThreeLensSection() {
-  return (
-    <section className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="max-w-2xl mb-10">
-          <div className="text-xs uppercase tracking-wider text-muted mb-2">
-            One parse, every lens.
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            See it. Count it.
-            <br />
-            <span className="text-muted">Trace it.</span>
-          </h2>
-          <p className="mt-4 text-muted leading-relaxed max-w-xl">
-            A public-license IFC opened once with{" "}
-            <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-              ifcfast.open()
-            </code>
-            . Click anything in the data panel — the model dims,
-            the graph highlights the path. Three lenses, one model,
-            cross-filtered. A live look at what the parser produces,
-            not a benchmark.
-          </p>
-        </div>
-        <SelectionProvider>
-          {/* 2×2 workbench — model viewer, relationship graph, a small
-              dashboard, and the data panel, all reading from the same
-              parse and cross-filtered through a shared selection. */}
-          <div className="grid grid-cols-1 grid-rows-[repeat(4,minmax(420px,1fr))] lg:grid-cols-2 lg:grid-rows-2 gap-px bg-line rounded-xl overflow-hidden border border-line h-auto lg:h-[780px]">
-            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <ModelViewer
-                src="/sample/duplex.glb"
-                metaSrc="/sample/duplex.graph.json"
-                alt="Duplex apartment IFC — buildingSMART community sample, CC BY 4.0"
-              />
-            </div>
-            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <VectorGraph src="/sample/duplex.graph.json" compact />
-            </div>
-            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <DashTile
-                qtoSrc="/sample/duplex.qto.json"
-                graphSrc="/sample/duplex.graph.json"
-                bundleSrc="/sample/duplex.bundle.json"
-              />
-            </div>
-            <div className="bg-card flex flex-col min-h-0 overflow-hidden">
-              <QtoPanel
-                src="/sample/duplex.qto.json"
-                metaSrc="/sample/duplex.graph.json"
-                bundleSrc="/sample/duplex.bundle.json"
-                compact
-              />
-            </div>
-          </div>
-        </SelectionProvider>
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 text-xs text-muted">
-          <span>
-            Source IFC:{" "}
-            <a
-              href="https://github.com/buildingsmart-community/Community-Sample-Test-Files"
-              target="_blank"
-              rel="noreferrer"
-              className="underline hover:text-fg"
-            >
-              buildingSMART community sample — Duplex Apartment
-            </a>{" "}
-            (CC BY 4.0).
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
-            <span>
-              ifcfast hands over whatever it can read — mesh volume, AABB
-              volume, per-face area, footprint, length, thickness,
-              author-supplied <span className="font-mono">Qto_*</span> pset
-              values, layer breakdowns. Interpreting them is the
-              consumer&apos;s job: the numbers reflect the geometry the
-              modeller authored (a lightbulb&apos;s mesh volume is its
-              envelope, not its glass). Geometric quantities are
-              differential-tested against{" "}
-              <span className="font-mono">ifcopenshell</span> on real
-              multi-discipline models, but interpretation is still on you —
-              cross-check anything you&apos;re about to rely on.
-            </span>
-          </span>
-        </div>
-      </div>
-    </section>
-  );
-}
+/* ------------------------------------------------------------------ */
 
-function Header() {
+function Masthead() {
   return (
-    <header className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Mark />
-          <span className="font-semibold tracking-tight">ifcfast</span>
-          <span className="text-[10px] font-mono text-muted ml-1 border border-line rounded-full px-1.5 py-0.5">
-            experimental
+    <header className="border-b border-rule">
+      <Shell>
+        <div className="flex items-center justify-between gap-4 py-3">
+          <span className="text-[0.9375rem] font-semibold tracking-[-0.01em]">
+            ifcfast
           </span>
-          <PypiVersion className="text-[10px] font-mono text-muted border border-line rounded-full px-1.5 py-0.5 hover:text-fg" />
+          <nav className="flex items-center gap-3 text-[0.8125rem] text-ink-2">
+            <Suspense fallback={null}>
+              <PypiBadge />
+            </Suspense>
+            <a className="hover:text-ink" href={AGENTS} target="_blank" rel="noreferrer">
+              Agent guide
+            </a>
+            <a className="hover:text-ink" href={REPO} target="_blank" rel="noreferrer">
+              Source
+            </a>
+          </nav>
         </div>
-        <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-4 text-sm">
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub repository"
-            className="inline-flex items-center gap-1.5 text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded"
-          >
-            <Github size={14} /> <span className="hidden sm:inline">GitHub</span>
-          </a>
-          <a
-            href="https://pypi.org/project/ifcfast/"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded font-mono text-xs"
-          >
-            pypi
-          </a>
-          <a
-            href={`${REPO}/blob/main/AGENTS.md`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 text-fg hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent px-2 py-1 rounded"
-          >
-            For agents <ArrowUpRight size={14} aria-hidden />
-          </a>
-        </nav>
-      </div>
+      </Shell>
     </header>
   );
 }
 
-function Mark() {
-  return (
-    <div
-      className="w-6 h-6 rounded-md bg-fg text-bg grid place-items-center font-mono text-[10px] leading-none"
-      aria-hidden
-    >
-      if
-    </div>
-  );
-}
+/* ------------------------------------------------------------------ */
 
 function Hero() {
+  const arch = parse.models[0];
   return (
-    <section className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-        <div className="lg:col-span-5">
-          <div className="inline-flex items-center gap-2 text-xs font-mono text-muted border border-line rounded-full px-3 py-1 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
-            an open IFC parser — early & in progress
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-semibold tracking-tight leading-[1.05] text-balance">
-            Open any IFC.
-            <br />
-            <span className="text-muted">Ask any question.</span>
+    <section className="border-b border-rule">
+      <Shell>
+        <div className="pt-12 pb-14 sm:pt-20 sm:pb-20">
+          <h1 className="max-w-[16ch] text-[2rem] leading-[1.08] font-semibold tracking-[-0.03em] sm:max-w-[20ch] sm:text-[3.25rem]">
+            An IFC parser that shows its working.
           </h1>
-          <p className="mt-6 text-base sm:text-lg text-muted leading-relaxed max-w-md">
-            A native IFC parser with a Python API. It reads a model&apos;s{" "}
-            <span className="text-fg font-medium">data and geometry</span> into
-            pandas tables, triangle meshes, and point clouds — and writes{" "}
-            <span className="text-fg font-medium">surgical edits</span> back
-            out as valid IFC. No geometry kernel on the hot path. Built for AI
-            agents, analytics, and pipelines.
-          </p>
-          <p className="mt-3 text-sm text-muted/80 max-w-md">
-            Open-source and under active development. It complements{" "}
-            <span className="font-mono">ifcopenshell</span> rather than
-            replacing it — different tradeoffs, different jobs.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#quickstart"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-fg text-bg text-sm font-medium hover:bg-fg/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              Install{" "}
-              <span className="hidden sm:inline font-mono text-xs opacity-70">
-                pip install ifcfast
-              </span>
-            </a>
-            <a
-              href={REPO}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-line bg-card text-sm hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <Github size={14} /> Source
-            </a>
+
+          <div className="mt-6 max-w-[38rem] space-y-4 text-[1rem] leading-[1.6] text-ink-2 sm:text-[1.0625rem]">
+            <p>
+              ifcfast reads IFC into pandas, meshes and point clouds, and writes
+              surgical edits back out as valid IFC. A Rust core does the reading;
+              there is no geometry kernel on the hot path.
+            </p>
+            <p>
+              Every number on this page was measured on one real building — the
+              buildingSMART Medical-Dental Clinic, all five discipline models — and
+              every section carries the command that reproduces it.
+            </p>
           </div>
-          <div
-            id="quickstart"
-            className="mt-10 relative rounded-md bg-card border border-line px-4 py-3 pr-10 scroll-mt-20"
+
+          <div className="mt-9">
+            <Figures>
+              <Fig value={dec(parse.total_size_mb, 1)} unit="MB" label="IFC read" />
+              <Fig value={int(parse.total_products)} label="products indexed" />
+              <Fig
+                value={dec(parse.total_open_cold_s, 2)}
+                unit="s"
+                label="to open all five, cold"
+              />
+              <Fig
+                value={String(parse.models.length)}
+                label="discipline models"
+                note={`${arch.schema}, ${parse.license}`}
+              />
+            </Figures>
+          </div>
+
+          <Command shell>{"pip install ifcfast"}</Command>
+          <Command>{parse.command}</Command>
+          <Stamp generated={parse.generated} file="receipts/parse.json" />
+        </div>
+      </Shell>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function Speed() {
+  const slowest = [...parse.models].sort((a, b) => b.bundle_s - a.bundle_s)[0];
+  const biggest = [...parse.models].sort((a, b) => b.size_mb - a.size_mb)[0];
+  return (
+    <Receipt
+      id="speed"
+      claim="Opening a model is not the part you wait for."
+      source="five models, cold cache"
+    >
+      <Prose>
+        <p>
+          <strong>ifcfast.open()</strong> builds the tier-1 index — products, storeys,
+          the spatial graph — straight from the STEP data section. The largest model
+          here is {dec(biggest.size_mb, 1)} MB and opens in{" "}
+          {dec(biggest.open_cold_s, 3)} s.
+        </p>
+        <p>
+          Geometry is the cost, and it is charged separately.{" "}
+          <strong>bundle()</strong> tessellates every product and writes the parquet
+          substrate; on {slowest.discipline} that is {dec(slowest.bundle_s, 2)} s for{" "}
+          {int(slowest.products)} products. The second open of a file reuses the cache.
+        </p>
+      </Prose>
+
+      {/* phone: the two numbers that matter, per model */}
+      <ul className="mt-7 border-t border-rule sm:hidden">
+        {parse.models.map((m) => (
+          <li
+            key={m.file}
+            className="grid grid-cols-2 gap-x-4 gap-y-1 border-b border-rule py-3"
           >
-            <pre className="text-xs font-mono text-muted leading-relaxed whitespace-pre-wrap break-words">
-{`$ pip install ifcfast
-$ python -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"`}
-            </pre>
-            <CopyButton
-              value={'pip install ifcfast\npython -c "import ifcfast; ifcfast.open(ifcfast.example_path()).summary()"'}
-              label="Copy install commands"
-              className="absolute top-2 right-2"
-            />
-          </div>
-        </div>
-        <div className="lg:col-span-7">
-          <HeroTerminal />
-        </div>
+            <span className="col-span-2 text-[0.9375rem] font-medium">
+              {m.discipline}
+              <span className="num ml-2 text-[0.75rem] font-normal text-ink-3">
+                {dec(m.size_mb, 1)} MB, {int(m.products)} products
+              </span>
+            </span>
+            <span className="num text-[1.125rem]">
+              {dec(m.open_cold_s, 3)}
+              <span className="ml-1 text-[0.75rem] text-ink-3">s open</span>
+            </span>
+            <span className="num text-[1.125rem]">
+              {dec(m.bundle_s, 2)}
+              <span className="ml-1 text-[0.75rem] text-ink-3">s bundle</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      {/* wider: the full receipt */}
+      <div className="mt-7 hidden sm:block">
+        <Scroller minWidth="42rem">
+          <table className="w-full border-collapse text-[0.875rem]">
+            <thead>
+              <tr className="border-y border-rule text-left text-[0.75rem] text-ink-3">
+                <th className="py-2 pr-4 font-normal">Model</th>
+                <th className="py-2 pr-4 font-normal">Schema</th>
+                <th className="py-2 pr-4 text-right font-normal">MB</th>
+                <th className="py-2 pr-4 text-right font-normal">Products</th>
+                <th className="py-2 pr-4 text-right font-normal">Storeys</th>
+                <th className="py-2 pr-4 text-right font-normal">Unit</th>
+                <th className="py-2 pr-4 text-right font-normal">open (s)</th>
+                <th className="py-2 text-right font-normal">bundle (s)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {parse.models.map((m) => (
+                <tr key={m.file} className="border-b border-rule">
+                  <td className="py-2.5 pr-4 font-medium">{m.discipline}</td>
+                  <td className="num py-2.5 pr-4 text-ink-2">{m.schema}</td>
+                  <td className="num py-2.5 pr-4 text-right">{dec(m.size_mb, 1)}</td>
+                  <td className="num py-2.5 pr-4 text-right">{int(m.products)}</td>
+                  <td className="num py-2.5 pr-4 text-right text-ink-2">{m.storeys}</td>
+                  <td className="num py-2.5 pr-4 text-right text-ink-2">{m.unit}</td>
+                  <td className="num py-2.5 pr-4 text-right">
+                    {dec(m.open_cold_s, 3)}
+                  </td>
+                  <td className="num py-2.5 text-right">{dec(m.bundle_s, 2)}</td>
+                </tr>
+              ))}
+              <tr>
+                <td className="py-2.5 pr-4 font-medium">All five</td>
+                <td />
+                <td className="num py-2.5 pr-4 text-right">
+                  {dec(parse.total_size_mb, 1)}
+                </td>
+                <td className="num py-2.5 pr-4 text-right">
+                  {int(parse.total_products)}
+                </td>
+                <td colSpan={2} />
+                <td className="num py-2.5 pr-4 text-right">
+                  {dec(parse.total_open_cold_s, 2)}
+                </td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </Scroller>
       </div>
-    </section>
+
+      <Command shell>{"ifcfast index Clinic_HVAC.ifc --json"}</Command>
+      <Note>
+        Two of these models are authored in millimetres and three in metres. ifcfast
+        records the project unit as parquet metadata and converts at read time, so the
+        numbers above are comparable without anyone rescaling anything first.
+      </Note>
+      <Stamp generated={parse.generated} file="receipts/parse.json" />
+    </Receipt>
   );
 }
 
-const CAPABILITIES = [
-  {
-    kicker: "Parse",
-    title: "Native, kernel-free reading",
-    body:
-      "A Rust core reads the IFC STEP data section directly into typed tables. ifcopenshell stays an optional dev dependency used for cross-checking — never on the hot path.",
-  },
-  {
-    kicker: "Data",
-    title: "Everything as pandas",
-    body:
-      "Property sets, quantities, materials, and classifications come back as long-format DataFrames. Filter, join, pivot, dump to Excel — ordinary data work, no IFC-specific gymnastics.",
-  },
-  {
-    kicker: "Graph",
-    title: "Spatial relationships",
-    body:
-      "Containment and aggregation as edge tables, plus traversal helpers. m.ancestors(guid) walks storey → building → site → project in one call.",
-  },
-  {
-    kicker: "Geometry",
-    title: "Meshes & point clouds",
-    body:
-      "Per-product triangle meshes, area-weighted point-cloud sampling with normals, and geometric quantities — handed back as numpy / pandas. Drops straight into trimesh, Open3D, or your own pipeline.",
-  },
-  {
-    kicker: "Write",
-    title: "Surgical round-trips",
-    body:
-      "m.subset() carves a valid standalone IFC from any element set; m.hotswap() swaps a single body mesh; m.mutate() edits properties, names, and placements. Everything an edit doesn't touch is written back byte-for-byte.",
-  },
-  {
-    kicker: "Clash",
-    title: "Interference checking",
-    body:
-      "ifcfast.clash() runs broad- and narrow-phase mesh checks over the substrate — hard clashes by default, clearance pairs at a tolerance when asked, and every hit categorised (clash / insulation / connection / non-physical) rather than silently dropped.",
-  },
-  {
-    kicker: "Substrate",
-    title: "Geometry + semantics, joined",
-    body:
-      "An optional GeoParquet export that pairs each product's geometry with its data, so a model becomes something DuckDB or pandas can query like any other table.",
-  },
-  {
-    kicker: "Viewer",
-    title: "One call to glTF",
-    body:
-      "m.to_gltf() writes a viewer-ready binary — openings cut, repeated geometry GPU-instanced, vertices quantized, authored surface colours carried through. Drops into model-viewer, three.js, or any glTF pipeline.",
-  },
-  {
-    kicker: "Agents",
-    title: "MCP server",
-    body:
-      "ifcfast-mcp speaks the Model Context Protocol, so Claude, Cursor, or any MCP client can open and question IFC files directly — point at the server, get tools and a guide resource.",
-  },
-];
+/* ------------------------------------------------------------------ */
 
-function WhatItIs() {
+function Federation() {
+  const cats = Object.entries(clash.by_category);
+  const total = cats.reduce((a, [, n]) => a + n, 0) || 1;
+  const recall = clash.oracle.pair_recall;
+  const found = recall.reduce((a, [f]) => a + f, 0);
+  const truth = recall.reduce((a, [, t]) => a + t, 0);
+
   return (
-    <section className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="max-w-2xl mb-12">
-          <div className="text-xs uppercase tracking-wider text-muted mb-2">
-            What it is
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            One parse.
-            <br />
-            <span className="text-muted">Data and geometry, both.</span>
-          </h2>
-          <p className="mt-4 text-muted leading-relaxed max-w-xl">
-            ifcfast opens a model once and exposes it through ordinary
-            Python objects — DataFrames, numpy arrays, JSON-friendly
-            dicts. The pieces below are what it does today.
-          </p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line rounded-xl overflow-hidden border border-line">
-          {CAPABILITIES.map((f) => (
-            <div
-              key={f.title}
-              className="bg-card p-6 sm:p-8 flex flex-col gap-3"
-            >
-              <div className="text-xs font-mono text-accent uppercase tracking-wider">
-                {f.kicker}
-              </div>
-              <h3 className="text-xl font-semibold tracking-tight">
-                {f.title}
-              </h3>
-              <p className="text-sm text-muted leading-relaxed">{f.body}</p>
-            </div>
-          ))}
-        </div>
+    <Receipt
+      id="federation"
+      claim="Five discipline models, one substrate, one clash list."
+      source="federate() then clash(), no re-parse"
+    >
+      <Prose>
+        <p>
+          <strong>federate()</strong> merges the five parquet bundles into one
+          substrate — a columnar merge, no re-parse and no geometry work. Passing the
+          list straight to <strong>clash()</strong> does it for you and caches the
+          merge on content, so it is paid once.
+        </p>
+        <p>
+          The engine reports facts and nothing else: which pairs touch, by how much,
+          and which of four semantic buckets each falls in. Deciding what is
+          actionable — what to hide, whom to route it to, what becomes a BCF topic — is
+          the caller&apos;s job, not the parser&apos;s.
+        </p>
+      </Prose>
+
+      <div className="mt-8">
+        <Figures>
+          <Fig value={dec(clash.federate_s, 1)} unit="s" label="to federate" />
+          <Fig value={dec(clash.clash_s, 1)} unit="s" label="to clash" />
+          <Fig value={int(clash.pairs_total)} label="pairs found" />
+          <Fig
+            value={int(clash.pairs_cross_model)}
+            label="cross-discipline"
+            note={`${dec((clash.pairs_cross_model / clash.pairs_total) * 100, 0)}% of the list`}
+          />
+        </Figures>
       </div>
-    </section>
+
+      <div className="mt-8 max-w-[34rem]">
+        <p className="text-[0.75rem] text-ink-3">
+          category, the column that makes the list readable
+        </p>
+        <table className="mt-2 w-full border-collapse text-[0.875rem]">
+          <tbody>
+            {cats.map(([name, n]) => (
+              <tr key={name} className="border-b border-rule">
+                <td className="num py-2 pr-3 text-ink-2">{name}</td>
+                <td className="w-[45%] py-2 pr-3">
+                  <span className="block h-[6px] bg-paper-3">
+                    <span
+                      className="block h-full bg-ink-2"
+                      style={{ width: `${(n / total) * 100}%` }}
+                    />
+                  </span>
+                </td>
+                <td className="num py-2 text-right">{int(n)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Note>
+        Only the <span className="num">clash</span> bucket is a coordination problem.
+        Insulation over its own pipe, a fitting meeting its own run, and hits against
+        grids and spaces are all real intersections and all noise — so they are
+        labelled rather than dropped.
+      </Note>
+
+      <Command>{clash.command}</Command>
+
+      <div className="mt-9 max-w-[38rem] border-t border-rule pt-6">
+        <p className="text-[0.9375rem] leading-[1.65] text-ink-2">
+          Against Solibri as ground truth on {clash.oracle.rounds} version-matched
+          rounds of {clash.oracle.project}, ifcfast finds{" "}
+          <strong className="font-medium text-ink">
+            {found} of the {truth} clash pairs
+          </strong>{" "}
+          Solibri reports, and both misses are attributed. The truth set is{" "}
+          {clash.oracle.truth}.
+        </p>
+      </div>
+
+      <Stamp generated={clash.generated} file="receipts/clash.json" />
+
+      <div className="mt-12 border-t border-rule pt-8">
+        <h3 className="text-[1.125rem] font-semibold tracking-[-0.015em]">
+          The same substrate, as an instrument
+        </h3>
+        <p className="mt-2 max-w-[38rem] text-[0.9375rem] leading-[1.65] text-ink-2">
+          One floor of all five models, carved with <strong>subset()</strong> and
+          exported with <strong>to_gltf()</strong>. Tap a product to pull its receipt —
+          class, discipline, storey, volume, and whether that volume is trustworthy — or
+          tap a storey, class or material to filter everything else. Geometry loads
+          only when you ask for it, one discipline at a time.
+        </p>
+      </div>
+      <InstrumentSection src="/receipts/model/instrument.json" />
+    </Receipt>
   );
 }
 
-function WhatWeAreAttempting() {
+/* ------------------------------------------------------------------ */
+
+function Quantities() {
+  const rows = qto.classes;
+  const agree = rows.filter((r) => Math.abs(r.ratio - 1) <= 0.01).length;
   return (
-    <section className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          <div className="lg:col-span-5">
-            <div className="text-xs uppercase tracking-wider text-muted mb-2">
-              What we&apos;re attempting
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">
-              An open experiment,
-              <br />
-              <span className="text-muted">honest about its edges.</span>
-            </h2>
-            <p className="mt-5 text-muted leading-relaxed max-w-md">
-              The goal is to make IFC files fast and pleasant to query —
-              for agents, analytics, and anyone who wants to ask
-              questions of a model without standing up a full geometry
-              kernel.
-            </p>
-            <p className="mt-4 text-muted leading-relaxed max-w-md">
-              ifcfast is young, and trust is earned, not claimed. Geometry
-              and quantity changes only ship through a differential gate —{" "}
-              <span className="font-mono">ifcopenshell</span>{" "}class by class
-              on real multi-discipline models, Solibri-authored ground truth
-              for clash, byte-level round-trip oracles for writing. What the
-              gates don&apos;t cover yet counts as unverified: cross-check
-              against your toolchain, and tell us where the numbers disagree.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href={ISSUES}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md bg-fg text-bg text-sm font-medium hover:bg-fg/90"
-              >
-                Report an issue <ArrowUpRight size={14} />
-              </a>
-              <a
-                href={REPO}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-line bg-card text-sm hover:bg-bg"
-              >
-                <Github size={14} /> Contribute
-              </a>
-            </div>
-          </div>
-          <div className="lg:col-span-7">
-            <div className="rounded-xl border border-line bg-card overflow-hidden">
-              <div className="px-5 py-2.5 border-b border-line text-xs font-mono text-muted">
-                what we&apos;re trying to find out
-              </div>
-              <ul className="divide-y divide-line">
-                {ATTEMPTS.map((a) => (
-                  <li key={a.title} className="px-5 py-4 flex flex-col gap-1">
-                    <div className="text-sm font-medium tracking-tight">
-                      {a.title}
-                    </div>
-                    <div className="text-sm text-muted leading-relaxed">
-                      {a.body}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <div className="px-5 py-3.5 border-t border-line bg-bg/40 text-xs text-muted leading-relaxed">
-                Found a wrong number, a missed entity, or a faulty
-                assumption?{" "}
-                <a
-                  href={ISSUES}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-fg underline hover:text-accent"
-                >
-                  Open a GitHub issue
-                </a>
-                . That feedback is how this becomes trustworthy.
-              </div>
-            </div>
-          </div>
-        </div>
+    <Receipt
+      id="quantities"
+      claim="Volumes, printed next to the kernel that checks them."
+      source={`${qto.model} vs ifcopenshell ${qto.ifcopenshell_version}`}
+    >
+      <Prose>
+        <p>
+          <strong>mesh_qto()</strong> quantified {int(qto.products)} products in{" "}
+          {dec(qto.mesh_qto_s, 2)} s. Every row carries a{" "}
+          <strong>volume_reliable</strong> flag:{" "}
+          {dec(qto.volume_reliable_share * 100, 1)}% of rows are the mesh volume and
+          trustworthy; the rest fall back to a prism bound and are meant to be sent
+          somewhere authoritative.
+        </p>
+        <p>
+          Below is every class in the architectural model beside the same class
+          measured by ifcopenshell. {agree} of {rows.length} classes agree within one
+          percent. The ones that do not are in the table too.
+        </p>
+      </Prose>
+
+      <div className="mt-7">
+        <Scroller minWidth="46rem">
+          <table className="w-full border-collapse text-[0.875rem]">
+            <thead>
+              <tr className="border-y border-rule text-left text-[0.75rem] text-ink-3">
+                <th className="py-2 pr-4 font-normal">Class</th>
+                <th className="py-2 pr-4 text-right font-normal">n</th>
+                <th className="py-2 pr-4 text-right font-normal">ifcfast m³</th>
+                <th className="py-2 pr-4 text-right font-normal">ifcopenshell m³</th>
+                <th className="py-2 pr-4 text-right font-normal">ratio</th>
+                <th className="py-2 pr-4 text-right font-normal">open shell</th>
+                <th className="py-2 text-right font-normal">ref &gt; aabb</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const off = Math.abs(r.ratio - 1) > 0.01;
+                return (
+                  <tr key={r.entity} className="border-b border-rule">
+                    <td className="py-2.5 pr-4 font-medium whitespace-nowrap">
+                      {r.entity}
+                    </td>
+                    <td className="num py-2.5 pr-4 text-right text-ink-2">
+                      {int(r.n)}
+                    </td>
+                    <td className="num py-2.5 pr-4 text-right">{m3(r.ifcfast_m3)}</td>
+                    <td className="num py-2.5 pr-4 text-right">
+                      {m3(r.ifcopenshell_m3)}
+                    </td>
+                    <td
+                      className={`num py-2.5 pr-4 text-right ${
+                        off ? "font-medium text-ink" : "text-ink-2"
+                      }`}
+                    >
+                      {dec(r.ratio, 4)}
+                    </td>
+                    <td className="num py-2.5 pr-4 text-right text-ink-2">
+                      {r.open_shell || "—"}
+                    </td>
+                    <td className="num py-2.5 text-right text-ink-2">
+                      {r.reference_exceeds_aabb || "—"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Scroller>
       </div>
-    </section>
+
+      <Note>
+        <strong className="font-medium text-ink">open shell</strong> counts elements
+        whose mesh is not watertight.{" "}
+        <strong className="font-medium text-ink">ref &gt; aabb</strong> counts elements
+        where the ifcopenshell volume is larger than the element&apos;s own bounding box
+        — a volume no solid inside that box can have. Both columns are published
+        because a difference is not the same thing as an error, and the table is
+        regenerated on every release rather than curated.
+      </Note>
+
+      <Command>{qto.command}</Command>
+      <Note>
+        The flagged rows are the routing target: run ifcfast over everything, send the{" "}
+        <span className="num">volume_reliable = false</span> rows to ifcopenshell or
+        Solibri, and keep the speed everywhere else.{" "}
+        <Link href={`${REPO}/blob/main/examples/hybrid_qto_routing.py`}>
+          examples/hybrid_qto_routing.py
+        </Link>{" "}
+        is that loop, written out.
+      </Note>
+      <Stamp generated={qto.generated} file="receipts/qto.json" />
+    </Receipt>
   );
 }
 
-const ATTEMPTS = [
-  {
-    title: "Expose the whole file as tidy data",
-    body:
-      "Every part a model declares — properties, quantities, materials, classifications, relationships — as tables you can reason about, with nothing silently dropped.",
-  },
-  {
-    title: "Carry geometry far enough for analysis",
-    body:
-      "Meshes, point clouds, and geometric quantities that are good enough to measure, sample, and compare — without trying to be a CAD kernel.",
-  },
-  {
-    title: "Gate changes on oracles, not vibes",
-    body:
-      "Every geometry or quantity change runs a differential sweep before it ships — ifcopenshell for meshes and QTO, Solibri ground truth for clash, byte-identical round-trips for the writer. Unattributed drift doesn't merge.",
-  },
-  {
-    title: "Stay honest about limits",
-    body:
-      "Surface what the parser can't yet handle as explicit, visible gaps rather than hiding them — so you always know what you're looking at.",
-  },
-];
+/* ------------------------------------------------------------------ */
 
-function McpSection() {
+function Writing() {
   return (
-    <section id="install" className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          <div className="lg:col-span-5">
-            <div className="text-xs uppercase tracking-wider text-muted mb-2">
-              For agents
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">
-              Plug into Claude.
-              <br />
-              <span className="text-muted">Or Cursor. Or anything MCP.</span>
-            </h2>
-            <p className="mt-5 text-muted leading-relaxed max-w-md">
-              <span className="font-mono text-fg">ifcfast-mcp</span> exposes
-              the parse, data, and spatial-graph surface as Model Context
-              Protocol tools. Add one block to your MCP client config and
-              your agent can drive IFCs directly — no per-tool wiring to
-              write.
-            </p>
-            <div className="mt-6 text-sm text-muted">
-              Paste{" "}
-              <code className="font-mono text-fg bg-bg border border-line px-1.5 py-0.5 rounded text-xs">
-                ifcfast.system_prompt()
-              </code>{" "}
-              into the system prompt for instant ramp-up.
-            </div>
-          </div>
-          <div className="lg:col-span-7">
-            <McpInstall />
-          </div>
-        </div>
+    <Receipt
+      id="write"
+      claim="It writes IFC back, and touches nothing you did not name."
+      source={write.model}
+    >
+      <Prose>
+        <p>
+          Three write primitives. <strong>subset()</strong> carves a valid standalone
+          IFC of the elements you name, pulling in their geometry, placements,
+          materials, styles and the spatial spine up to IfcProject.{" "}
+          <strong>hotswap()</strong> replaces one element&apos;s body mesh and garbage
+          collects only what that element uniquely owned. <strong>mutate()</strong>{" "}
+          batch-edits property values, names and placements, atomically.
+        </p>
+        <p>
+          The invariant underneath all three: subsetting every element of a file
+          reproduces that file byte for byte. Outside the records an operation actually
+          changes, the output is identical to the input — which is what makes a diff of
+          the result readable.
+        </p>
+      </Prose>
+
+      <div className="mt-8">
+        <Figures>
+          <Fig
+            value={int(write.subset.products_out)}
+            label={`products carved from ${write.subset.storey}`}
+            note={bytes(write.subset.bytes_out)}
+          />
+          <Fig
+            value={dec(write.subset.seconds, 2)}
+            unit="s"
+            label="to write the subset"
+          />
+          <Fig
+            value={dec(write.hotswap.seconds, 2)}
+            unit="s"
+            label="to swap one body mesh"
+            note={write.hotswap.class}
+          />
+          <Fig
+            value={String(write.mutate.ops)}
+            label="attribute edits, one emit"
+            note={`${write.mutate.placements_cloned} placements cloned`}
+          />
+        </Figures>
       </div>
-    </section>
+
+      <Command>{write.command}</Command>
+      <Note>
+        Schema-aware on the way out: IFC4 files get an IfcTriangulatedFaceSet, IFC2x3
+        files get an IfcShellBasedSurfaceModel, and either reopens in ifcopenshell with
+        no dangling references. Shared property sets and placements are copied on
+        write, so editing one wall does not quietly edit its siblings.
+      </Note>
+      <Stamp generated={write.generated} file="receipts/write.json" />
+    </Receipt>
   );
 }
 
-const DATA_SNIPPET = `import ifcfast
+/* ------------------------------------------------------------------ */
 
-m = ifcfast.open("model.ifc")
-
-# Long-format pandas tables, lazy.
-m.psets             # property sets
-m.quantities        # base quantities
-m.materials         # IfcMaterial / layer / constituent / profile
-m.classifications   # NS 3451 / Uniformat / OmniClass`;
-
-const GRAPH_SNIPPET = `# Spatial-relationship graph
-m.contained_in       # product → storey edges
-m.aggregates         # child → parent edges
-m.storey_building    # storey → building edges
-
-# Traversal helpers
-m.parent(g);   m.children(g)
-m.ancestors(g);   m.descendants(g)
-m.storey_of(g);   m.building_of(g)
-m.products_in(parent_g)`;
-
-const GEOMETRY_SNIPPET = `# Geometry — no CAD kernel on the hot path
-for mesh in m.meshes():          # per-product triangles
-    verts, faces = mesh.vertices, mesh.faces
-    # → trimesh.Trimesh(verts, faces), Open3D, ...
-
-# Area-weighted surface sampling (+ normals)
-pc = m.point_cloud(per_m2=1000)  # x,y,z,nx,ny,nz,guid,entity
-
-# Geometric quantities
-m.mesh_qto()                     # volume, area, orientation`;
-
-const WRITE_SNIPPET = `# Write — untouched bytes stay byte-for-byte
-m.subset([g1, g2], out_path="part.ifc")  # valid standalone IFC
-m.hotswap(guid, verts, tris)             # swap one body mesh
-
-m.mutate([                               # batch, atomic
-  {"op": "set_property", "guid": g,
-   "pset": "Pset_WallCommon",
-   "name": "FireRating", "value": "REI 60"},
-  {"op": "translate", "guid": g, "delta": [0, 0, 150.0]},
-])`;
-
-const CLASH_SNIPPET = `# Parquet substrate → clash facts
-ifcfast.bundle("model.ifc")        # → model.bundle/
-
-df = ifcfast.clash("model.bundle/")   # hard clashes
-df = ifcfast.clash("model.bundle/",
-                   tolerance_m=0.05)  # + clearance pairs
-
-# every row categorised, none silently dropped:
-# clash / insulation / connection / non_physical
-df["category"].value_counts()`;
-
-const PIPELINE_SNIPPET = `# One call to a viewer-ready binary
-m.to_gltf("model.glb")   # openings cut, GPU-instanced,
-                         # quantized, authored colours
-
-# Revision diff
-m.diff("model_v2.ifc")   # added / removed / changed
-
-# Same surface from a shell pipeline:
-#   ifcfast index model.ifc --json
-#   ifcfast schema model.ifc --json
-#   ifcfast bundle model.ifc`;
-
-function CodeShowcase() {
+function Agents() {
+  const config = JSON.stringify(mcp.config, null, 2);
   return (
-    <section className="border-b border-line">
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-24">
-        <div className="max-w-2xl mb-10">
-          <div className="text-xs uppercase tracking-wider text-muted mb-2">
-            The API
+    <Receipt
+      id="agents"
+      claim="It is an MCP server, so an agent needs no integration code."
+      source={`${mcp.tools} tools`}
+    >
+      <Prose>
+        <p>
+          Point Claude Desktop, Cursor, or any MCP client at ifcfast and it can open a
+          model, walk the spatial tree, and answer a property question in one round
+          trip. Every tool that returns rows caps its output at{" "}
+          {mcp.row_limit_default} by default, so a query against a large model returns
+          a page rather than the model.
+        </p>
+      </Prose>
+
+      <Command label="mcp config">{config}</Command>
+
+      <dl className="mt-7 grid grid-cols-1 gap-x-8 border-t border-rule sm:grid-cols-2">
+        {Object.entries(mcp.groups).map(([group, tools]) => (
+          <div key={group} className="border-b border-rule py-3">
+            <dt className="text-[0.8125rem] font-medium">{group}</dt>
+            <dd className="num mt-1 text-[0.75rem] leading-[1.7] break-words text-ink-2">
+              {tools.join("  ")}
+            </dd>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            Pandas and numpy out.
-          </h2>
-          <p className="mt-4 text-muted leading-relaxed">
-            Data layers are long-format DataFrames; geometry is numpy
-            arrays; summaries are JSON-friendly dicts; write calls hand
-            back STEP bytes or a stats dict. No{" "}
-            <span className="font-mono">ifcopenshell.open()</span> on the
-            hot path — <span className="font-mono">ifcopenshell</span> is an{" "}
-            <em>optional dev dependency</em>, used as the differential
-            oracle in the test suite.
-          </p>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <CodeCard kicker="Data layers" code={DATA_SNIPPET} />
-          <CodeCard kicker="Spatial graph" code={GRAPH_SNIPPET} />
-          <CodeCard kicker="Geometry" code={GEOMETRY_SNIPPET} />
-          <CodeCard kicker="Write" code={WRITE_SNIPPET} />
-          <CodeCard kicker="Substrate → clash" code={CLASH_SNIPPET} />
-          <CodeCard kicker="Viewer & diff" code={PIPELINE_SNIPPET} />
-        </div>
-      </div>
-    </section>
+        ))}
+      </dl>
+
+      <Note>
+        The server also publishes <span className="num">{mcp.resource}</span> — the full
+        agent guide, served from the installed wheel, so a client can read the API
+        contract instead of guessing at it. Its model cache holds {mcp.model_cache}{" "}
+        files and re-opens any that changed on disk between calls.
+      </Note>
+      <Stamp generated={mcp.generated} file="receipts/mcp.json" />
+    </Receipt>
   );
 }
 
-function CodeCard({ kicker, code }: { kicker: string; code: string }) {
+/* ------------------------------------------------------------------ */
+
+function Status() {
   return (
-    <div className="rounded-xl border border-line bg-card overflow-hidden">
-      <div className="px-5 py-2.5 border-b border-line text-xs font-mono text-muted flex items-center justify-between">
-        <span>{kicker}</span>
-        <CopyButton value={code} label={`Copy ${kicker} snippet`} className="-mr-1.5" />
-      </div>
-      <div className="p-5 overflow-x-auto scroll-thin">
-        <Code lang="python">{code}</Code>
-      </div>
-    </div>
+    <Receipt
+      id="status"
+      claim="Experimental. Check it against a kernel before you trust it."
+    >
+      <Prose>
+        <p>
+          ifcfast is under active development and is not validated against established
+          tools across the board. Geometric quantities are the highest-risk surface:
+          open shells, non-watertight surface models and complex booleans can be
+          silently wrong. Cross-check anything you are going to act on against
+          ifcopenshell or Solibri.
+        </p>
+        <p>
+          It complements ifcopenshell rather than replacing it — ifcopenshell owns the
+          geometry kernels, the schema and authoring. When you find a discrepancy, the
+          report worth sending names the file, the GUID, expected versus actual, and
+          which tool you compared against.
+        </p>
+      </Prose>
+
+      <Command shell>{"pip install ifcfast"}</Command>
+
+      <p className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[0.9375rem]">
+        <Link href={REPO}>Source on GitHub</Link>
+        <Link href={PYPI}>ifcfast on PyPI</Link>
+        <Link href={AGENTS}>Agent guide</Link>
+        <Link href={ISSUES}>Report a discrepancy</Link>
+      </p>
+    </Receipt>
   );
 }
+
+/* ------------------------------------------------------------------ */
 
 function Footer() {
   return (
-    <footer>
-      <div className="mx-auto max-w-6xl px-6 sm:px-8 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        <div className="flex items-center gap-2 text-sm">
-          <Mark />
-          <span className="font-semibold tracking-tight">ifcfast</span>
-          <span className="text-muted ml-2 text-xs">
-            MIT · open source · Rust core, Python API
-            <PypiVersion
-              prefix=" · "
-              suffix=" on PyPI"
-              className="hover:text-fg"
-            />
-          </span>
+    <footer className="border-t border-rule bg-paper-2">
+      <Shell>
+        <div className="space-y-3 py-10 text-[0.8125rem] leading-[1.65] text-ink-2">
+          <p className="max-w-[46rem]">
+            The building measured throughout this page is the Medical-Dental Clinic
+            sample dataset published by buildingSMART International, used under{" "}
+            <Link href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</Link>.
+            The First Floor of each discipline model was carved with{" "}
+            <span className="num">subset()</span> and exported with{" "}
+            <span className="num">to_gltf()</span> for the viewer; no geometry was
+            authored or edited. buildingSMART does not endorse ifcfast.
+          </p>
+          <p className="text-ink-3">
+            ifcfast is MIT licensed. Built by Edvard Granskogen Kjorstad.
+          </p>
         </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-          <a href={REPO} target="_blank" rel="noreferrer" className="hover:text-fg">GitHub</a>
-          <a href="https://pypi.org/project/ifcfast/" target="_blank" rel="noreferrer" className="hover:text-fg">PyPI</a>
-          <a href={`${REPO}/blob/main/AGENTS.md`} target="_blank" rel="noreferrer" className="hover:text-fg">AGENTS.md</a>
-          <a href={ISSUES} target="_blank" rel="noreferrer" className="hover:text-fg">Report an issue</a>
-        </div>
-      </div>
+      </Shell>
     </footer>
   );
 }
