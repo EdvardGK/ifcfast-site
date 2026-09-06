@@ -84,9 +84,18 @@ function Hero() {
     <section className="border-b border-rule">
       <Shell>
         <div className="pt-12 pb-14 sm:pt-20 sm:pb-20">
-          <h1 className="max-w-[16ch] text-[2rem] leading-[1.08] font-semibold tracking-[-0.03em] sm:max-w-[20ch] sm:text-[3.25rem]">
-            An IFC parser that shows its working.
-          </h1>
+          <div className="lg:flex lg:items-start lg:justify-between lg:gap-12">
+            <h1 className="max-w-[16ch] text-[2rem] leading-[1.08] font-semibold tracking-[-0.03em] sm:max-w-[20ch] sm:text-[3.25rem]">
+              An IFC parser that shows its working.
+            </h1>
+            <p className="num hidden shrink-0 text-right text-[0.6875rem] leading-[1.9] text-ink-3 lg:block">
+              buildingSMART Medical-Dental Clinic
+              <br />
+              {parse.models.length} discipline models, {arch.schema}
+              <br />
+              {parse.license}
+            </p>
+          </div>
 
           <div className="mt-6 max-w-[38rem] space-y-4 text-[1rem] leading-[1.6] text-ink-2 sm:text-[1.0625rem]">
             <p>
@@ -120,7 +129,7 @@ function Hero() {
 
           <Command shell>{"pip install ifcfast"}</Command>
           <Command>{parse.command}</Command>
-          <Stamp generated={parse.generated} file="receipts/parse.json" />
+          <Stamp generated={parse.generated} values={parse.values} file="receipts/parse.json" />
         </div>
       </Shell>
     </section>
@@ -235,7 +244,7 @@ function Speed() {
         records the project unit as parquet metadata and converts at read time, so the
         numbers above are comparable without anyone rescaling anything first.
       </Note>
-      <Stamp generated={parse.generated} file="receipts/parse.json" />
+      <Stamp generated={parse.generated} values={parse.values} file="receipts/parse.json" />
     </Receipt>
   );
 }
@@ -328,7 +337,7 @@ function Federation() {
         </p>
       </div>
 
-      <Stamp generated={clash.generated} file="receipts/clash.json" />
+      <Stamp generated={clash.generated} values={clash.values} file="receipts/clash.json" />
 
       <div className="mt-12 border-t border-rule pt-8">
         <h3 className="text-[1.125rem] font-semibold tracking-[-0.015em]">
@@ -374,7 +383,45 @@ function Quantities() {
         </p>
       </Prose>
 
-      <div className="mt-7">
+      {/* phone: the comparison, two columns, nothing hidden off-screen */}
+      <ul className="mt-7 border-t border-rule sm:hidden">
+        {rows.map((r) => {
+          const off = Math.abs(r.ratio - 1) > 0.01;
+          return (
+            <li
+              key={r.entity}
+              className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 border-b border-rule py-3"
+            >
+              <span className="text-[0.9375rem] font-medium">{r.entity}</span>
+              <span
+                className={`num text-[1.125rem] ${off ? "text-ink" : "text-ink-2"}`}
+              >
+                {dec(r.ratio, 4)}
+              </span>
+              <span className="num mt-1 text-[0.75rem] text-ink-3">
+                {int(r.n)} elements
+              </span>
+              <span className="mt-1 text-[0.6875rem] text-ink-3">ratio</span>
+              <span className="num col-span-2 mt-1.5 text-[0.75rem] text-ink-2">
+                ifcfast {m3(r.ifcfast_m3)} m³ &nbsp;/&nbsp; ifcopenshell{" "}
+                {m3(r.ifcopenshell_m3)} m³
+              </span>
+              {(r.open_shell > 0 || r.reference_exceeds_aabb > 0) && (
+                <span className="num col-span-2 mt-1 text-[0.75rem] text-ink-3">
+                  {r.open_shell > 0 && <>open shell {int(r.open_shell)}</>}
+                  {r.open_shell > 0 && r.reference_exceeds_aabb > 0 && <> &nbsp;/&nbsp; </>}
+                  {r.reference_exceeds_aabb > 0 && (
+                    <>ref &gt; aabb {int(r.reference_exceeds_aabb)}</>
+                  )}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* wider: the full receipt */}
+      <div className="mt-7 hidden sm:block">
         <Scroller minWidth="46rem">
           <table className="w-full border-collapse text-[0.875rem]">
             <thead>
@@ -427,7 +474,8 @@ function Quantities() {
       <Note>
         <strong className="font-medium text-ink">open shell</strong> counts elements
         whose mesh is not watertight.{" "}
-        <strong className="font-medium text-ink">ref &gt; aabb</strong> counts elements
+        <strong className="font-medium text-ink">ref &gt; aabb</strong>{" "}
+        counts elements
         where the ifcopenshell volume is larger than the element&apos;s own bounding box
         — a volume no solid inside that box can have. Both columns are published
         because a difference is not the same thing as an error, and the table is
@@ -444,7 +492,7 @@ function Quantities() {
         </Link>{" "}
         is that loop, written out.
       </Note>
-      <Stamp generated={qto.generated} file="receipts/qto.json" />
+      <Stamp generated={qto.generated} values={qto.values} file="receipts/qto.json" />
     </Receipt>
   );
 }
@@ -463,7 +511,8 @@ function Writing() {
           Three write primitives. <strong>subset()</strong> carves a valid standalone
           IFC of the elements you name, pulling in their geometry, placements,
           materials, styles and the spatial spine up to IfcProject.{" "}
-          <strong>hotswap()</strong> replaces one element&apos;s body mesh and garbage
+          <strong>hotswap()</strong>{" "}
+          replaces one element&apos;s body mesh and garbage
           collects only what that element uniquely owned. <strong>mutate()</strong>{" "}
           batch-edits property values, names and placements, atomically.
         </p>
@@ -508,7 +557,7 @@ function Writing() {
         no dangling references. Shared property sets and placements are copied on
         write, so editing one wall does not quietly edit its siblings.
       </Note>
-      <Stamp generated={write.generated} file="receipts/write.json" />
+      <Stamp generated={write.generated} values={write.values} file="receipts/write.json" />
     </Receipt>
   );
 }
@@ -552,7 +601,7 @@ function Agents() {
         contract instead of guessing at it. Its model cache holds {mcp.model_cache}{" "}
         files and re-opens any that changed on disk between calls.
       </Note>
-      <Stamp generated={mcp.generated} file="receipts/mcp.json" />
+      <Stamp generated={mcp.generated} values={mcp.values} file="receipts/mcp.json" />
     </Receipt>
   );
 }

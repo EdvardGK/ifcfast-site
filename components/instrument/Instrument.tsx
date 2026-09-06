@@ -21,7 +21,9 @@ import s from "./instrument.module.css";
 const nf = new Intl.NumberFormat("en-US");
 const int = (n: number) => nf.format(Math.round(n)).replace(/,/g, " ");
 const dec = (n: number, d: number) =>
-  n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  n
+    .toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d })
+    .replace(/,/g, " ");
 const short = (entity: string) => entity.replace(/^Ifc/, "");
 const mb = (n: number) => `${(n / 1e6).toFixed(1)} MB`;
 const HEAVY_BYTES = 5e6;
@@ -134,6 +136,7 @@ export function Instrument({ data, initialModel }: InstrumentProps) {
   }, [data.materials, disciplines, entries, inDiscipline]);
   const matMax = Math.max(1, ...materialRows.map((m) => m.n));
 
+  const showModel = disciplines.size !== 1;
   const sel = selected ? data.products[selected] : null;
   const onPick = useCallback((guid: string | null) => setSelected(guid), []);
   const onModelState = useCallback(
@@ -345,10 +348,11 @@ export function Instrument({ data, initialModel }: InstrumentProps) {
                     setSelected(null);
                     setCls(on ? null : c.key);
                   }}
+                  title={`${c.entity} — ${int(c.n)} products, ${dec(c.v, 1)} m³`}
                 >
                   <span className={s.rowName}>
                     {short(c.entity)}
-                    <span className={s.rowSub}>{c.model}</span>
+                    {showModel && <span className={s.rowSub}>{c.model}</span>}
                   </span>
                   <span className={s.track}>
                     <span
@@ -357,7 +361,6 @@ export function Instrument({ data, initialModel }: InstrumentProps) {
                     />
                   </span>
                   <span className={s.rowN}>{int(c.n)}</span>
-                  <span className={s.rowV}>{dec(c.v, 1)}</span>
                 </button>
               );
             })}
@@ -423,7 +426,7 @@ export function Instrument({ data, initialModel }: InstrumentProps) {
                 >
                   <span className={s.rowName}>
                     {short(p.entity)}
-                    <span className={s.rowSub}>{p.model}</span>
+                    {showModel && <span className={s.rowSub}>{p.model}</span>}
                   </span>
                   <span className={s.rowV}>{dec(p.volume_m3, 3)}</span>
                   <span

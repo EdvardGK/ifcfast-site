@@ -19,7 +19,7 @@
   --line-2: #2e343c;
   --fg: #e7e8ea;
   --fg-2: #9aa0a8;
-  --fg-3: #71777f;
+  --fg-3: #7d838b;
   --steel: #4a515a;
   --steel-2: #626a74;
   --acc: #a794ff;
@@ -185,14 +185,19 @@
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  background: var(--line);
-  padding: 1px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--sheet-2);
+  border-top: 1px solid var(--line);
+}
+@media (min-width: 40rem) {
+  .chips {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
 }
 .chip {
-  flex: 1 1 7.5rem;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -202,11 +207,16 @@
   background: var(--sheet-2);
   border: 0;
   border-top: 2px solid transparent;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   color: var(--fg-3);
   font-family: inherit;
   font-size: 0.75rem;
   text-align: left;
   cursor: pointer;
+}
+.chip:last-child {
+  border-right: 0;
 }
 .chip:hover {
   color: var(--fg-2);
@@ -496,13 +506,32 @@
 }
 
 .storey .row {
-  grid-template-columns: 3.2rem minmax(0, 1fr) 26% 3.2rem;
+  grid-template-columns: 3.1rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    "elev name n"
+    "bar  bar  bar";
+  row-gap: 0.3rem;
+  padding-block: 0.5rem;
+}
+.storey .rowElev {
+  grid-area: elev;
+}
+.storey .rowName {
+  grid-area: name;
+}
+.storey .rowN {
+  grid-area: n;
+}
+.storey .track {
+  grid-area: bar;
 }
 .dist .row {
-  grid-template-columns: minmax(0, 1fr) 24% 2.8rem 3.2rem;
+  grid-template-columns: minmax(0, 1fr) 22% 2.6rem;
+  gap: 0.4rem;
 }
 .mat .row {
-  grid-template-columns: minmax(0, 1fr) 26% 2.8rem;
+  grid-template-columns: minmax(0, 1fr) 20% 2.6rem;
+  gap: 0.4rem;
 }
 .reg .row {
   grid-template-columns: minmax(0, 1fr) 4rem 2.8rem;

@@ -58,7 +58,7 @@ export function InstrumentSection({ src }: { src: string }) {
         <Instrument data={data} initialModel="Architectural" />
       ) : (
         <div className="flex min-h-[18rem] items-center justify-center border border-rule bg-graphite px-6 text-center">
-          <p className="cmd text-[0.75rem] text-white/45">
+          <p className="cmd text-[0.75rem] text-white/70">
             {failed
               ? "the slice index could not be loaded"
               : "reading the federated slice…"}

@@ -27,12 +27,12 @@ export function Receipt({
     <section id={id} className="border-t border-rule">
       <Shell>
         <div className="py-12 sm:py-20">
-          <header className="mb-7 sm:mb-9">
-            <h2 className="text-[1.5rem] leading-[1.2] sm:text-[2rem] font-semibold tracking-[-0.022em] max-w-[22ch]">
+          <header className="mb-7 sm:mb-9 lg:flex lg:items-baseline lg:justify-between lg:gap-10">
+            <h2 className="max-w-[22ch] text-[1.5rem] leading-[1.2] font-semibold tracking-[-0.022em] sm:text-[2rem]">
               {claim}
             </h2>
             {source && (
-              <p className="num mt-3 text-[0.7rem] text-ink-3 uppercase tracking-[0.08em]">
+              <p className="num mt-3 text-[0.7rem] tracking-[0.06em] text-ink-3 lg:mt-0 lg:shrink-0 lg:text-right">
                 {source}
               </p>
             )}
@@ -98,7 +98,7 @@ export function Command({
   label?: string;
 }) {
   return (
-    <div className="mt-6 border-l-2 border-accent bg-paper-2">
+    <div className="mt-6 max-w-[46rem] border-l-2 border-accent bg-paper-2">
       {label && (
         <div className="num border-b border-rule px-3 pt-2 pb-1.5 text-[0.6875rem] uppercase tracking-[0.08em] text-ink-3">
           {label}
@@ -137,17 +137,27 @@ export function Note({ children }: { children: ReactNode }) {
   );
 }
 
-/** Provenance line: which receipt file, and whether it is current. */
-export function Stamp({ generated, file }: { generated: string; file: string }) {
+/** Provenance line: which receipt file, and how much to trust it yet. */
+export function Stamp({
+  generated,
+  file,
+  values,
+}: {
+  generated: string;
+  file: string;
+  values: "measured" | "example";
+}) {
   const pending = generated === "PLACEHOLDER";
   return (
     <p className="num mt-6 text-[0.6875rem] text-ink-3">
       {file}
-      <span className="mx-2 text-rule-2">|</span>
-      {pending ? (
-        <span className="text-ink-2">example values, awaiting regeneration</span>
-      ) : (
+      <span className="mx-2 text-rule-2">/</span>
+      {!pending ? (
         <>generated {generated}</>
+      ) : values === "measured" ? (
+        <span className="text-ink-2">measured, date stamp pending</span>
+      ) : (
+        <span className="text-ink-2">example values, pending regeneration</span>
       )}
     </p>
   );

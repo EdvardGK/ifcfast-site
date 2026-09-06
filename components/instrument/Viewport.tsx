@@ -63,6 +63,10 @@ export function Viewport({
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<SceneApi | null>(null);
   const loadedRef = useRef<Set<string>>(new Set());
+  // `active` flips once and drives the build; `status` is display only, so
+  // a status change can never tear down the scene it describes.
+  const [active, setActive] = useState(false);
+  const [ready, setReady] = useState(false);
   const [status, setStatus] = useState<Status>("poster");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -77,12 +81,13 @@ export function Viewport({
   stateRef.current = onModelState;
 
   const activate = useCallback(() => {
-    setStatus((cur) => (cur === "poster" ? "starting" : cur));
+    setActive(true);
+    setStatus("starting");
   }, []);
 
   /* -------- build the scene once the reader asks for it -------- */
   useEffect(() => {
-    if (status !== "starting") return;
+    if (!active) return;
     let cancelled = false;
     let dispose: (() => void) | undefined;
 
@@ -305,6 +310,7 @@ export function Viewport({
       };
       sceneRef.current = api;
       dispose = api.dispose;
+      setReady(true);
       setStatus("live");
     })().catch(() => {
       if (!cancelled) {
@@ -318,12 +324,13 @@ export function Viewport({
       dispose?.();
       sceneRef.current = null;
       loadedRef.current = new Set();
+      setReady(false);
     };
-  }, [status]);
+  }, [active]);
 
   /* -------- load and show the enabled disciplines -------- */
   useEffect(() => {
-    if (status !== "live") return;
+    if (!ready) return;
     const scene = sceneRef.current;
     if (!scene) return;
     let cancelled = false;
@@ -346,26 +353,29 @@ export function Viewport({
       setBusy(null);
       scene.setVisible(enabled);
       scene.apply(filterRef.current, enabled);
-      if (attempted && loadedRef.current.size === 0) {
+      if (!attempted) return;
+      if (loadedRef.current.size === 0) {
         setStatus("pending");
         setMessage("the discipline models are not published yet");
+      } else {
+        setStatus("live");
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [status, models, enabled]);
+  }, [ready, models, enabled]);
 
   /* -------- push filter changes into the live scene -------- */
   useEffect(() => {
-    if (status !== "live") return;
+    if (!ready) return;
     sceneRef.current?.apply(filter, enabled);
-  }, [status, filter, enabled]);
+  }, [ready, filter, enabled]);
 
   const idle = status === "poster";
   const blocked = status === "pending" || status === "error";
-  const loadingNow = busy !== null && status === "live";
+  const loadingNow = busy !== null;
   const overlay = idle || blocked || status === "starting" || loadingNow;
 
   return (
@@ -375,7 +385,7 @@ export function Viewport({
         className={s.canvasHost}
         // Before activation the page owns vertical gestures; after it,
         // OrbitControls does.
-        style={{ touchAction: status === "live" ? "none" : "pan-y" }}
+        style={{ touchAction: ready ? "none" : "pan-y" }}
         aria-hidden={idle || blocked}
       />
 
@@ -390,7 +400,7 @@ export function Viewport({
             <button type="button" className={s.loadBtn} onClick={activate}>
               Load the model
               <span className={s.loadHint}>
-                {models[0]?.name ?? "First discipline"} first, the rest on request
+                {models[0]?.name ?? "one discipline"} first
               </span>
             </button>
           )}

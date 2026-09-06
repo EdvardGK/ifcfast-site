@@ -16,7 +16,7 @@
   --color-paper-3: #eceef1;
   --color-ink: #14161a;
   --color-ink-2: #4b505a;
-  --color-ink-3: #6c727c;
+  --color-ink-3: #666c76;
   --color-rule: #dcdee3;
   --color-rule-2: #b3b8c0;
   --color-accent: #4a2be0;
@@ -86,9 +86,14 @@ body {
   top: 0;
   right: 0;
   bottom: 7px;
-  width: 2.25rem;
+  width: 3rem;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #ffffff 85%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 55%,
+    #ffffff 100%
+  );
 }
 
 :where(a, button, summary, [tabindex]):focus-visible {

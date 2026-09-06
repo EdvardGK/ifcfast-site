@@ -29,6 +29,7 @@ export type ParseModel = {
 
 export const parse = parseJson as unknown as {
   generated: string;
+  values: "measured" | "example";
   ifcfast_version: string;
   machine: string;
   project: string;
@@ -42,6 +43,7 @@ export const parse = parseJson as unknown as {
 
 export const qto = qtoJson as unknown as {
   generated: string;
+  values: "measured" | "example";
   ifcfast_version: string;
   model: string;
   mesh_qto_s: number;
@@ -62,6 +64,7 @@ export const qto = qtoJson as unknown as {
 
 export const clash = clashJson as unknown as {
   generated: string;
+  values: "measured" | "example";
   federate_s: number;
   clash_s: number;
   tolerance_m: number;
@@ -93,6 +96,7 @@ export const clash = clashJson as unknown as {
 
 export const write = writeJson as unknown as {
   generated: string;
+  values: "measured" | "example";
   model: string;
   subset: {
     guids: number;
@@ -114,6 +118,7 @@ export const write = writeJson as unknown as {
 
 export const mcp = mcpJson as unknown as {
   generated: string;
+  values: "measured" | "example";
   tools: number;
   groups: Record<string, string[]>;
   resource: string;

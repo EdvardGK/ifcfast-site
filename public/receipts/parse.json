@@ -1,5 +1,6 @@
 {
   "generated": "PLACEHOLDER",
+  "values": "measured",
   "ifcfast_version": "0.4.42",
   "machine": "PLACEHOLDER",
   "project": "buildingSMART Medical-Dental Clinic",
@@ -18,11 +19,26 @@
       "open_warm_s": null,
       "bundle_s": 2.12,
       "top_types": [
-        ["IfcWallStandardCase", 1065],
-        ["IfcMember", 534],
-        ["IfcOpeningElement", 403],
-        ["IfcSpace", 269],
-        ["IfcDoor", 254]
+        [
+          "IfcWallStandardCase",
+          1065
+        ],
+        [
+          "IfcMember",
+          534
+        ],
+        [
+          "IfcOpeningElement",
+          403
+        ],
+        [
+          "IfcSpace",
+          269
+        ],
+        [
+          "IfcDoor",
+          254
+        ]
       ]
     },
     {
@@ -36,11 +52,20 @@
       "unit": "m",
       "open_cold_s": 0.146,
       "open_warm_s": null,
-      "bundle_s": 1.90,
+      "bundle_s": 1.9,
       "top_types": [
-        ["IfcBeam", 738],
-        ["IfcColumn", 195],
-        ["IfcFooting", 96]
+        [
+          "IfcBeam",
+          738
+        ],
+        [
+          "IfcColumn",
+          195
+        ],
+        [
+          "IfcFooting",
+          96
+        ]
       ]
     },
     {
@@ -56,10 +81,22 @@
       "open_warm_s": null,
       "bundle_s": 12.17,
       "top_types": [
-        ["IfcDistributionPort", 7390],
-        ["IfcFlowFitting", 1590],
-        ["IfcFlowSegment", 1548],
-        ["IfcFlowTerminal", 440]
+        [
+          "IfcDistributionPort",
+          7390
+        ],
+        [
+          "IfcFlowFitting",
+          1590
+        ],
+        [
+          "IfcFlowSegment",
+          1548
+        ],
+        [
+          "IfcFlowTerminal",
+          440
+        ]
       ]
     },
     {
@@ -75,9 +112,18 @@
       "open_warm_s": null,
       "bundle_s": 20.87,
       "top_types": [
-        ["IfcDistributionPort", 13058],
-        ["IfcFlowFitting", 3318],
-        ["IfcFlowSegment", 2893]
+        [
+          "IfcDistributionPort",
+          13058
+        ],
+        [
+          "IfcFlowFitting",
+          3318
+        ],
+        [
+          "IfcFlowSegment",
+          2893
+        ]
       ]
     },
     {
@@ -93,8 +139,14 @@
       "open_warm_s": null,
       "bundle_s": 3.16,
       "top_types": [
-        ["IfcFlowTerminal", 2081],
-        ["IfcSpace", 266]
+        [
+          "IfcFlowTerminal",
+          2081
+        ],
+        [
+          "IfcSpace",
+          266
+        ]
       ]
     }
   ],
