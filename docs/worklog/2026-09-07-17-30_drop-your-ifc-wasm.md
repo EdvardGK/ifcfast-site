@@ -110,3 +110,9 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   4.9 s, worst frame after done 983 → 33 ms, 60 fps during the stream.
   Note: the box was swapping (3/3 GB) during these runs — two Chrome
   instances with RIV loaded + an agent worktree; cleaned up after.
+- Header band (`0b2550e`, sonnet agent): `--hud-h` 96px desktop / 72px
+  phone; the instrument grid is `calc(100svh - var(--hud-h))` under a
+  graphite band so the fixed brand + install tab never overlap the title
+  block; scroll-end still lands exactly (measured grid top 96, bottom
+  900 at 1440×900). Film badge retires on the instrument (overlapped
+  the storey stack).
