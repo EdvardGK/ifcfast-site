@@ -238,7 +238,9 @@ export function StreamViewer({
           else hi = mid - 1;
         }
         const m = gpu.meta[lo];
-        if (!gh && GHOST_ENTITIES.has(m.entity.toLowerCase())) continue; // hidden outright
+        // spaces / openings are context, never a pick target — the translucent room
+        // volume around everything would otherwise win every click
+        if (GHOST_ENTITIES.has(m.entity.toLowerCase())) continue;
         // With a filter active, the first product INSIDE the filter along the
         // ray wins — ghosted ones in front are see-through and must not steal
         // the click. Without a filter, the nearest product wins.

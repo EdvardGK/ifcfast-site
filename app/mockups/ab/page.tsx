@@ -1943,8 +1943,8 @@ function InstrumentViewport({
     }
     const guidKey = mat.name.includes("#") ? mat.name.slice(0, mat.name.indexOf("#")) : mat.name;
     const meta = guidLookup.get(guidKey);
-    if (!meta) {
-      onPick(null);
+    if (!meta || GHOST_ENTITIES.has(meta.entity.toLowerCase())) {
+      onPick(null); // unknown, or a space / opening (context, never a pick target)
       return;
     }
     onPick({ guid: guidKey, entity: meta.entity, type_name: meta.type_name ?? null, storey_guid: meta.storey_guid });
