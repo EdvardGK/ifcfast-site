@@ -340,7 +340,8 @@ export default function SceneInstrumentMockup() {
   // derived, real numbers
   const totalVol = qto ? qto.rows.reduce((s, r) => s + (r.volume_m3 ?? 0), 0) : 0;
   const totalArea = qto ? qto.rows.reduce((s, r) => s + (r.area_m2 ?? 0), 0) : 0;
-  const parseMs = summary ? summary.parse_seconds * 1000 : 0;
+  // film chapters + HUD badge narrate the Duplex, never the dropped model
+  const parseMs = sampleSummary ? sampleSummary.parse_seconds * 1000 : 0;
 
   // curated specimen set for chapter 02 — real glbs, one representative per
   // entity (highest count), skipping degenerate/opening geometry per brief.
@@ -1711,7 +1712,7 @@ function InstrumentChapter({
                         style={{ width: `${(t.count / 50) * 100}%` }}
                       />
                     </span>
-                    <span className="reg-bytes ra">{(t.bytes / 1024).toFixed(1)}k</span>
+                    <span className="reg-bytes ra">{t.bytes ? `${(t.bytes / 1024).toFixed(1)}k` : "—"}</span>
                   </div>
                 );
               })}
