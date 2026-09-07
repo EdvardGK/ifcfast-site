@@ -40,6 +40,7 @@ import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
 import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
+import EntityTreemap from "@/components/entity-treemap";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -1428,7 +1429,6 @@ function InstrumentChapter({
       }))
       .sort((a, b) => b.count - a.count);
   }, [scoped, qtoByEntity]);
-  const distMax = dist.reduce((mx, d) => Math.max(mx, d.count), 1);
 
   /* ── materials within scope ── */
   const materials = useMemo(() => {
@@ -1713,41 +1713,6 @@ function InstrumentChapter({
             />
           </section>
 
-          {/* ─────────── ENTITY DISTRIBUTION ─────────── */}
-          <section className="cell dist" style={{ gridArea: "dist" }}>
-            <InstHead label="ENTITY DISTRIBUTION" meta={`${dist.length} CLASSES`} />
-            <div className="scrolly bars">
-              {dist.map((d) => {
-                const hot = hotEntity === d.entity || entitySel === d.entity;
-                return (
-                  <div
-                    key={d.entity}
-                    className={`bar-row${hot ? " hot" : ""}${entitySel === d.entity ? " pin" : ""}`}
-                    onMouseEnter={() => setHotEntity(d.entity)}
-                    onMouseLeave={() => setHotEntity(null)}
-                    onClick={() => {
-                      setTypeSel(null);
-                      setEntitySel(entitySel === d.entity ? null : d.entity);
-                    }}
-                  >
-                    <span className="bar-name">
-                      {short(d.entity)}
-                      {d.noMesh && <span className="bar-flag">NO MESH</span>}
-                    </span>
-                    <span className="bar-track">
-                      <span
-                        className="bar-fill"
-                        style={{ width: `${(d.count / distMax) * 100}%` }}
-                      />
-                    </span>
-                    <span className="bar-n">{d.count}</span>
-                    <span className="bar-v">{fmt(d.m3, 1)}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
           {/* ─────────── MATERIALS ─────────── */}
           <section className="cell mat" style={{ gridArea: "mat" }}>
             <InstHead label="MATERIALS" meta={`${materials.length} DISTINCT`} />
@@ -1770,6 +1735,22 @@ function InstrumentChapter({
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* ─────────── ENTITY DISTRIBUTION (treemap, folded under MATERIALS) ─────────── */}
+          <section className="cell dist" style={{ gridArea: "dist" }}>
+            <InstHead label="ENTITY DISTRIBUTION" meta={`${dist.length} CLASSES`} />
+            <EntityTreemap
+              data={dist}
+              hot={hotEntity}
+              selected={entitySel}
+              onHover={setHotEntity}
+              onSelect={(entity) => {
+                setTypeSel(null);
+                setEntitySel(entitySel === entity ? null : entity);
+              }}
+              label={short}
+            />
           </section>
 
           {/* ─────────── TYPE REGISTER ─────────── */}
@@ -2532,7 +2513,7 @@ function StyleBlock() {
   display:grid;
   border-top:1px solid var(--ln); border-left:1px solid var(--ln);
   grid-template-columns:1fr;
-  grid-template-areas:"title" "quant" "storey" "view" "dist" "mat" "reg";
+  grid-template-areas:"title" "quant" "storey" "view" "mat" "dist" "reg";
 }
 #inst-b .cell{
   border-right:1px solid var(--ln); border-bottom:1px solid var(--ln);
@@ -2541,32 +2522,35 @@ function StyleBlock() {
   position:relative;
 }
 #inst-b .view{ min-height:280px; }
-#inst-b .storey,#inst-b .dist,#inst-b .mat{ min-height:180px; }
+#inst-b .storey,#inst-b .mat{ min-height:180px; }
+#inst-b .dist{ min-height:240px; }
 #inst-b .reg{ min-height:260px; }
 
-/* desktop — zero-scroll instrument */
+/* desktop — zero-scroll instrument.
+   MATERIALS sits on top of the ENTITY DISTRIBUTION treemap in one narrow
+   column; the width that column gives up goes to the viewport. */
 @media(min-width:1200px){
   #inst-b.inst-inflow{ height:100svh; min-height:100svh; overflow:hidden; }
   #inst-b .grid{
     height:100dvh; min-height:0;
-    grid-template-columns:216px minmax(0,1.15fr) minmax(0,1fr) 302px;
-    grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);
+    grid-template-columns:216px minmax(0,1.6fr) minmax(0,0.72fr) 302px;
+    grid-template-rows:auto minmax(0,0.85fr) minmax(0,1.15fr);
     grid-template-areas:
       "title  title  quant  quant"
-      "storey view   dist   reg"
-      "storey view   mat    reg";
+      "storey view   mat    reg"
+      "storey view   dist   reg";
   }
   #inst-b .view,#inst-b .storey,#inst-b .dist,#inst-b .mat,#inst-b .reg{ min-height:0; }
 }
-/* wide — gain a column, split dist/mat, no stretch */
+/* wide — same stack, more room for both the viewport and the treemap */
 @media(min-width:1920px){
   #inst-b .grid{
-    grid-template-columns:248px minmax(0,1.25fr) minmax(0,0.92fr) minmax(0,0.92fr) 360px;
-    grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);
+    grid-template-columns:248px minmax(0,1.7fr) minmax(0,0.78fr) 360px;
+    grid-template-rows:auto minmax(0,0.8fr) minmax(0,1.2fr);
     grid-template-areas:
-      "title  title  title  quant  quant"
-      "storey view   dist   mat    reg"
-      "storey view   dist   mat    reg";
+      "title  title  quant  quant"
+      "storey view   mat    reg"
+      "storey view   dist   reg";
   }
 }
 
