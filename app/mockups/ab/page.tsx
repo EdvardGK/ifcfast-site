@@ -541,8 +541,8 @@ export default function SceneInstrumentMockup() {
                 >
                   <Code size={16} /> GitHub
                 </a>
-                <a className="btn ghost" href="/">
-                  <ArrowLeft size={16} /> back to ifcfast.com
+                <a className="btn ghost" href="/receipts">
+                  the receipts <ArrowLeft size={16} style={{ transform: "rotate(180deg)" }} />
                 </a>
               </div>
             </div>
