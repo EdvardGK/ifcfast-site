@@ -76,3 +76,24 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   through the model centre often hits nothing; that is not a bug.
   Note: a stale canvas rect after the filter button appears shifted a
   synthetic click; real clicks read the live rect.
+
+## Late evening — two agents in parallel (Fable coordinating, per Ed)
+- **Perf (opus, main tree, `01a3eb3`)**: the 20 s RIV was NOT the
+  normals — `graphJson()` called before the mesh pass to build the
+  "indexed" message cost 6.6–8.8 s (eager graph build the mesh pass
+  repeats); after the stream it costs 342 ms. Graph now built once,
+  after the stream; normals dropped in favour of dFdx/dFdy flat
+  shading; Uint8 colours; converging camera fit; root matrix baked once.
+  RIV 20.3 → 10.8 s wall, first triangle 13.2 → 6.1 s, 60 fps streaming;
+  Clinic ARK 2.43 → 1.44 s. Open: panels empty while streaming (~4 s on
+  RIV, graph lands at "done"); ~830 ms React hitch rendering 35 789 rows
+  after "done".
+- **Treemap (opus, isolated worktree `agent/entity-treemap`, `db76567`,
+  merged `24fb9c5`)**: MATERIALS on top, entity distribution as a
+  d3-hierarchy squarified treemap under it; column 0.72fr, viewport
+  1.6fr (+132 px at 1440); hover/click/keyboard like the bars.
+- Coordinator: spaces / openings are never pick targets on either
+  viewer (the translucent room volume won every click — a big part of
+  "picks random things").
+- Ed's rule, recorded in memory: Fable plans and coordinates, opus /
+  sonnet write the code.
