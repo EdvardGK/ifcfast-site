@@ -15,7 +15,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const N = 1600; // points in the cloud — fixed for the whole run
+const N = 900; // points in the cloud — fixed for the whole run (smooth > dense)
 const HOLD = 1.1; // s the solid rests
 const DISSOLVE = 0.7; // s solid → blob (points explode radially outward)
 const DRIFT = 0.5; // s the blob hangs and breathes
@@ -71,9 +71,11 @@ function surfacePoints(geom: THREE.BufferGeometry, seed: number): Float32Array {
  * `to` (grid-hashed, expanding search). Returns `to` reordered so index i
  * is where point i travels — short paths, no scramble. */
 function assign(from: Float32Array, to: Float32Array, seed: number): Float32Array {
-  const cell = 0.18;
-  const key = (x: number, y: number, z: number) => `${Math.floor(x / cell)},${Math.floor(y / cell)},${Math.floor(z / cell)}`;
-  const grid = new Map<string, number[]>();
+  const cell = 0.2;
+  const OFF = 64; // grid coordinates are offset into [0, 128) and packed into one integer key
+  const key = (x: number, y: number, z: number) =>
+    ((Math.floor(x / cell) + OFF) << 14) | ((Math.floor(y / cell) + OFF) << 7) | (Math.floor(z / cell) + OFF);
+  const grid = new Map<number, number[]>();
   for (let j = 0; j < N; j++) {
     const k = key(to[3 * j], to[3 * j + 1], to[3 * j + 2]);
     (grid.get(k) ?? grid.set(k, []).get(k)!).push(j);
@@ -92,7 +94,7 @@ function assign(from: Float32Array, to: Float32Array, seed: number): Float32Arra
     for (let r = 0; r <= 12 && best < 0; r++) {
       for (let dx = -r; dx <= r; dx++) for (let dy = -r; dy <= r; dy++) for (let dz = -r; dz <= r; dz++) {
         if (Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz)) !== r) continue; // shell only
-        const bucket = grid.get(`${cx + dx},${cy + dy},${cz + dz}`);
+        const bucket = grid.get(((cx + dx + OFF) << 14) | ((cy + dy + OFF) << 7) | (cz + dz + OFF));
         if (!bucket) continue;
         for (const j of bucket) {
           if (claimed[j]) continue;
@@ -122,7 +124,7 @@ export function LoadingShapes({ caption }: { caption?: string }) {
     let raf = 0;
     let disposed = false;
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); // smooth > crisp
     renderer.setClearColor(0x000000, 0);
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
@@ -142,18 +144,18 @@ export function LoadingShapes({ caption }: { caption?: string }) {
     scene.add(keyLight);
 
     const geoms = [
-      new THREE.SphereGeometry(1.0, 48, 32),
+      new THREE.SphereGeometry(1.0, 32, 20),
       new THREE.ConeGeometry(1.15, 1.7, 4, 1), // square pyramid
       new THREE.TetrahedronGeometry(1.25),
-      new THREE.TorusGeometry(0.8, 0.32, 24, 64),
+      new THREE.TorusGeometry(0.8, 0.32, 16, 40),
       new THREE.BoxGeometry(1.45, 1.45, 1.45),
-      new THREE.ConeGeometry(0.95, 1.8, 40, 1),
+      new THREE.ConeGeometry(0.95, 1.8, 28, 1),
     ];
     const samples = geoms.map((g, i) => surfacePoints(g, 700 + i));
     const solids = geoms.map((g) => {
       const m = new THREE.Mesh(
         g,
-        new THREE.MeshStandardMaterial({ color: 0xe9e7e1, roughness: 0.7, metalness: 0.05, transparent: true, opacity: 0, flatShading: true }),
+        new THREE.MeshLambertMaterial({ color: 0xe9e7e1, transparent: true, opacity: 0, flatShading: true }),
       );
       m.visible = false;
       return m;
@@ -162,7 +164,6 @@ export function LoadingShapes({ caption }: { caption?: string }) {
     // the one cloud: current resting positions, and the assigned targets for the flight in progress
     let rest: Float32Array = new Float32Array(samples[0]);
     let target: Float32Array = rest;
-    let targetFor = -1; // shape index the current `target` was assigned for
     const pointPos = new Float32Array(rest);
     const pointGeom = new THREE.BufferGeometry();
     pointGeom.setAttribute("position", new THREE.BufferAttribute(pointPos, 3));
@@ -207,6 +208,19 @@ export function LoadingShapes({ caption }: { caption?: string }) {
       }
     };
     buildBlob(rest);
+    // Precompute one full lap — rest / blob / target per shape — so no
+    // frame ever pays for an assignment. The lap repeats identically.
+    const lap: { rest: Float32Array; blob: Float32Array; target: Float32Array }[] = [];
+    {
+      let r: Float32Array = new Float32Array(samples[0]);
+      for (let k = 0; k < geoms.length; k++) {
+        buildBlob(r);
+        const b = new Float32Array(blob);
+        const tgt = assign(b, samples[(k + 1) % geoms.length], 1000 + k);
+        lap.push({ rest: r, blob: b, target: tgt });
+        r = tgt;
+      }
+    }
     const smooth = (x: number) => x * x * (3 - 2 * x);
     const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
@@ -220,15 +234,11 @@ export function LoadingShapes({ caption }: { caption?: string }) {
       const next = (k + 1) % geoms.length;
       const ph = t % PERIOD;
       if (cycle !== lastCycle) {
-        if (lastCycle >= 0) rest = target; // the shape we gathered into is where we rest now
         lastCycle = cycle;
-        targetFor = -1;
-        buildBlob(rest);
-      }
-      if (targetFor !== next) {
-        // gather from the BLOB (not the old shape) — nearest free spot on the next shape
-        target = assign(blob, samples[next], 1000 + cycle);
-        targetFor = next;
+        const L = lap[k];
+        rest = L.rest;
+        target = L.target;
+        blob.set(L.blob);
       }
 
       // e: 0 = on the shape, 1 = in the blob; g: 0 = blob, 1 = next shape
@@ -272,7 +282,7 @@ export function LoadingShapes({ caption }: { caption?: string }) {
       solids.forEach((sMesh, i) => {
         const on = i === solidIdx && solidOpacity > 0.01;
         sMesh.visible = on;
-        if (on) (sMesh.material as THREE.MeshStandardMaterial).opacity = solidOpacity;
+        if (on) (sMesh.material as THREE.MeshLambertMaterial).opacity = solidOpacity;
       });
       pivot.rotation.y = t * 0.35;
       pivot.rotation.x = -0.28 + Math.sin(t * 0.25) * 0.12;

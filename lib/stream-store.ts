@@ -19,7 +19,7 @@ export type ProductMeta = {
   rgba: [number, number, number, number];
 };
 
-export type Batch = { meta: ProductMeta[]; positions: Float32Array; indices: Uint32Array };
+export type Batch = { meta: ProductMeta[]; positions: Float32Array; indices: Uint32Array; normals?: Float32Array };
 export type Progress = { seen: number; meshed: number; total: number };
 
 export class StreamStore {

@@ -1173,6 +1173,21 @@ function Terminal({ show }: { show: boolean }) {
 /* ================================================================== */
 /* CopyPip — the pip install line with copy button                     */
 /* ================================================================== */
+/** Progress while geometry streams — polls the store 5×/s so the rest of
+ * the instrument never re-renders per batch. */
+function StreamingPill({ name, store }: { name: string; store: StreamStore | null }) {
+  const [p, setP] = useState(store?.progress ?? { seen: 0, meshed: 0, total: 0 });
+  useEffect(() => {
+    const iv = setInterval(() => store && setP({ ...store.progress }), 200);
+    return () => clearInterval(iv);
+  }, [store]);
+  return (
+    <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded">
+      <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {name}
+    </span>
+  );
+}
+
 /* ================================================================== */
 /* DropPill — "drop your IFC, it stays in this tab" (GH #172)          */
 /* ================================================================== */
@@ -1205,12 +1220,7 @@ function DropPill({
     );
   }
   if (state.status === "ready" && state.model.streaming) {
-    const p = state.progress;
-    return (
-      <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded">
-        <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {state.model.name}
-      </span>
-    );
+    return <StreamingPill name={state.model.name} store={state.model.store} />;
   }
   if (state.status === "ready") {
     const m = state.model;

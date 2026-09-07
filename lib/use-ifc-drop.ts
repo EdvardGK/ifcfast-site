@@ -39,7 +39,6 @@ export function useIfcDrop() {
   const [state, setState] = useState<DropState>({ status: "idle" });
   const workerRef = useRef<Worker | null>(null);
   const urlRef = useRef<string | null>(null);
-  const progressTick = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -102,15 +101,10 @@ export function useIfcDrop() {
           return;
         }
         case "batch": {
-          const meta = JSON.parse(d.meta);
-          const progress: Progress = JSON.parse(d.progress);
-          store.push({ meta, positions: d.positions, indices: d.indices }, progress);
-          // throttle React to ~8 progress updates a second
-          const now = performance.now();
-          if (model && now - progressTick.current > 120) {
-            progressTick.current = now;
-            setState({ status: "ready", model, progress });
-          }
+          // no React state here: the viewer subscribes to the store directly and
+          // the pill polls store.progress — re-rendering the instrument per batch
+          // is what made the interlude stutter on big files
+          store.push({ meta: d.meta, positions: d.positions, indices: d.indices, normals: d.normals }, d.progress as Progress);
           return;
         }
         case "done": {

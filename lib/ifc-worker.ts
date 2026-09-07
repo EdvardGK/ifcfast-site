@@ -22,6 +22,26 @@ type Req = { bytes: ArrayBuffer; name: string; batch?: number };
 
 let modPromise: Promise<{ IfcModel: typeof IfcModelT }> | null = null;
 
+/** Area-weighted vertex normals (what three's computeVertexNormals does),
+ * computed off the main thread. */
+function vertexNormals(pos: Float32Array, idx: Uint32Array): Float32Array {
+  const n = new Float32Array(pos.length);
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
+    const abx = pos[b] - pos[a], aby = pos[b + 1] - pos[a + 1], abz = pos[b + 2] - pos[a + 2];
+    const acx = pos[c] - pos[a], acy = pos[c + 1] - pos[a + 1], acz = pos[c + 2] - pos[a + 2];
+    const nx = aby * acz - abz * acy, ny = abz * acx - abx * acz, nz = abx * acy - aby * acx;
+    n[a] += nx; n[a + 1] += ny; n[a + 2] += nz;
+    n[b] += nx; n[b + 1] += ny; n[b + 2] += nz;
+    n[c] += nx; n[c + 1] += ny; n[c + 2] += nz;
+  }
+  for (let v = 0; v < n.length; v += 3) {
+    const l = Math.hypot(n[v], n[v + 1], n[v + 2]) || 1;
+    n[v] /= l; n[v + 1] /= l; n[v + 2] /= l;
+  }
+  return n;
+}
+
 function load() {
   if (!modPromise) {
     modPromise = (async () => {
@@ -71,11 +91,16 @@ self.onmessage = async (ev: MessageEvent<Req>) => {
       let nBatches = 0;
       model.streamMeshes(batch, (metaJson: string, positions: Float32Array, indices: Uint32Array, progressJson: string) => {
         // copy out of wasm memory — the views alias the linear memory, which
-        // may grow (and relocate) during the pass
+        // may grow (and relocate) during the pass. Parse the meta and compute
+        // the normals HERE so the main thread only uploads to the GPU.
         const p = positions.slice();
         const i = indices.slice();
+        const n = vertexNormals(p, i);
         nBatches++;
-        postMessage({ phase: "batch", meta: metaJson, positions: p, indices: i, progress: progressJson }, [p.buffer, i.buffer]);
+        postMessage(
+          { phase: "batch", meta: JSON.parse(metaJson), positions: p, indices: i, normals: n, progress: JSON.parse(progressJson) },
+          [p.buffer, i.buffer, n.buffer],
+        );
       });
       const mesh = performance.now() - t1;
       postMessage({

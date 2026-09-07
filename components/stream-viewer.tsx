@@ -140,7 +140,8 @@ export function StreamViewer({
       const geom = new THREE.BufferGeometry();
       geom.setAttribute("position", new THREE.BufferAttribute(b.positions, 3));
       geom.setIndex(new THREE.BufferAttribute(b.indices, 1));
-      geom.computeVertexNormals();
+      if (b.normals) geom.setAttribute("normal", new THREE.BufferAttribute(b.normals, 3));
+      else geom.computeVertexNormals();
       const color = new THREE.BufferAttribute(new Float32Array(b.positions.length / 3 * 4), 4);
       color.setUsage(THREE.DynamicDrawUsage);
       geom.setAttribute("color", color);
