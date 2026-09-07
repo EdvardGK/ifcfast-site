@@ -57,3 +57,10 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   batches never touch React state (StreamingPill polls the store).
   Measured: preview 60.3 fps / max 16.8 ms; RIV parse+stream 58.6 fps,
   p99 16.8 ms, one 267 ms hitch at the "indexed" graph parse.
+- Interlude tuning with Ed live: no pulse, no hang (explode → immediate
+  contraction), points hidden 0.5 s before the gather ends, solid in over
+  the last 0.6 s. Live parsing timer (10 Hz) in the pill, the interlude
+  caption and the title-block PARSE cell; final elapsed kept in the pill.
+  Verified on G55_RIE: all three tick together, PARSE settles on the
+  engine's own number (1 267 ms) once indexed. The model itself starts
+  rendering at the first geometry batch, ~150 ms after "indexed".
