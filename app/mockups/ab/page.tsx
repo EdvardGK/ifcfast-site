@@ -36,7 +36,8 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Code, Copy, Check, Ghost } from "lucide-react";
+import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
+import { useIfcDrop, MAX_BYTES, type DropState } from "@/lib/use-ifc-drop";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
@@ -247,10 +248,20 @@ export default function SceneInstrumentMockup() {
   const [ready, setReady] = useState(false);
   const [active, setActive] = useState(0);
 
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [qto, setQto] = useState<Qto | null>(null);
-  const [manifest, setManifest] = useState<Manifest | null>(null);
-  const [graph, setGraph] = useState<Graph | null>(null);
+  const [sampleSummary, setSummary] = useState<Summary | null>(null);
+  const [sampleQto, setQto] = useState<Qto | null>(null);
+  const [sampleManifest, setManifest] = useState<Manifest | null>(null);
+  const [sampleGraph, setGraph] = useState<Graph | null>(null);
+
+  // Drop your IFC (GH #172): the instrument swaps to the dropped model,
+  // parsed in a Web Worker by the ifcfast wasm core — the file never
+  // leaves the tab. The film (chapters 01–05) keeps the Duplex.
+  const drop = useIfcDrop();
+  const dropped = drop.state.status === "ready" ? drop.state.model : null;
+  const summary = (dropped?.summary as Summary | undefined) ?? sampleSummary;
+  const qto = (dropped?.qto as Qto | undefined) ?? sampleQto;
+  const manifest = (dropped?.manifest as Manifest | undefined) ?? sampleManifest;
+  const graph = (dropped?.graph as Graph | undefined) ?? sampleGraph;
 
   /* chapter 06 lifecycle: entered (first IO hit) → booted (veil lifts) */
   const [instEntered, setInstEntered] = useState(false);
@@ -412,10 +423,10 @@ export default function SceneInstrumentMockup() {
 
       {/* live parse badge, bottom-left */}
       <div className="hud-badge">
-        {summary ? (
+        {sampleSummary ? (
           <>
             <span className="dot" />
-            {summary.schema} · {fmt(summary.products)} products ·{" "}
+            {sampleSummary.schema} · {fmt(sampleSummary.products)} products ·{" "}
             {parseMs < 100 ? parseMs.toFixed(0) : fmt(parseMs)} ms
           </>
         ) : (
@@ -549,6 +560,8 @@ export default function SceneInstrumentMockup() {
             manifest={manifest}
             entered={instEntered}
             booted={booted}
+            glbSrc={dropped?.glbUrl}
+            drop={drop}
           />
         </section>
 
@@ -1151,6 +1164,82 @@ function Terminal({ show }: { show: boolean }) {
 /* ================================================================== */
 /* CopyPip — the pip install line with copy button                     */
 /* ================================================================== */
+/* ================================================================== */
+/* DropPill — "drop your IFC, it stays in this tab" (GH #172)          */
+/* ================================================================== */
+function DropPill({
+  state,
+  onFile,
+  onReset,
+}: {
+  state: DropState;
+  onFile: (f: File) => void;
+  onReset: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const budget = `${MAX_BYTES / 1024 / 1024} MB`;
+  if (state.status === "working") {
+    return (
+      <span className="tb-drop tb-drop-busy" title="parsing in a Web Worker — nothing is uploaded">
+        <span className="tb-live" /> {state.step} {state.name}
+      </span>
+    );
+  }
+  if (state.status === "error") {
+    return (
+      <span className="tb-drop tb-drop-err" title={state.error}>
+        {state.name}: {state.error}
+        <button type="button" className="tb-drop-x" onClick={onReset} aria-label="dismiss">
+          <X size={10} />
+        </button>
+      </span>
+    );
+  }
+  if (state.status === "ready") {
+    const m = state.model;
+    const unhandled = Object.entries(m.bySource)
+      .filter(([k]) => k.startsWith("unhandled:"))
+      .reduce((a, [, n]) => a + n, 0);
+    return (
+      <span
+        className="tb-drop tb-drop-ok"
+        title={`parsed ${m.ms.parse.toFixed(0)} ms · glb ${m.ms.glb.toFixed(0)} ms · never left this tab${
+          unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""
+        }`}
+      >
+        your model · {m.name}
+        {unhandled ? <span className="tb-drop-warn">{unhandled} unhandled</span> : null}
+        <button type="button" className="tb-drop-x" onClick={onReset} aria-label="back to the sample">
+          <X size={10} />
+        </button>
+      </span>
+    );
+  }
+  return (
+    <>
+      <button
+        type="button"
+        className="tb-drop"
+        onClick={() => inputRef.current?.click()}
+        title={`Drop an .ifc / .ifczip here (up to ${budget}). It is parsed in this tab by the ifcfast wasm core — nothing is uploaded.`}
+      >
+        <Upload size={10} /> drop your IFC · stays in this tab
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".ifc,.ifczip,.step,.stp"
+        hidden
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) onFile(f);
+          e.currentTarget.value = "";
+        }}
+      />
+    </>
+  );
+}
+
 function CopyPip({ compact = false }: { compact?: boolean }) {
   const [copied, setCopied] = useState(false);
   const cmd = "pip install ifcfast";
@@ -1210,6 +1299,8 @@ function InstrumentChapter({
   manifest,
   entered,
   booted,
+  glbSrc,
+  drop,
 }: {
   summary: Summary | null;
   qto: Qto | null;
@@ -1217,9 +1308,13 @@ function InstrumentChapter({
   manifest: Manifest | null;
   entered: boolean;
   booted: boolean;
+  /** blob URL of a dropped model's glb; the Duplex sample when absent */
+  glbSrc?: string;
+  drop: ReturnType<typeof useIfcDrop>;
 }) {
   // scope: "ALL" | "UNPLACED" | storey_guid  (drives numeric rescoping)
   const [scope, setScope] = useState<string>("ALL");
+  const [dragOver, setDragOver] = useState(false);
   // cross-highlight entity (hovering a dist bar OR a register row)
   const [hotEntity, setHotEntity] = useState<string | null>(null);
   // viewport swap target (register row hover = live mini-glb preview)
@@ -1333,13 +1428,14 @@ function InstrumentChapter({
   const filterActive = !!(hotEntity || entitySel || typeSel || scope !== "ALL");
 
   /* ── viewport source: register hover previews a type mini-glb ── */
-  const previewing = !!hotType;
-  const viewSrc = previewing ? hotType!.glb : "/sample/duplex.glb";
+  const previewing = !!hotType && !!hotType.glb;
+  const viewSrc = previewing ? hotType!.glb : (glbSrc ?? "/sample/duplex.glb");
+  const modelStem = (summary?.path.split("/").pop() ?? "DUPLEX_A").replace(/\.(ifc|ifczip|step|stp)$/i, "").toUpperCase();
   const viewLabel = previewing
     ? `${short(hotType!.entity)} · ${hotType!.type_name}`
     : filterActive
-      ? `DUPLEX_A · FILTER · ${scopeLabel}`
-      : "DUPLEX_A · FULL ASSEMBLY";
+      ? `${modelStem} · FILTER · ${scopeLabel}`
+      : `${modelStem} · FULL ASSEMBLY`;
 
   /* ── highlight descriptor (precedence: hover → type click → entity click → storey) ── */
   const highlight: Highlight = useMemo(() => {
@@ -1369,13 +1465,27 @@ function InstrumentChapter({
       {entered && ready && !booted && <BootVeil ready={!!ready} />}
 
       {entered && ready && (
-        <div className="grid">
+        <div
+          className={`grid${dragOver ? " drag-over" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            const f = e.dataTransfer.files?.[0];
+            if (f) drop.open(f);
+          }}
+        >
           {/* ─────────── TITLE BLOCK (brand reduced — A's chrome carries ifcfast) ─────────── */}
           <section className="cell titleblk" style={{ gridArea: "title" }}>
             <div className="tb-mark">
               <span className="tb-live" />
               <span className="tb-brand">THE INSTRUMENT</span>
               <span className="tb-sub">COMMAND</span>
+              <DropPill state={drop.state} onFile={drop.open} onReset={drop.reset} />
               <span className="tb-ver">v{manifest!.generated_with}</span>
             </div>
             <div className="tb-grid">
@@ -2298,7 +2408,22 @@ function StyleBlock() {
 }
 #inst-b .tb-brand{ font-size:13px; letter-spacing:.2em; font-weight:700; }
 #inst-b .tb-sub{ font-size:8.5px; letter-spacing:.34em; color:var(--acc); align-self:flex-end; margin-bottom:2px; }
-#inst-b .tb-ver{ margin-left:auto; font-size:8.5px; letter-spacing:.13em; color:var(--mut); }
+#inst-b .tb-ver{ font-size:8.5px; letter-spacing:.13em; color:var(--mut); }
+#inst-b .tb-drop{
+  margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--mut); background:rgba(255,255,255,.03); border:1px dashed var(--ln2); padding:3px 8px;
+  cursor:pointer; transition:color .2s ease, border-color .2s ease; max-width:52%;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#inst-b .tb-drop:hover{ color:var(--fg); border-color:var(--acc); }
+#inst-b .tb-drop-busy{ border-style:solid; color:var(--fg); cursor:default; }
+#inst-b .tb-drop-ok{ border-style:solid; border-color:var(--acc); color:var(--fg); cursor:default; }
+#inst-b .tb-drop-err{ border-style:solid; border-color:#b3462a; color:#f0a48a; cursor:default; }
+#inst-b .tb-drop-warn{ color:var(--acc); margin-left:4px; }
+#inst-b .tb-drop-x{ display:inline-flex; align-items:center; margin-left:4px; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
+#inst-b .tb-drop-x:hover{ color:var(--fg); }
+#inst-b .grid.drag-over{ outline:2px dashed var(--acc); outline-offset:-2px; }
 #inst-b .tb-live{
   width:6px; height:6px; background:var(--acc); border-radius:50%;
   box-shadow:0 0 7px 1px var(--acc); animation:pulse-b 1.7s ease-in-out infinite;
