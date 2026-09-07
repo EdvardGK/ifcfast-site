@@ -12,15 +12,16 @@
  * greedy), so it flows rather than scrambles. Points are never visible
  * while the solid is. Off-white solid, amber points, three only.
  */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 const N = 900; // points in the cloud — fixed for the whole run (smooth > dense)
 const HOLD = 1.1; // s the solid rests
 const DISSOLVE = 0.7; // s solid → blob (points explode radially outward)
 const DRIFT = 0.0; // no hang: the blob contracts the instant it has fully expanded
-const GATHER = 0.9; // s cloud → next shape; the solid crossfades in from CROSS on
-const CROSS = 0.62; // fraction of the gather at which the next solid starts fading in
+const GATHER = 0.9; // s cloud → next shape
+const POINTS_OUT = 0.5; // s before the gather ends the points are fully hidden
+const SOLID_IN = 0.6; // s before the gather ends the next solid starts fading in
 const PERIOD = HOLD + DISSOLVE + DRIFT + GATHER;
 
 function mulberry32(seed: number) {
@@ -116,7 +117,19 @@ function assign(from: Float32Array, to: Float32Array, seed: number): Float32Arra
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export function LoadingShapes({ caption }: { caption?: string }) {
+/** Elapsed stopwatch, 10 Hz — "3.2 s" — from a performance.now() origin. */
+export function LiveTimer({ since, done }: { since: number; done?: number }) {
+  const [now, setNow] = useState(() => performance.now());
+  useEffect(() => {
+    if (done != null) return;
+    const iv = setInterval(() => setNow(performance.now()), 100);
+    return () => clearInterval(iv);
+  }, [done]);
+  const s = ((done ?? now) - since) / 1000;
+  return <span className="ls-timer">{s < 10 ? s.toFixed(1) : s.toFixed(0)} s</span>;
+}
+
+export function LoadingShapes({ caption, since }: { caption?: string; since?: number }) {
   const host = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = host.current;
@@ -257,15 +270,16 @@ export function LoadingShapes({ caption }: { caption?: string }) {
         e = 1;
         void u; // the blob simply hangs — no pulse (Ed: it read as a wobble)
       } else {
-        const u = easeInOut((ph - HOLD - DISSOLVE - DRIFT) / GATHER);
+        const tg = ph - HOLD - DISSOLVE - DRIFT; // seconds into the gather
+        const u = easeInOut(tg / GATHER);
         e = 1;
         g = u;
-        // crossfade: the next solid rises while the points make their last approach,
-        // both hit their end state exactly at u = 1 — no step, no pause
-        const x = u < CROSS ? 0 : smooth((u - CROSS) / (1 - CROSS));
         solidIdx = next;
-        solidOpacity = x;
-        cloudOpacity = 1 - x;
+        // points are fully hidden POINTS_OUT s before the end (fade over 0.25 s);
+        // the solid fades in over the last SOLID_IN s and is complete at the end
+        const pointsEnd = GATHER - POINTS_OUT;
+        cloudOpacity = 1 - Math.min(1, Math.max(0, (tg - (pointsEnd - 0.25)) / 0.25));
+        solidOpacity = smooth(Math.min(1, Math.max(0, (tg - (GATHER - SOLID_IN)) / SOLID_IN)));
       }
       for (let i = 0; i < N; i++) {
         const o = 3 * i;
@@ -305,7 +319,12 @@ export function LoadingShapes({ caption }: { caption?: string }) {
   }, []);
   return (
     <div className="ls-host" ref={host} aria-hidden>
-      {caption ? <div className="ls-cap">{caption}</div> : null}
+      {caption ? (
+        <div className="ls-cap">
+          {caption}
+          {since != null ? <> · <LiveTimer since={since} /></> : null}
+        </div>
+      ) : null}
     </div>
   );
 }

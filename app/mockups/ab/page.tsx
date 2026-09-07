@@ -38,7 +38,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
 import { useIfcDrop, MAX_BYTES, type DropState } from "@/lib/use-ifc-drop";
-import { LoadingShapes } from "@/components/loading-shapes";
+import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
@@ -1175,7 +1175,7 @@ function Terminal({ show }: { show: boolean }) {
 /* ================================================================== */
 /** Progress while geometry streams — polls the store 5×/s so the rest of
  * the instrument never re-renders per batch. */
-function StreamingPill({ name, store }: { name: string; store: StreamStore | null }) {
+function StreamingPill({ name, store, since }: { name: string; store: StreamStore | null; since: number }) {
   const [p, setP] = useState(store?.progress ?? { seen: 0, meshed: 0, total: 0 });
   useEffect(() => {
     const iv = setInterval(() => store && setP({ ...store.progress }), 200);
@@ -1183,7 +1183,8 @@ function StreamingPill({ name, store }: { name: string; store: StreamStore | nul
   }, [store]);
   return (
     <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded">
-      <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {name}
+      <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {name} ·{" "}
+      <LiveTimer since={since} />
     </span>
   );
 }
@@ -1205,7 +1206,7 @@ function DropPill({
   if (state.status === "working") {
     return (
       <span className="tb-drop tb-drop-busy" title="parsing in a Web Worker — nothing is uploaded">
-        <span className="tb-live" /> {state.step} {state.name}
+        <span className="tb-live" /> {state.step} {state.name} · <LiveTimer since={state.startedAt} />
       </span>
     );
   }
@@ -1220,7 +1221,7 @@ function DropPill({
     );
   }
   if (state.status === "ready" && state.model.streaming) {
-    return <StreamingPill name={state.model.name} store={state.model.store} />;
+    return <StreamingPill name={state.model.name} store={state.model.store} since={state.model.startedAt} />;
   }
   if (state.status === "ready") {
     const m = state.model;
@@ -1234,7 +1235,7 @@ function DropPill({
           unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""
         }`}
       >
-        your model · {m.name}
+        your model · {m.name} · <LiveTimer since={m.startedAt} done={m.finishedAt ?? m.startedAt} />
         {unhandled ? <span className="tb-drop-warn">{unhandled} unhandled</span> : null}
         <button type="button" className="tb-drop-x" onClick={onReset} aria-label="back to the sample">
           <X size={10} />
@@ -1555,7 +1556,17 @@ function InstrumentChapter({
               <TB k="SOURCE APP" v={summary!.authoring_app} wide />
               <TB k="UNITS" v={`${summary!.length_unit} · ×${summary!.unit_scale}`} />
               <TB k="SIZE" v={`${fmt(summary!.size_bytes / 1e6, 2)} MB`} />
-              <TB k="PARSE" v={`${fmt(summary!.parse_seconds * 1000, 1)} ms`} accent />
+              <TB
+                k="PARSE"
+                v={
+                  drop.state.status === "working" ? (
+                    <LiveTimer since={drop.state.startedAt} />
+                  ) : (
+                    `${fmt(summary!.parse_seconds * 1000, 1)} ms`
+                  )
+                }
+                accent
+              />
               <TB k="ENTITIES" v={nfInt.format(summary!.type_counts_total)} />
               <TB k="CACHE" v={summary!.cache_key} mono />
             </div>
@@ -1661,6 +1672,7 @@ function InstrumentChapter({
               guidLookup={guidLookup}
               highlight={highlight}
               working={drop.state.status === "working" ? `${drop.state.step} · ${drop.state.name}` : null}
+              workingSince={drop.state.status === "working" ? drop.state.startedAt : undefined}
               stream={stream ?? null}
               onPick={onPick}
               picked={
@@ -1805,7 +1817,7 @@ function TB({
   mono,
 }: {
   k: string;
-  v: string;
+  v: React.ReactNode;
   wide?: boolean;
   accent?: boolean;
   mono?: boolean;
@@ -1813,7 +1825,7 @@ function TB({
   return (
     <div className={`tb-cell${wide ? " tb-wide" : ""}`}>
       <div className="tb-k">{k}</div>
-      <div className={`tb-v${accent ? " tb-acc" : ""}${mono ? " tb-mono" : ""}`} title={v}>
+      <div className={`tb-v${accent ? " tb-acc" : ""}${mono ? " tb-mono" : ""}`} title={typeof v === "string" ? v : undefined}>
         {v}
       </div>
     </div>
@@ -1877,6 +1889,7 @@ function InstrumentViewport({
   guidLookup,
   highlight,
   working,
+  workingSince,
   stream,
   onPick,
   picked,
@@ -1886,8 +1899,9 @@ function InstrumentViewport({
   label: string;
   guidLookup: Map<string, Meta>;
   highlight: Highlight;
-  /** non-null while a dropped model is being parsed — shows the golden-section interlude */
+  /** non-null while a dropped model is being parsed — shows the interlude */
   working?: string | null;
+  workingSince?: number;
   /** streamed geometry (dropped model, v2) — rendered by StreamViewer instead of model-viewer */
   stream?: StreamStore | null;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
@@ -2089,7 +2103,9 @@ function InstrumentViewport({
         <Ghost size={11} strokeWidth={ghostMode ? 2.2 : 1.6} />
         ghost {ghostMode ? "on" : "off"}
       </button>
-      {working || previewInterlude ? <LoadingShapes caption={working ?? "interlude preview · add ?interlude to the url"} /> : null}
+      {working || previewInterlude ? (
+        <LoadingShapes caption={working ?? "interlude preview · add ?interlude to the url"} since={workingSince} />
+      ) : null}
       {picked ? (
         <div className="vp-sel" title={picked.guid}>
           <span className="vp-sel-t">{picked.title}</span>
@@ -2554,6 +2570,7 @@ function StyleBlock() {
 #inst-b .tb-drop-ok{ border-style:solid; border-color:var(--acc); color:var(--fg); cursor:default; }
 #inst-b .tb-drop-err{ border-style:solid; border-color:#b3462a; color:#f0a48a; cursor:default; }
 #inst-b .tb-drop-warn{ color:var(--acc); margin-left:4px; }
+#inst-b .ls-timer{ font-variant-numeric:tabular-nums; }
 #inst-b .tb-drop-x{ display:inline-flex; align-items:center; margin-left:4px; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
 #inst-b .tb-drop-x:hover{ color:var(--fg); }
 #inst-b .grid.drag-over{ outline:2px dashed var(--acc); outline-offset:-2px; }

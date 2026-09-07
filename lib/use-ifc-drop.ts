@@ -27,11 +27,15 @@ export type DroppedModel = {
   ms: { parse: number; mesh?: number; glb?: number; batches?: number };
   /** geometry still arriving */
   streaming: boolean;
+  /** performance.now() when the file was picked — drives the live timer */
+  startedAt: number;
+  /** performance.now() when everything had landed (set at "done" / "glb") */
+  finishedAt?: number;
 };
 
 export type DropState =
   | { status: "idle" }
-  | { status: "working"; name: string; step: string }
+  | { status: "working"; name: string; step: string; startedAt: number }
   | { status: "ready"; model: DroppedModel; progress: Progress }
   | { status: "error"; name: string; error: string };
 
@@ -65,7 +69,8 @@ export function useIfcDrop() {
     urlRef.current = null;
     const worker = new Worker(new URL("./ifc-worker.ts", import.meta.url), { type: "module" });
     workerRef.current = worker;
-    setState({ status: "working", name: file.name, step: "reading" });
+    const startedAt = performance.now();
+    setState({ status: "working", name: file.name, step: "reading", startedAt });
     const bytes = await file.arrayBuffer();
     const store = new StreamStore();
     let model: DroppedModel | null = null;
@@ -75,7 +80,7 @@ export function useIfcDrop() {
       // bare progress strings ("parsing", …) come before any phase; batch
       // messages also carry a `progress` field (JSON) — never confuse the two
       if (!d.phase && typeof d.progress === "string" && d.ok === undefined) {
-        setState({ status: "working", name: file.name, step: d.progress });
+        setState({ status: "working", name: file.name, step: d.progress, startedAt });
         return;
       }
       if (d.ok === false) {
@@ -96,6 +101,7 @@ export function useIfcDrop() {
             store,
             ms: d.ms,
             streaming: true,
+            startedAt,
           };
           setState({ status: "ready", model, progress: store.progress });
           return;
@@ -119,6 +125,7 @@ export function useIfcDrop() {
             stats: JSON.parse(d.stats),
             ms: d.ms,
             streaming: false,
+            finishedAt: performance.now(),
           };
           setState({ status: "ready", model, progress: store.progress });
           return;
@@ -138,6 +145,8 @@ export function useIfcDrop() {
             store: null,
             ms: d.ms,
             streaming: false,
+            startedAt,
+            finishedAt: performance.now(),
           };
           setState({ status: "ready", model, progress: { seen: 0, meshed: 0, total: 0 } });
           return;
