@@ -18,7 +18,7 @@ import * as THREE from "three";
 const N = 900; // points in the cloud — fixed for the whole run (smooth > dense)
 const HOLD = 1.1; // s the solid rests
 const DISSOLVE = 0.7; // s solid → blob (points explode radially outward)
-const DRIFT = 0.5; // s the blob hangs and breathes
+const DRIFT = 0.5; // s the blob hangs, motionless apart from the slow rotation
 const GATHER = 0.9; // s cloud → next shape; the solid crossfades in from CROSS on
 const CROSS = 0.62; // fraction of the gather at which the next solid starts fading in
 const PERIOD = HOLD + DISSOLVE + DRIFT + GATHER;
@@ -255,7 +255,7 @@ export function LoadingShapes({ caption }: { caption?: string }) {
         solidOpacity = 0;
         cloudOpacity = 1;
         e = 1;
-        breathe = Math.sin(u * Math.PI) * 0.08;
+        void u; // the blob simply hangs — no pulse (Ed: it read as a wobble)
       } else {
         const u = easeInOut((ph - HOLD - DISSOLVE - DRIFT) / GATHER);
         e = 1;
