@@ -1,27 +1,60 @@
 {
-  "generated": "PLACEHOLDER",
-  "values": "example",
-  "ifcfast_version": "0.4.42",
-  "machine": "PLACEHOLDER",
-  "model": "Clinic_Architectural.ifc",
-  "subset": {
-    "guids": 1,
-    "storey": "First Floor",
-    "products_out": 812,
-    "bytes_out": 3456789,
-    "seconds": 0.4
-  },
-  "hotswap": {
-    "guid": "PLACEHOLDER",
-    "class": "IfcWallStandardCase",
-    "seconds": 0.05,
-    "untouched_bytes_identical": true,
-    "round_trip": "byte-identical outside the swapped body"
-  },
-  "mutate": {
-    "ops": 3,
-    "seconds": 0.03,
-    "placements_cloned": 0
-  },
-  "command": "m.subset(guids, 'floor1.ifc'); m.hotswap(guid, verts, tris, 'out.ifc'); m.mutate([...])"
+ "generated": "2026-09-06",
+ "ifcfast_version": "0.4.42",
+ "machine": "omarchy \u00b7 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz \u00b7 Linux",
+ "values": "measured",
+ "model": "Clinic_Architectural.ifc",
+ "subset": {
+  "seed_guids": 1393,
+  "storey": "First Floor",
+  "products_out": 1583,
+  "bytes_in": 13003205,
+  "bytes_out": 4663847,
+  "seconds": 0.13
+ },
+ "hotswap": {
+  "guid": "0bk1ZfURb7DB4FOIglu8Y$",
+  "class": "IfcWallStandardCase",
+  "triangles": 12,
+  "seconds": 0.186,
+  "bytes_in": 13003205,
+  "bytes_out": 13005075,
+  "identical_prefix_bytes": 2800665,
+  "records_changed": 53,
+  "stats": {
+   "product": 156,
+   "shape_rep": 33386,
+   "new_geometry": 209305,
+   "new_records": 46,
+   "old_items": 1,
+   "records_gc": 5,
+   "records_out": 209300,
+   "pds_shared_with": 0,
+   "body_reps": 1,
+   "bytes_out": 13005075,
+   "path": "scratch/clinic/write/hotswap.ifc"
+  }
+ },
+ "mutate": {
+  "ops": 3,
+  "seconds": 0.209,
+  "stats": {
+   "ops_applied": 3,
+   "renamed": 1,
+   "props_set": 0,
+   "props_added": 1,
+   "props_retyped": 0,
+   "psets_cloned": 0,
+   "rels_cloned": 0,
+   "placements_cloned": 0,
+   "translated": 1,
+   "rotated": 0,
+   "records_minted": 3,
+   "records_gc": 2,
+   "records_out": 209260,
+   "bytes_out": 13003265,
+   "path": "scratch/clinic/write/mutate.ifc"
+  }
+ },
+ "command": "m.subset(guids, out_path='floor1.ifc'); m.hotswap(guid, verts, tris, out_path='out.ifc'); m.mutate(ops, out_path='edited.ifc')"
 }

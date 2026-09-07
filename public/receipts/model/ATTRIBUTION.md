@@ -1,15 +1,7 @@
-# Model attribution
+# Medical-Dental Clinic
 
-The building shown and measured throughout ifcfast.com is the
-**Medical-Dental Clinic** sample dataset published by **buildingSMART
-International**, used under **CC BY 4.0**.
+Source: buildingSMART community sample test files (https://github.com/buildingsmart-community/Community-Sample-Test-Files), Medical-Dental Clinic, five discipline models.
 
-- Source: buildingSMART Sample Test Files
-- Licence: Creative Commons Attribution 4.0 International
-  (https://creativecommons.org/licenses/by/4.0/)
-- Models used: Architectural, Structural, HVAC, Plumbing, Electrical
-- Changes made: the First Floor of each discipline model was carved with
-  `m.subset()` and exported with `m.to_gltf(cut_openings=True)` for the
-  web viewer. No geometry was authored or edited.
+License: CC BY 4.0.
 
-buildingSMART International does not endorse ifcfast.
+All GLB and JSON files here were generated from those IFCs with ifcfast 0.4.42 (`scripts/generate_receipts.py`).

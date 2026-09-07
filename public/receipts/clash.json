@@ -1,141 +1,317 @@
 {
-  "generated": "PLACEHOLDER",
-  "values": "example",
-  "ifcfast_version": "0.4.42",
-  "machine": "PLACEHOLDER",
-  "federate_s": 1.2,
-  "clash_s": 8.4,
-  "tolerance_m": 0.0,
-  "unit_note": "3 models in m, 2 in mm - federate() rejects a mixed-unit merge; the substrate records unit_scale and clash converts at load",
-  "pairs_total": 12345,
-  "pairs_cross_model": 2345,
-  "by_category": {
-    "clash": 1200,
-    "insulation": 300,
-    "connection": 800,
-    "non_physical": 45
-  },
-  "by_model_pair": [
-    [
-      "HVAC",
-      "Plumbing",
-      900
-    ],
-    [
-      "Architectural",
-      "HVAC",
-      600
-    ],
-    [
-      "Structural",
-      "Plumbing",
-      420
-    ],
-    [
-      "Architectural",
-      "Electrical",
-      260
-    ],
-    [
-      "HVAC",
-      "Structural",
-      165
+ "generated": "2026-09-06",
+ "ifcfast_version": "0.4.42",
+ "machine": "omarchy \u00b7 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz \u00b7 Linux",
+ "values": "measured",
+ "tolerance_m": 0.0,
+ "oracle": {
+  "project": "a live hospital project (client data, not shown)",
+  "truth": "Solibri TMK BCF ground truth, version-matched by STEP header",
+  "rounds": [
+   {
+    "round": "tmk12_plan2_del3",
+    "matched": 14,
+    "truth_pairs": 15,
+    "topics": [
+     40,
+     42
     ]
-  ],
-  "by_class_pair": [
-    [
-      "DuctSegment",
-      "PipeSegment",
-      400
-    ],
-    [
-      "PipeSegment",
-      "Beam",
-      240
-    ],
-    [
-      "DuctFitting",
-      "Wall",
-      180
-    ],
-    [
-      "FlowTerminal",
-      "Covering",
-      120
+   },
+   {
+    "round": "tmk12_plan2_del4",
+    "matched": 18,
+    "truth_pairs": 19,
+    "topics": [
+     39,
+     40
     ]
+   },
+   {
+    "round": "tmk13_plan5",
+    "matched": 13,
+    "truth_pairs": 13,
+    "topics": [
+     48,
+     49
+    ]
+   },
+   {
+    "round": "tmk13_plan5_del3",
+    "matched": 2,
+    "truth_pairs": 2,
+    "topics": [
+     6,
+     6
+    ]
+   },
+   {
+    "round": "tmk13_plan5_del4",
+    "matched": 2,
+    "truth_pairs": 2,
+    "topics": [
+     7,
+     7
+    ]
+   }
+  ]
+ },
+ "command": "fed = ifcfast.federate([...5 bundles...], 'clinic.fed'); df = ifcfast.clash(fed)",
+ "federate_s": 0.84,
+ "clash_s": 1.64,
+ "unit_scales": {
+  "Architectural": "1",
+  "Structural": "1",
+  "HVAC": "0.001",
+  "Plumbing": "0.001",
+  "Electrical": "1"
+ },
+ "unit_note": "3 models authored in m, 2 in mm \u2014 federate() rescales to the finest unit (GH #169)",
+ "pairs_total": 61485,
+ "pairs_cross_model": 36425,
+ "by_category": {
+  "non_physical": 25265,
+  "clash": 9531,
+  "insulation": 1602,
+  "connection": 27
+ },
+ "by_kind": {
+  "hard": 36425
+ },
+ "by_model_pair": [
+  [
+   "Architectural",
+   "Electrical",
+   9924
   ],
-  "top_rows": [
-    {
-      "guid_a": "PLACEHOLDER-A1",
-      "class_a": "DuctSegment",
-      "model_a": "HVAC",
-      "guid_b": "PLACEHOLDER-B1",
-      "class_b": "Beam",
-      "model_b": "Structural",
-      "category": "clash",
-      "kind": "hard",
-      "storey": "First Floor"
-    },
-    {
-      "guid_a": "PLACEHOLDER-A2",
-      "class_a": "PipeSegment",
-      "model_a": "Plumbing",
-      "guid_b": "PLACEHOLDER-B2",
-      "class_b": "WallStandardCase",
-      "model_b": "Architectural",
-      "category": "clash",
-      "kind": "hard",
-      "storey": "First Floor"
-    },
-    {
-      "guid_a": "PLACEHOLDER-A3",
-      "class_a": "PipeFitting",
-      "model_a": "Plumbing",
-      "guid_b": "PLACEHOLDER-B3",
-      "class_b": "PipeSegment",
-      "model_b": "Plumbing",
-      "category": "connection",
-      "kind": "hard",
-      "storey": "Second Floor"
-    },
-    {
-      "guid_a": "PLACEHOLDER-A4",
-      "class_a": "DuctSegment",
-      "model_a": "HVAC",
-      "guid_b": "PLACEHOLDER-B4",
-      "class_b": "Covering",
-      "model_b": "Architectural",
-      "category": "insulation",
-      "kind": "hard",
-      "storey": "Second Floor"
-    }
+  [
+   "Architectural",
+   "HVAC",
+   6373
   ],
-  "oracle": {
-    "project": "a live hospital project (client data, not shown)",
-    "rounds": 5,
-    "pair_recall": [
-      [
-        13,
-        13
-      ],
-      [
-        2,
-        2
-      ],
-      [
-        2,
-        2
-      ],
-      [
-        14,
-        15
-      ],
-      [
-        18,
-        19
-      ]
-    ],
-    "truth": "Solibri TMK BCF ground truth"
+  [
+   "Architectural",
+   "Structural",
+   4837
+  ],
+  [
+   "Electrical",
+   "HVAC",
+   4084
+  ],
+  [
+   "HVAC",
+   "Structural",
+   3328
+  ],
+  [
+   "Electrical",
+   "Structural",
+   2471
+  ],
+  [
+   "Architectural",
+   "Plumbing",
+   2095
+  ],
+  [
+   "HVAC",
+   "Plumbing",
+   1324
+  ],
+  [
+   "Electrical",
+   "Plumbing",
+   1214
+  ],
+  [
+   "Plumbing",
+   "Structural",
+   775
+  ]
+ ],
+ "by_class_pair": [
+  [
+   "Beam",
+   "Space",
+   4374
+  ],
+  [
+   "Space",
+   "Wall",
+   4189
+  ],
+  [
+   "FlowTerminal",
+   "Space",
+   3570
+  ],
+  [
+   "FlowSegment",
+   "Space",
+   3403
+  ],
+  [
+   "Space",
+   "Space",
+   2560
+  ],
+  [
+   "Beam",
+   "Wall",
+   1917
+  ],
+  [
+   "FlowSegment",
+   "Wall",
+   1594
+  ],
+  [
+   "Covering",
+   "FlowTerminal",
+   1434
+  ],
+  [
+   "Slab",
+   "Wall",
+   1305
+  ],
+  [
+   "FlowTerminal",
+   "Wall",
+   1280
+  ],
+  [
+   "OpeningElement",
+   "Space",
+   1250
+  ],
+  [
+   "Door",
+   "Space",
+   1055
+  ]
+ ],
+ "narrow_phase_residuals": 0,
+ "top_rows": [
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "22_kIllv127wWuzeSbBoPm",
+   "class_b": "Slab",
+   "model_b": "Structural",
+   "category": "clash",
+   "kind": "hard"
   },
-  "command": "fed = ifcfast.federate([...5 bundles...], 'clinic.fed'); df = ifcfast.clash(fed)"
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "2oJ$jhEMn3nhAqn0NbtYKu",
+   "class_b": "Slab",
+   "model_b": "Structural",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3Xz4QBoKnDyhOmF73ZDgfB",
+   "class_b": "FlowSegment",
+   "model_b": "HVAC",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "2Ztg$AVBDDkhZXGGcJXZ5m",
+   "class_b": "FlowSegment",
+   "model_b": "Plumbing",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3Bm2btTL9Dzxc3Av2wDSGd",
+   "class_b": "FlowSegment",
+   "model_b": "Plumbing",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "1k8p9C4S9CiONR7YL7KQwa",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3VOJ",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3VZp",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3UsC",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3U$B",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3T42",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  },
+  {
+   "guid_a": "3LbNSBzHHBSuzhUUvuwAbw",
+   "class_a": "Wall",
+   "model_a": "Architectural",
+   "guid_b": "3e_9ViPQjBmuUesehp3TXz",
+   "class_b": "FlowTerminal",
+   "model_b": "Electrical",
+   "category": "clash",
+   "kind": "hard"
+  }
+ ]
 }

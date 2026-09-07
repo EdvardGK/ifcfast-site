@@ -1,4 +1,11 @@
-@import "tailwindcss";
+/* Tailwind 4 auto-detects sources by scanning the project tree. Without
+   this restriction it scanned public/receipts — including a 12 MB GLB
+   — as text, and the PostCSS build worker grew past 7 GB and was
+   OOM-killed (2026-09-06, three times). Only app/ and components/ carry
+   class names. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
 
 /* ------------------------------------------------------------------ *
  * ifcfast.com — receipts
