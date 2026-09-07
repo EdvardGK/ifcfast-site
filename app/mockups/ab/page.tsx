@@ -38,6 +38,9 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
 import { useIfcDrop, MAX_BYTES, type DropState } from "@/lib/use-ifc-drop";
+import { LoadingShapes } from "@/components/loading-shapes";
+import { StreamViewer } from "@/components/stream-viewer";
+import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
@@ -136,7 +139,11 @@ type Highlight =
   | { mode: "storey"; value: string }
   | { mode: "entity"; value: string; storeyScope?: string }
   | { mode: "type"; value: string; storeyScope?: string }
+  | { mode: "product"; value: string }
   | null;
+
+/** what the viewport shows for a tapped product */
+type Picked = { guid: string; entity: string; type_name: string | null; storey_guid: string | null; m3: number | null; m2: number | null };
 
 /* ------------------------------------------------------------------ */
 /* Chapter rail (labels only — the film's camera choreography now lives */
@@ -561,7 +568,8 @@ export default function SceneInstrumentMockup() {
             manifest={manifest}
             entered={instEntered}
             booted={booted}
-            glbSrc={dropped?.glbUrl}
+            glbSrc={dropped?.glbUrl ?? undefined}
+            stream={dropped?.store ?? null}
             drop={drop}
           />
         </section>
@@ -1196,6 +1204,14 @@ function DropPill({
       </span>
     );
   }
+  if (state.status === "ready" && state.model.streaming) {
+    const p = state.progress;
+    return (
+      <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded">
+        <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {state.model.name}
+      </span>
+    );
+  }
   if (state.status === "ready") {
     const m = state.model;
     const unhandled = Object.entries(m.bySource)
@@ -1204,7 +1220,7 @@ function DropPill({
     return (
       <span
         className="tb-drop tb-drop-ok"
-        title={`parsed ${m.ms.parse.toFixed(0)} ms · glb ${m.ms.glb.toFixed(0)} ms · never left this tab${
+        title={`parsed ${m.ms.parse.toFixed(0)} ms${m.ms.mesh != null ? ` · meshed ${m.ms.mesh.toFixed(0)} ms in ${m.ms.batches ?? 0} batches` : ""}${m.ms.glb != null ? ` · glb ${m.ms.glb.toFixed(0)} ms` : ""} · never left this tab${
           unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""
         }`}
       >
@@ -1301,6 +1317,7 @@ function InstrumentChapter({
   entered,
   booted,
   glbSrc,
+  stream,
   drop,
 }: {
   summary: Summary | null;
@@ -1309,8 +1326,10 @@ function InstrumentChapter({
   manifest: Manifest | null;
   entered: boolean;
   booted: boolean;
-  /** blob URL of a dropped model's glb; the Duplex sample when absent */
+  /** blob URL of a dropped model's glb (v1 packages); the Duplex sample when absent */
   glbSrc?: string;
+  /** streamed geometry of a dropped model (v2) — replaces model-viewer */
+  stream?: StreamStore | null;
   drop: ReturnType<typeof useIfcDrop>;
 }) {
   // scope: "ALL" | "UNPLACED" | storey_guid  (drives numeric rescoping)
@@ -1323,6 +1342,8 @@ function InstrumentChapter({
   // pinned viewport filters (clicks)
   const [entitySel, setEntitySel] = useState<string | null>(null);
   const [typeSel, setTypeSel] = useState<string | null>(null);
+  // tapped product in the viewport (click-to-select) — wins over the panel filters
+  const [picked, setPicked] = useState<Picked | null>(null);
 
   /* ── storey ordering (top elevation first) ── */
   const storeys = useMemo(() => {
@@ -1426,7 +1447,7 @@ function InstrumentChapter({
         ? "UNPLACED · OPENINGS + FURNISHINGS"
         : storeys.find((s) => s.guid === scope)?.name ?? scope;
 
-  const filterActive = !!(hotEntity || entitySel || typeSel || scope !== "ALL");
+  const filterActive = !!(picked || hotEntity || entitySel || typeSel || scope !== "ALL");
 
   /* ── viewport source: register hover previews a type mini-glb ── */
   const previewing = !!hotType && !!hotType.glb;
@@ -1441,15 +1462,43 @@ function InstrumentChapter({
   /* ── highlight descriptor (precedence: hover → type click → entity click → storey) ── */
   const highlight: Highlight = useMemo(() => {
     if (previewing) return null; // mini-glb preview: no cross-filter
+    if (picked) return { mode: "product", value: picked.guid };
     const storeyScope = scope === "ALL" ? undefined : scope;
     const ent = hotEntity ?? entitySel;
     if (ent) return { mode: "entity", value: ent, storeyScope };
     if (typeSel) return { mode: "type", value: typeSel, storeyScope };
     if (scope !== "ALL") return { mode: "storey", value: scope };
     return null;
-  }, [previewing, hotEntity, entitySel, typeSel, scope]);
+  }, [previewing, picked, hotEntity, entitySel, typeSel, scope]);
+
+  // product lookup for the tap receipt (m3 / m2 land with the "done" phase)
+  const productByGuid = useMemo(() => {
+    const m = new Map<string, Product>();
+    graph?.products.forEach((p) => m.set(p.guid, p));
+    return m;
+  }, [graph]);
+  const storeyName = (g: string | null) => (g ? storeys.find((s) => s.guid === g)?.name ?? g : "unplaced");
+  const onPick = useCallback(
+    (m: { guid: string; entity: string; type_name?: string | null; storey_guid?: string | null; m3?: number | null; m2?: number | null } | null) => {
+      if (!m) {
+        setPicked(null);
+        return;
+      }
+      const p = productByGuid.get(m.guid);
+      setPicked({
+        guid: m.guid,
+        entity: m.entity,
+        type_name: m.type_name ?? p?.type_name ?? null,
+        storey_guid: m.storey_guid ?? p?.storey_guid ?? null,
+        m3: m.m3 ?? p?.m3 ?? null,
+        m2: m.m2 ?? p?.m2 ?? null,
+      });
+    },
+    [productByGuid],
+  );
 
   const clearFilters = () => {
+    setPicked(null);
     setScope("ALL");
     setEntitySel(null);
     setTypeSel(null);
@@ -1601,6 +1650,19 @@ function InstrumentChapter({
               label={viewLabel}
               guidLookup={guidLookup}
               highlight={highlight}
+              working={drop.state.status === "working" ? `${drop.state.step} · ${drop.state.name}` : null}
+              stream={stream ?? null}
+              onPick={onPick}
+              picked={
+                picked
+                  ? {
+                      title: `${short(picked.entity)}${picked.type_name ? ` · ${picked.type_name}` : ""}`,
+                      sub: `${storeyName(picked.storey_guid)}${picked.m3 != null ? ` · ${picked.m3 < 0.01 ? picked.m3.toFixed(4) : fmt(picked.m3, 2)} m³` : ""}${picked.m2 != null ? ` · ${fmt(picked.m2, 1)} m²` : ""}`,
+                      guid: picked.guid,
+                    }
+                  : null
+              }
+              onClearPick={() => setPicked(null)}
             />
           </section>
 
@@ -1804,14 +1866,51 @@ function InstrumentViewport({
   label,
   guidLookup,
   highlight,
+  working,
+  stream,
+  onPick,
+  picked,
+  onClearPick,
 }: {
   src: string;
   label: string;
   guidLookup: Map<string, Meta>;
   highlight: Highlight;
+  /** non-null while a dropped model is being parsed — shows the golden-section interlude */
+  working?: string | null;
+  /** streamed geometry (dropped model, v2) — rendered by StreamViewer instead of model-viewer */
+  stream?: StreamStore | null;
+  onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
+  picked?: { title: string; sub: string; guid: string } | null;
+  onClearPick?: () => void;
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // click-to-select on the model-viewer path: a pointerdown/up pair that did
+  // not drag → materialFromPoint → material name is the product GUID (GH #146)
+  const downAt = useRef<[number, number] | null>(null);
+  const onMvDown = (e: React.PointerEvent) => {
+    downAt.current = [e.clientX, e.clientY];
+  };
+  const onMvUp = (e: React.PointerEvent) => {
+    const d = downAt.current;
+    downAt.current = null;
+    if (!d || !onPick) return;
+    if (Math.hypot(e.clientX - d[0], e.clientY - d[1]) > 4) return;
+    const mv = ref.current as unknown as { materialFromPoint?: (x: number, y: number) => { name: string } | null } | null;
+    const mat = mv?.materialFromPoint?.(e.clientX, e.clientY);
+    if (!mat) {
+      onPick(null);
+      return;
+    }
+    const guidKey = mat.name.includes("#") ? mat.name.slice(0, mat.name.indexOf("#")) : mat.name;
+    const meta = guidLookup.get(guidKey);
+    if (!meta) {
+      onPick(null);
+      return;
+    }
+    onPick({ guid: guidKey, entity: meta.entity, type_name: meta.type_name ?? null, storey_guid: meta.storey_guid });
+  };
   // ghost ON: non-selected fade to faint context · ghost OFF: non-selected
   // (and spaces / openings) are hidden — the original site's viewer toggle
   const [ghostMode, setGhostMode] = useState(true);
@@ -1871,6 +1970,8 @@ function InstrumentViewport({
           match =
             (meta.type_name ?? "—") === highlight.value &&
             (highlight.storeyScope ? storeyMatch(meta, highlight.storeyScope) : true);
+        } else if (highlight.mode === "product") {
+          match = guidKey === highlight.value;
         }
       }
       if (match) {
@@ -1930,11 +2031,16 @@ function InstrumentViewport({
       <div className="vp-crosshair vp-ch-tr" />
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
+      {stream ? (
+        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} onPick={onPick} />
+      ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer
         ref={ref as React.MutableRefObject<HTMLElement | null>}
         src={src}
         alt={label}
+        onPointerDown={onMvDown}
+        onPointerUp={onMvUp}
         camera-controls
         auto-rotate
         rotation-per-second="16deg"
@@ -1951,6 +2057,7 @@ function InstrumentViewport({
         style={{
           width: "100%",
           height: "100%",
+          display: stream ? "none" : "block",
           background:
             "radial-gradient(ellipse 120% 90% at 50% 8%, #202429 0%, #14171b 45%, #0c0e11 100%)",
           ["--poster-color" as string]: "transparent",
@@ -1967,6 +2074,16 @@ function InstrumentViewport({
         <Ghost size={11} strokeWidth={ghostMode ? 2.2 : 1.6} />
         ghost {ghostMode ? "on" : "off"}
       </button>
+      {working ? <LoadingShapes caption={working} /> : null}
+      {picked ? (
+        <div className="vp-sel" title={picked.guid}>
+          <span className="vp-sel-t">{picked.title}</span>
+          <span className="vp-sel-s">{picked.sub}</span>
+          <button type="button" className="vp-sel-x" onClick={onClearPick} aria-label="clear selection">
+            <X size={10} />
+          </button>
+        </div>
+      ) : null}
       <div className="vp-cap">
         <span className="vp-dot" data-on={loaded} />
         {label}
@@ -2425,6 +2542,31 @@ function StyleBlock() {
 #inst-b .tb-drop-x{ display:inline-flex; align-items:center; margin-left:4px; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
 #inst-b .tb-drop-x:hover{ color:var(--fg); }
 #inst-b .grid.drag-over{ outline:2px dashed var(--acc); outline-offset:-2px; }
+#inst-b .sv-host{ position:absolute; inset:0; z-index:1; background:radial-gradient(ellipse 120% 90% at 50% 8%, #202429 0%, #14171b 45%, #0c0e11 100%); }
+#inst-b .sv-host canvas{ display:block; width:100%; height:100%; cursor:crosshair; }
+#inst-b .vp-sel{
+  position:absolute; left:8px; top:7px; z-index:4; display:flex; align-items:center; gap:8px;
+  font-size:8.5px; letter-spacing:.13em; color:var(--fg);
+  background:rgba(9,11,13,.82); padding:4px 8px; border:1px solid var(--acc); max-width:calc(100% - 120px);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#inst-b .vp-sel-t{ color:var(--acc); text-transform:uppercase; }
+#inst-b .vp-sel-s{ color:var(--mut); }
+#inst-b .vp-sel-x{ display:inline-flex; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
+#inst-b .vp-sel-x:hover{ color:var(--fg); }
+#inst-b .ls-host{
+  position:absolute; inset:0; z-index:3;
+  background:radial-gradient(ellipse 120% 90% at 50% 8%, rgba(32,36,41,.96) 0%, rgba(20,23,27,.97) 45%, rgba(12,14,17,.98) 100%);
+  animation:ls-in .35s ease;
+}
+#inst-b .ls-host canvas{ display:block; width:100%; height:100%; }
+#inst-b .ls-cap{
+  position:absolute; left:50%; bottom:12%; transform:translateX(-50%);
+  font-size:8.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--acc);
+  white-space:nowrap; animation:ls-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ls-in{ from{opacity:0} to{opacity:1} }
+@keyframes ls-pulse{ 0%,100%{opacity:.45} 50%{opacity:1} }
 #inst-b .tb-live{
   width:6px; height:6px; background:var(--acc); border-radius:50%;
   box-shadow:0 0 7px 1px var(--acc); animation:pulse-b 1.7s ease-in-out infinite;

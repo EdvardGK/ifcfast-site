@@ -2,8 +2,14 @@
 /**
  * Drop-your-IFC state for the landing's instrument (ifcfast GH #172).
  * Runs the ifcfast wasm core in a Web Worker; the file never leaves the tab.
+ *
+ * v2: phased. "indexed" lands first (summary / storeys / register fill in),
+ * then geometry streams into a StreamStore (kept out of React state — the
+ * viewer subscribes directly), then "done" brings the mesh-derived
+ * quantities. A v1 package (no streamMeshes) still works via one glb.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { StreamStore, type Progress } from "./stream-store";
 
 export const MAX_BYTES = 300 * 1024 * 1024; // browser-tab memory ceiling, stated up front
 
@@ -11,24 +17,29 @@ export type DroppedModel = {
   name: string;
   summary: unknown;
   graph: unknown;
-  qto: unknown;
+  qto: unknown | null;
   manifest: unknown;
   bySource: Record<string, number>;
   stats: Record<string, number>;
-  glbUrl: string;
-  ms: { parse: number; glb: number };
+  /** v1 packages only — v2 streams into `store` and never builds a glb */
+  glbUrl: string | null;
+  store: StreamStore | null;
+  ms: { parse: number; mesh?: number; glb?: number; batches?: number };
+  /** geometry still arriving */
+  streaming: boolean;
 };
 
 export type DropState =
   | { status: "idle" }
   | { status: "working"; name: string; step: string }
-  | { status: "ready"; model: DroppedModel }
+  | { status: "ready"; model: DroppedModel; progress: Progress }
   | { status: "error"; name: string; error: string };
 
 export function useIfcDrop() {
   const [state, setState] = useState<DropState>({ status: "idle" });
   const workerRef = useRef<Worker | null>(null);
   const urlRef = useRef<string | null>(null);
+  const progressTick = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -51,40 +62,96 @@ export function useIfcDrop() {
       return;
     }
     workerRef.current?.terminate();
+    if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+    urlRef.current = null;
     const worker = new Worker(new URL("./ifc-worker.ts", import.meta.url), { type: "module" });
     workerRef.current = worker;
     setState({ status: "working", name: file.name, step: "reading" });
     const bytes = await file.arrayBuffer();
+    const store = new StreamStore();
+    let model: DroppedModel | null = null;
+
     worker.onmessage = (ev: MessageEvent) => {
       const d = ev.data;
-      if (d.progress) {
+      // bare progress strings ("parsing", …) come before any phase; batch
+      // messages also carry a `progress` field (JSON) — never confuse the two
+      if (!d.phase && typeof d.progress === "string" && d.ok === undefined) {
         setState({ status: "working", name: file.name, step: d.progress });
         return;
       }
-      if (!d.ok) {
+      if (d.ok === false) {
         setState({ status: "error", name: file.name, error: d.error });
         return;
       }
-      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
-      const glbUrl = URL.createObjectURL(new Blob([d.glb], { type: "model/gltf-binary" }));
-      urlRef.current = glbUrl;
-      setState({
-        status: "ready",
-        model: {
-          name: file.name,
-          summary: JSON.parse(d.summary),
-          graph: JSON.parse(d.graph),
-          qto: JSON.parse(d.qto),
-          manifest: JSON.parse(d.types),
-          bySource: JSON.parse(d.bySource),
-          stats: JSON.parse(d.stats),
-          glbUrl,
-          ms: d.ms,
-        },
-      });
+      switch (d.phase) {
+        case "indexed": {
+          model = {
+            name: file.name,
+            summary: JSON.parse(d.summary),
+            graph: JSON.parse(d.graph),
+            qto: null,
+            manifest: JSON.parse(d.types),
+            bySource: {},
+            stats: {},
+            glbUrl: null,
+            store,
+            ms: d.ms,
+            streaming: true,
+          };
+          setState({ status: "ready", model, progress: store.progress });
+          return;
+        }
+        case "batch": {
+          const meta = JSON.parse(d.meta);
+          const progress: Progress = JSON.parse(d.progress);
+          store.push({ meta, positions: d.positions, indices: d.indices }, progress);
+          // throttle React to ~8 progress updates a second
+          const now = performance.now();
+          if (model && now - progressTick.current > 120) {
+            progressTick.current = now;
+            setState({ status: "ready", model, progress });
+          }
+          return;
+        }
+        case "done": {
+          store.shift = JSON.parse(d.shift);
+          store.finish();
+          if (!model) return;
+          model = {
+            ...model,
+            graph: JSON.parse(d.graph),
+            qto: JSON.parse(d.qto),
+            bySource: JSON.parse(d.bySource),
+            stats: JSON.parse(d.stats),
+            ms: d.ms,
+            streaming: false,
+          };
+          setState({ status: "ready", model, progress: store.progress });
+          return;
+        }
+        case "glb": {
+          const glbUrl = URL.createObjectURL(new Blob([d.glb], { type: "model/gltf-binary" }));
+          urlRef.current = glbUrl;
+          model = {
+            name: file.name,
+            summary: JSON.parse(d.summary),
+            graph: JSON.parse(d.graph),
+            qto: JSON.parse(d.qto),
+            manifest: JSON.parse(d.types),
+            bySource: JSON.parse(d.bySource),
+            stats: JSON.parse(d.stats),
+            glbUrl,
+            store: null,
+            ms: d.ms,
+            streaming: false,
+          };
+          setState({ status: "ready", model, progress: { seen: 0, meshed: 0, total: 0 } });
+          return;
+        }
+      }
     };
     worker.onerror = (e) => setState({ status: "error", name: file.name, error: e.message || "worker crashed" });
-    worker.postMessage({ bytes, name: file.name }, [bytes]);
+    worker.postMessage({ bytes, name: file.name, batch: 200 }, [bytes]);
   }, []);
 
   const reset = useCallback(() => {

@@ -16,11 +16,19 @@ export class IfcModel {
      * bytes exactly like the native `source::open`. Throws an `Error`
      * carrying the core's message (truncated file, no STEP trailer,
      * broken zip) rather than serving a partial model.
+     *
+     * v2: parse + index + extractors only. No tessellation — call
+     * [`IfcModel::stream_meshes`] for the incremental geometry, or just
+     * touch any geometry-derived surface and the v1 batch pass runs
+     * itself.
      */
     static fromBytes(bytes: Uint8Array, name: string): IfcModel;
     /**
      * `<prefix>.graph.json` — per-product rows (measures joined from the
      * mesh pass) plus the spatial graph.
+     *
+     * Runs the batch mesh pass if no geometry has been produced yet;
+     * after `streamMeshes` it reuses the streamed per-product stats.
      */
     graphJson(): string;
     /**
@@ -34,8 +42,61 @@ export class IfcModel {
      */
     statsJson(): string;
     /**
+     * Run the mesh pass once, streaming merged batches through `cb` as
+     * products are tessellated (GH #172 v2).
+     *
+     * `cb(metaJson, positions, indices, progressJson)` is called
+     * synchronously from inside the pass, every `productsPerBatch`
+     * drawable products and once more for the tail. A Web Worker
+     * `postMessage`s from it, so the main thread paints the model as it
+     * builds instead of waiting for one baked GLB.
+     *
+     *   * `positions` — `Float32Array`, world METRES minus
+     *     [`IfcModel::stream_shift_json`]. A **copy** into JS memory,
+     *     not a view: a view into the wasm heap would be detached by the
+     *     next allocation the pass makes, and the callback is free to
+     *     keep (or transfer) what it is handed.
+     *   * `indices` — `Uint32Array`, batch-local (already offset by each
+     *     product's `v0`), so a batch uploads as one merged
+     *     `BufferGeometry`.
+     *   * `metaJson` — `[{guid, entity, storey_guid, type_name, m3, m2,
+     *     tri, v0, vn, i0, in, rgba}]`. `v0`/`vn` are the product's
+     *     vertex offset/count inside `positions` (xyz triples),
+     *     `i0`/`in` its index offset/count inside `indices`, and `rgba`
+     *     is `mesh::gltf::resolve_product_color` — the same cascade the
+     *     glTF writer paints with, not a second implementation of it.
+     *     `m3`/`m2`/`tri` are the v1 per-product measures.
+     *   * `progressJson` — `{seen, meshed, total}`: products handed to
+     *     the sink so far, of those the ones that had drawable geometry
+     *     after the cutter strip, and the index's product count.
+     *
+     * Products with no geometry left after the synthetic half-space
+     * cutters are stripped (GH #66) still get their QTO row; they just
+     * never reach a batch. Nothing is filtered by entity — `IfcSpace`
+     * and opening solids stream like everything else, tagged in `meta`,
+     * so the viewer decides what to draw. (`toGlb` still holds them
+     * back; that is a glTF-export choice, not a data one.)
+     *
+     * Throwing from `cb` aborts the stream and surfaces as an `Error`
+     * here; the per-product tables stay consistent for whatever ran.
+     */
+    streamMeshes(products_per_batch: number, cb: Function): void;
+    /**
+     * `[sx, sy, sz]` in METRES — the model-wide global shift the
+     * streamed positions were reduced by. Add it back for absolute world
+     * coordinates. `[0, 0, 0]` before the stream starts and for every
+     * model within 10 km of the origin; same rule (and same value) as
+     * `_core.extract_meshes`' `global_shift`.
+     */
+    streamShiftJson(): string;
+    /**
      * `<prefix>.summary.json` — identity, counts, top types, and the
      * shape + loaded-state of every table.
+     *
+     * The one surface that never triggers a mesh pass: it is what the
+     * drop zone shows the instant parsing finishes. Its `drift` and
+     * `segments` tables therefore report `loaded: false` / `rows: 0`
+     * until geometry has actually run.
      */
     summaryJson(): string;
     /**
@@ -80,14 +141,17 @@ export interface InitOutput {
     readonly ifcmodel_graphJson: (a: number) => [number, number];
     readonly ifcmodel_qtoJson: (a: number) => [number, number];
     readonly ifcmodel_statsJson: (a: number) => [number, number];
+    readonly ifcmodel_streamMeshes: (a: number, b: number, c: any) => [number, number];
+    readonly ifcmodel_streamShiftJson: (a: number) => [number, number];
     readonly ifcmodel_summaryJson: (a: number) => [number, number];
     readonly ifcmodel_toGlb: (a: number, b: number, c: number) => [number, number, number, number];
     readonly ifcmodel_typesJson: (a: number) => [number, number];
+    readonly __wbindgen_malloc: (a: number, b: number) => number;
+    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+    readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-    readonly __wbindgen_malloc: (a: number, b: number) => number;
-    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_start: () => void;
 }

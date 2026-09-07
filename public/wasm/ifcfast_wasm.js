@@ -40,6 +40,11 @@ export class IfcModel {
      * bytes exactly like the native `source::open`. Throws an `Error`
      * carrying the core's message (truncated file, no STEP trailer,
      * broken zip) rather than serving a partial model.
+     *
+     * v2: parse + index + extractors only. No tessellation — call
+     * [`IfcModel::stream_meshes`] for the incremental geometry, or just
+     * touch any geometry-derived surface and the v1 batch pass runs
+     * itself.
      * @param {Uint8Array} bytes
      * @param {string} name
      * @returns {IfcModel}
@@ -58,6 +63,9 @@ export class IfcModel {
     /**
      * `<prefix>.graph.json` — per-product rows (measures joined from the
      * mesh pass) plus the spatial graph.
+     *
+     * Runs the batch mesh pass if no geometry has been produced yet;
+     * after `streamMeshes` it reuses the streamed per-product stats.
      * @returns {string}
      */
     graphJson() {
@@ -107,8 +115,80 @@ export class IfcModel {
         }
     }
     /**
+     * Run the mesh pass once, streaming merged batches through `cb` as
+     * products are tessellated (GH #172 v2).
+     *
+     * `cb(metaJson, positions, indices, progressJson)` is called
+     * synchronously from inside the pass, every `productsPerBatch`
+     * drawable products and once more for the tail. A Web Worker
+     * `postMessage`s from it, so the main thread paints the model as it
+     * builds instead of waiting for one baked GLB.
+     *
+     *   * `positions` — `Float32Array`, world METRES minus
+     *     [`IfcModel::stream_shift_json`]. A **copy** into JS memory,
+     *     not a view: a view into the wasm heap would be detached by the
+     *     next allocation the pass makes, and the callback is free to
+     *     keep (or transfer) what it is handed.
+     *   * `indices` — `Uint32Array`, batch-local (already offset by each
+     *     product's `v0`), so a batch uploads as one merged
+     *     `BufferGeometry`.
+     *   * `metaJson` — `[{guid, entity, storey_guid, type_name, m3, m2,
+     *     tri, v0, vn, i0, in, rgba}]`. `v0`/`vn` are the product's
+     *     vertex offset/count inside `positions` (xyz triples),
+     *     `i0`/`in` its index offset/count inside `indices`, and `rgba`
+     *     is `mesh::gltf::resolve_product_color` — the same cascade the
+     *     glTF writer paints with, not a second implementation of it.
+     *     `m3`/`m2`/`tri` are the v1 per-product measures.
+     *   * `progressJson` — `{seen, meshed, total}`: products handed to
+     *     the sink so far, of those the ones that had drawable geometry
+     *     after the cutter strip, and the index's product count.
+     *
+     * Products with no geometry left after the synthetic half-space
+     * cutters are stripped (GH #66) still get their QTO row; they just
+     * never reach a batch. Nothing is filtered by entity — `IfcSpace`
+     * and opening solids stream like everything else, tagged in `meta`,
+     * so the viewer decides what to draw. (`toGlb` still holds them
+     * back; that is a glTF-export choice, not a data one.)
+     *
+     * Throwing from `cb` aborts the stream and surfaces as an `Error`
+     * here; the per-product tables stay consistent for whatever ran.
+     * @param {number} products_per_batch
+     * @param {Function} cb
+     */
+    streamMeshes(products_per_batch, cb) {
+        const ret = wasm.ifcmodel_streamMeshes(this.__wbg_ptr, products_per_batch, cb);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * `[sx, sy, sz]` in METRES — the model-wide global shift the
+     * streamed positions were reduced by. Add it back for absolute world
+     * coordinates. `[0, 0, 0]` before the stream starts and for every
+     * model within 10 km of the origin; same rule (and same value) as
+     * `_core.extract_meshes`' `global_shift`.
+     * @returns {string}
+     */
+    streamShiftJson() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.ifcmodel_streamShiftJson(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
      * `<prefix>.summary.json` — identity, counts, top types, and the
      * shape + loaded-state of every table.
+     *
+     * The one surface that never triggers a mesh pass: it is what the
+     * drop zone shows the instant parsing finishes. Its `drift` and
+     * `segments` tables therefore report `loaded: false` / `rows: 0`
+     * until geometry has actually run.
      * @returns {string}
      */
     summaryJson() {
@@ -185,12 +265,43 @@ function __wbg_get_imports() {
             const ret = Error(getStringFromWasm0(arg0, arg1));
             return ret;
         },
+        __wbg___wbindgen_debug_string_0e68cf47c9cbd9b0: function(arg0, arg1) {
+            const ret = debugString(arg1);
+            const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len1 = WASM_VECTOR_LEN;
+            getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+            getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+        },
         __wbg___wbindgen_is_undefined_8c687d0b90d5b524: function(arg0) {
             const ret = arg0 === undefined;
             return ret;
         },
+        __wbg___wbindgen_string_get_92ab86bb19cbc12f: function(arg0, arg1) {
+            const obj = arg1;
+            const ret = typeof(obj) === 'string' ? obj : undefined;
+            var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            var len1 = WASM_VECTOR_LEN;
+            getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
+            getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
+        },
         __wbg___wbindgen_throw_5d9e815e6fdf150f: function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
+        },
+        __wbg_call_577a548a1e2b6101: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4, arg5) {
+            const ret = arg0.call(arg1, arg2, arg3, arg4, arg5);
+            return ret;
+        }, arguments); },
+        __wbg_get_989d0a1309644f2b: function() { return handleError(function (arg0, arg1) {
+            const ret = Reflect.get(arg0, arg1);
+            return ret;
+        }, arguments); },
+        __wbg_new_from_slice_2221cabb71753908: function(arg0, arg1) {
+            const ret = new Float32Array(getArrayF32FromWasm0(arg0, arg1));
+            return ret;
+        },
+        __wbg_new_from_slice_a500ec81601be48f: function(arg0, arg1) {
+            const ret = new Uint32Array(getArrayU32FromWasm0(arg0, arg1));
+            return ret;
         },
         __wbg_now_e7c6795a7f81e10f: function(arg0) {
             const ret = arg0.now();
@@ -215,6 +326,11 @@ function __wbg_get_imports() {
         __wbg_static_accessor_WINDOW_fd0bc376bf0f8b42: function() {
             const ret = typeof window === 'undefined' ? null : window;
             return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
+        },
+        __wbindgen_generic_0000000000000001: function(arg0, arg1) {
+            // Cast intrinsic for `Ref(String) -> Externref`.
+            const ret = getStringFromWasm0(arg0, arg1);
+            return ret;
         },
         __wbindgen_init_externref_table: function() {
             const table = wasm.__wbindgen_externrefs;
@@ -242,13 +358,112 @@ function addToExternrefTable0(obj) {
     return idx;
 }
 
+function debugString(val) {
+    // primitive types
+    const type = typeof val;
+    if (type == 'number' || type == 'boolean' || val == null) {
+        return  `${val}`;
+    }
+    if (type == 'string') {
+        return `"${val}"`;
+    }
+    if (type == 'symbol') {
+        const description = val.description;
+        if (description == null) {
+            return 'Symbol';
+        } else {
+            return `Symbol(${description})`;
+        }
+    }
+    if (type == 'function') {
+        const name = val.name;
+        if (typeof name == 'string' && name.length > 0) {
+            return `Function(${name})`;
+        } else {
+            return 'Function';
+        }
+    }
+    // objects
+    if (Array.isArray(val)) {
+        const length = val.length;
+        let debug = '[';
+        if (length > 0) {
+            debug += debugString(val[0]);
+        }
+        for(let i = 1; i < length; i++) {
+            debug += ', ' + debugString(val[i]);
+        }
+        debug += ']';
+        return debug;
+    }
+    // Test for built-in
+    const builtInMatches = /\[object ([^\]]+)\]/.exec(toString.call(val));
+    let className;
+    if (builtInMatches && builtInMatches.length > 1) {
+        className = builtInMatches[1];
+    } else {
+        // Failed to match the standard '[object ClassName]'
+        return toString.call(val);
+    }
+    if (className == 'Object') {
+        // we're a user defined class or Object
+        // JSON.stringify avoids problems with cycles, and is generally much
+        // easier than looping through ownProperties of `val`.
+        try {
+            return 'Object(' + JSON.stringify(val) + ')';
+        } catch (_) {
+            return 'Object';
+        }
+    }
+    // errors
+    if (val instanceof Error) {
+        return `${val.name}: ${val.message}\n${val.stack}`;
+    }
+    // TODO we could test for more things here, like `Set`s and `Map`s.
+    return className;
+}
+
+function getArrayF32FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getFloat32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
+}
+
+function getArrayU32FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint32ArrayMemory0().subarray(ptr / 4, ptr / 4 + len);
+}
+
 function getArrayU8FromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
 }
 
+let cachedDataViewMemory0 = null;
+function getDataViewMemory0() {
+    if (cachedDataViewMemory0 === null || cachedDataViewMemory0.buffer.detached === true || (cachedDataViewMemory0.buffer.detached === undefined && cachedDataViewMemory0.buffer !== wasm.memory.buffer)) {
+        cachedDataViewMemory0 = new DataView(wasm.memory.buffer);
+    }
+    return cachedDataViewMemory0;
+}
+
+let cachedFloat32ArrayMemory0 = null;
+function getFloat32ArrayMemory0() {
+    if (cachedFloat32ArrayMemory0 === null || cachedFloat32ArrayMemory0.byteLength === 0) {
+        cachedFloat32ArrayMemory0 = new Float32Array(wasm.memory.buffer);
+    }
+    return cachedFloat32ArrayMemory0;
+}
+
 function getStringFromWasm0(ptr, len) {
     return decodeText(ptr >>> 0, len);
+}
+
+let cachedUint32ArrayMemory0 = null;
+function getUint32ArrayMemory0() {
+    if (cachedUint32ArrayMemory0 === null || cachedUint32ArrayMemory0.byteLength === 0) {
+        cachedUint32ArrayMemory0 = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachedUint32ArrayMemory0;
 }
 
 let cachedUint8ArrayMemory0 = null;
@@ -257,6 +472,15 @@ function getUint8ArrayMemory0() {
         cachedUint8ArrayMemory0 = new Uint8Array(wasm.memory.buffer);
     }
     return cachedUint8ArrayMemory0;
+}
+
+function handleError(f, args) {
+    try {
+        return f.apply(this, args);
+    } catch (e) {
+        const idx = addToExternrefTable0(e);
+        wasm.__wbindgen_exn_store(idx);
+    }
 }
 
 function isLikeNone(x) {
@@ -347,6 +571,9 @@ function __wbg_finalize_init(instance, module) {
     wasmInstance = instance;
     wasm = instance.exports;
     wasmModule = module;
+    cachedDataViewMemory0 = null;
+    cachedFloat32ArrayMemory0 = null;
+    cachedUint32ArrayMemory0 = null;
     cachedUint8ArrayMemory0 = null;
     wasm.__wbindgen_start();
     return wasm;
