@@ -27,7 +27,7 @@ export type Progress = { seen: number; meshed: number; total: number };
  * of it ends up in the pill's title so a slow drop is diagnosable in the wild. */
 export type StreamStats = {
   /* before a single byte is parsed */
-  read: number; // File.arrayBuffer() on the main thread
+  read: number; // File.arrayBuffer() on the main thread (async — overlaps worker boot)
   spawn: number; // new Worker(...) construction
   handoff: number; // main postMessage → worker onmessage entry
   load: number; // wasm fetch + instantiate in the worker
@@ -70,6 +70,13 @@ export function emptyStats(): StreamStats {
 
 export class StreamStore {
   batches: Batch[] = [];
+  /** every product meta seen so far, in arrival order. This is the PROVISIONAL
+   * product graph: the batch meta already carries guid / entity / storey_guid /
+   * type_name / m3 / m2, which is everything the quantities, the entity
+   * distribution and a viewport pick need. Only materials and the storey list
+   * are missing (they come with the real graphJson at "done"). Accumulating the
+   * existing meta objects costs one array push per product — no allocation. */
+  products: ProductMeta[] = [];
   progress: Progress = { seen: 0, meshed: 0, total: 0 };
   shift: [number, number, number] = [0, 0, 0];
   done = false;
@@ -79,6 +86,7 @@ export class StreamStore {
 
   push(b: Batch, p: Progress) {
     this.batches.push(b);
+    for (const m of b.meta) this.products.push(m);
     this.progress = p;
     for (const l of this.listeners) l(b);
   }

@@ -34,7 +34,7 @@
  * components/viewer.tsx (the namespace merges project-wide).
  */
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
 import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
@@ -267,12 +267,13 @@ export default function SceneInstrumentMockup() {
   const drop = useIfcDrop();
   const dropped = drop.state.status === "ready" ? drop.state.model : null;
   const summary = (dropped?.summary as Summary | undefined) ?? sampleSummary;
-  const qto = (dropped?.qto as Qto | undefined) ?? sampleQto;
   const manifest = (dropped?.manifest as Manifest | undefined) ?? sampleManifest;
-  // a dropped model owns the panels outright: its graph is null while geometry
-  // streams (it is built after the mesh pass) and the panels must show ITS state,
-  // never fall back to the Duplex's
+  // a dropped model owns the panels outright: while geometry streams its graph is
+  // the provisional batch-meta fold and its qto does not exist yet — the panels
+  // must show ITS state, never fall back to the Duplex's numbers
+  const qto = dropped ? ((dropped.qto as Qto | null) ?? null) : sampleQto;
   const graph = dropped ? ((dropped.graph as Graph | null) ?? null) : sampleGraph;
+  const provisional = !!dropped?.provisional;
 
   /* chapter 06 lifecycle: entered (first IO hit) → booted (veil lifts) */
   const [instEntered, setInstEntered] = useState(false);
@@ -535,7 +536,11 @@ export default function SceneInstrumentMockup() {
                   stack, each node a product contained on that level.
                 </p>
               </div>
-              <Constellation graph={graph ?? sampleGraph} />
+              {/* the film narrates the Duplex, never the dropped model. It also
+                  MUST not: the constellation draws a line + a circle per contained
+                  product, so a 35 789-product graph is 71 629 SVG nodes in one
+                  commit — that was the ~830 ms hitch when a dropped model landed. */}
+              <Constellation graph={sampleGraph} />
             </Reveal>
           </div>
         </section>
@@ -570,6 +575,7 @@ export default function SceneInstrumentMockup() {
             qto={qto}
             graph={graph}
             manifest={manifest}
+            provisional={provisional}
             entered={instEntered}
             booted={booted}
             glbSrc={dropped?.glbUrl ?? undefined}
@@ -1055,7 +1061,12 @@ function TypeMini({ entry, ready, delay }: { entry: MType; ready: boolean; delay
 /* ================================================================== */
 /* Constellation — custom SVG storey-stack (chapter 04)                */
 /* ================================================================== */
-function Constellation({ graph }: { graph: Graph | null }) {
+/** dots drawn per storey. A backstop, not a style: the Duplex the film narrates
+ * is 289 products, so nothing is clipped today — but each dot costs two SVG
+ * nodes, and a graph this size must never reach the DOM again. */
+const CST_MAX_DOTS = 600;
+
+const Constellation = memo(function Constellation({ graph }: { graph: Graph | null }) {
   if (!graph) return <div className="constellation skel" />;
 
   const counts = new Map<string, number>();
@@ -1087,8 +1098,9 @@ function Constellation({ graph }: { graph: Graph | null }) {
       {storeys.map((s, i) => {
         const y = top + rowGap * i;
         const n = counts.get(s.guid) ?? 0;
-        const dots = Array.from({ length: n }, (_, k) => {
-          const t = n > 1 ? k / (n - 1) : 0.5;
+        const shown = Math.min(n, CST_MAX_DOTS);
+        const dots = Array.from({ length: shown }, (_, k) => {
+          const t = shown > 1 ? k / (shown - 1) : 0.5;
           const x = padL + 46 + t * (W - padL - padR - 60);
           const jitter = (rand() - 0.5) * 34;
           return { x, y: y + jitter, r: 1.6 + rand() * 1.8 };
@@ -1124,7 +1136,7 @@ function Constellation({ graph }: { graph: Graph | null }) {
       })}
     </svg>
   );
-}
+});
 
 /* ================================================================== */
 /* Terminal — write-back story lines materializing (chapter 05)        */
@@ -1325,23 +1337,98 @@ function useCountUp(target: number, ms = 520): number {
     const a = from.current;
     const b = target;
     if (a === b) return;
+    if (ms <= 0) {
+      // live value: it is already moving, a 520 ms ease on top only lags it
+      from.current = b;
+      setV(b);
+      return;
+    }
     const t0 = performance.now();
     let raf = 0;
     const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / ms);
       const e = 1 - Math.pow(1 - p, 3);
-      setV(a + (b - a) * e);
+      const cur = a + (b - a) * e;
+      // `from` tracks the CURRENT value, not the start of the run: a scope
+      // toggled twice inside 520 ms used to leave from.current === the new
+      // target, so the effect early-returned and the readout froze mid-flight —
+      // WHOLE MODEL reading 3 870 on a 35 789-product model.
+      from.current = cur;
+      setV(cur);
       if (p < 1) raf = requestAnimationFrame(tick);
       else from.current = b;
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target, ms]);
-  return v;
+  return ms <= 0 ? target : v;
 }
 
 /* void / air entities excluded from a "solid" volume readout */
 const VOID_ENTITIES = new Set(["IfcSpace", "IfcOpeningElement"]);
+
+/* MATERIALS rows rendered before the list is summarised. The panel is a ranked
+ * distribution, not a browser: an ARK model with 3 439 distinct material names
+ * would otherwise put ~14 000 nodes in the DOM for rows nobody scrolls to. */
+const MAT_ROW_CAP = 400;
+
+/* ================================================================== */
+/* TypeRegister — rows are TYPES, not products, but the list re-renders  */
+/* on every provisional-graph tick unless its props are stable. `inScope` */
+/* is null for the whole model (the only scope a streaming model has), so */
+/* memo holds through the entire stream.                                 */
+/* ================================================================== */
+const TypeRegister = memo(function TypeRegister({
+  types,
+  hotEntity,
+  typeSel,
+  inScope,
+  onHover,
+  onSelect,
+}: {
+  types: MType[];
+  hotEntity: string | null;
+  typeSel: string | null;
+  /** entities present in the current scope — null means "no scope filter" */
+  inScope: Set<string> | null;
+  onHover: (t: MType | null) => void;
+  onSelect: (t: MType) => void;
+}) {
+  return (
+    <div className="scrolly reg-body" onMouseLeave={() => onHover(null)}>
+      <div className="reg-head">
+        <span>ENT</span>
+        <span>TYPE</span>
+        <span className="ra">N</span>
+        <span>DIST</span>
+        <span className="ra">GLB</span>
+      </div>
+      {types.map((t) => {
+        const entHot = hotEntity === t.entity;
+        const pinned = typeSel === t.type_name;
+        const dim = inScope ? !inScope.has(t.entity) : false;
+        return (
+          <div
+            key={t.slug}
+            className={`reg-row${entHot ? " hot" : ""}${pinned ? " pin" : ""}${dim ? " dim" : ""}`}
+            onMouseEnter={() => onHover(t)}
+            onClick={() => onSelect(t)}
+          >
+            <span className="reg-ent">{short(t.entity)}</span>
+            <span className="reg-name" title={t.type_name}>
+              {t.type_name}
+            </span>
+            <span className="reg-n ra">{t.count}</span>
+            <span className="reg-spark">
+              <span className="reg-sparkfill" style={{ width: `${(t.count / 50) * 100}%` }} />
+            </span>
+            <span className="reg-bytes ra">{t.bytes ? `${(t.bytes / 1024).toFixed(1)}k` : "—"}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 
 /* ================================================================== */
 /* InstrumentChapter — concept B, adapted as film chapter 06           */
@@ -1351,6 +1438,7 @@ function InstrumentChapter({
   qto,
   graph,
   manifest,
+  provisional,
   entered,
   booted,
   glbSrc,
@@ -1361,6 +1449,9 @@ function InstrumentChapter({
   qto: Qto | null;
   graph: Graph | null;
   manifest: Manifest | null;
+  /** `graph` is the streaming fold, not graphJson's output: no materials, no
+   * storeys, meshed products only. Panels that cannot be honest say PENDING. */
+  provisional: boolean;
   entered: boolean;
   booted: boolean;
   /** blob URL of a dropped model's glb (v1 packages); the Duplex sample when absent */
@@ -1394,14 +1485,24 @@ function InstrumentChapter({
     return m;
   }, [qto]);
 
-  /* ── product-guid → meta lookup for viewport cross-filter ── */
-  const guidLookup = useMemo(() => {
-    const m = new Map<string, Meta>();
-    graph?.products.forEach((p) =>
-      m.set(p.guid, { entity: p.entity, storey_guid: p.storey_guid, type_name: p.type_name })
-    );
-    return m;
-  }, [graph]);
+  /* ── product-guid → product lookup, built on FIRST USE, not on every graph
+     change. Only a viewport pick and the model-viewer's material pass read it,
+     and 35 789 Map inserts (twice: this and the receipt lookup) inside the
+     commit that lands the real graph is pure latency for something nobody has
+     asked for yet. The cache is keyed on graph identity, so the provisional
+     fold republishing at 4 Hz costs nothing until someone clicks. ── */
+  const lookupRef = useRef<{ g: Graph | null; m: Map<string, Product> }>({ g: null, m: new Map() });
+  const lookup = useCallback(
+    (guid: string): Product | undefined => {
+      if (lookupRef.current.g !== graph) {
+        const m = new Map<string, Product>();
+        graph?.products.forEach((p) => m.set(p.guid, p));
+        lookupRef.current = { g: graph, m };
+      }
+      return lookupRef.current.m.get(guid);
+    },
+    [graph],
+  );
 
   /* ── scoped product set (storey-based numeric scope) ── */
   const scoped = useMemo(() => {
@@ -1430,15 +1531,18 @@ function InstrumentChapter({
       .sort((a, b) => b.count - a.count);
   }, [scoped, qtoByEntity]);
 
-  /* ── materials within scope ── */
+  /* ── materials within scope. Batch meta carries no material assignments, so
+     while the graph is provisional this is not "no materials" — it is "not yet
+     known", and the panel says so instead of counting a 35 789-product no-op. ── */
   const materials = useMemo(() => {
+    if (provisional) return [] as { name: string; count: number }[];
     const m = new Map<string, number>();
     for (const p of scoped)
       for (const name of p.materials ?? []) m.set(name, (m.get(name) ?? 0) + 1);
     return [...m.entries()]
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
-  }, [scoped]);
+  }, [scoped, provisional]);
   const matMax = materials.reduce((mx, d) => Math.max(mx, d.count), 1);
 
   /* ── quantities strip (scope-aware) ── */
@@ -1485,6 +1589,24 @@ function InstrumentChapter({
 
   const filterActive = !!(hotEntity || entitySel || typeSel || scope !== "ALL");
 
+  /* the interlude covers the viewport until there is geometry to show. Before
+     "indexed" that is the drop state; after it, the provisional graph being
+     still empty is the signal — the viewer paints the first batch the moment it
+     lands, independent of React. */
+  const awaitingGeometry = provisional && !!graph && graph.products.length === 0;
+  const workingLabel =
+    drop.state.status === "working"
+      ? `${drop.state.step} · ${drop.state.name}`
+      : awaitingGeometry && drop.state.status === "ready"
+        ? `tessellating · ${drop.state.model.name}`
+        : null;
+  const workingSince =
+    drop.state.status === "working"
+      ? drop.state.startedAt
+      : drop.state.status === "ready"
+        ? drop.state.model.startedAt
+        : undefined;
+
   /* ── viewport source: register hover previews a type mini-glb ── */
   const previewing = !!hotType && !!hotType.glb;
   const viewSrc = previewing ? hotType!.glb : (glbSrc ?? "/sample/duplex.glb");
@@ -1506,12 +1628,6 @@ function InstrumentChapter({
     return null;
   }, [previewing, hotEntity, entitySel, typeSel, scope]);
 
-  // product lookup for the tap receipt (m3 / m2 land with the "done" phase)
-  const productByGuid = useMemo(() => {
-    const m = new Map<string, Product>();
-    graph?.products.forEach((p) => m.set(p.guid, p));
-    return m;
-  }, [graph]);
   const storeyName = (g: string | null) => (g ? storeys.find((s) => s.guid === g)?.name ?? g : "unplaced");
   const onPick = useCallback(
     (m: { guid: string; entity: string; type_name?: string | null; storey_guid?: string | null; m3?: number | null; m2?: number | null } | null) => {
@@ -1519,7 +1635,7 @@ function InstrumentChapter({
         setPicked(null);
         return;
       }
-      const p = productByGuid.get(m.guid);
+      const p = lookup(m.guid);
       setPicked({
         guid: m.guid,
         entity: m.entity,
@@ -1529,8 +1645,28 @@ function InstrumentChapter({
         m2: m.m2 ?? p?.m2 ?? null,
       });
     },
-    [productByGuid],
+    [lookup],
   );
+
+  /* ── which classes the register may show as in-scope. Null (= everything) for
+     the whole model, which is what the stream publishes 20 times in a row — a
+     stable prop, so the memoized register does not re-render per tick. ── */
+  const inScopeEntities = useMemo(() => {
+    if (scope === "ALL") return null;
+    const s = new Set<string>();
+    for (const d of dist) if (d.count > 0) s.add(d.entity);
+    return s;
+  }, [scope, dist]);
+  const onRegisterHover = useCallback((t: MType | null) => {
+    setHotType(t);
+    setHotEntity(t ? t.entity : null);
+  }, []);
+  const onRegisterSelect = useCallback((t: MType) => {
+    // click = filter: return viewport to full glb, highlight this type
+    setHotType(null);
+    setEntitySel(null);
+    setTypeSel((cur) => (cur === t.type_name ? null : t.type_name));
+  }, []);
 
   const clearFilters = () => {
     setPicked(null);
@@ -1542,7 +1678,10 @@ function InstrumentChapter({
   };
 
   const fileName = summary ? summary.path.split("/").pop() ?? summary.path : "—";
-  const ready = summary && qto && graph && manifest;
+  // qto is deliberately NOT required: it only lands at "done", and gating the
+  // whole instrument on it unmounted the grid — viewport, pill and all — for the
+  // entire stream (5.0 s on RIV), then remounted it with 179 batches to replay.
+  const ready = summary && graph && manifest;
 
   return (
     <div id="inst-b" className="inst-inflow">
@@ -1598,19 +1737,35 @@ function InstrumentChapter({
 
           {/* ─────────── QUANTITIES STRIP ─────────── */}
           <section className="cell quant" style={{ gridArea: "quant" }}>
-            <InstHead label="QUANTITIES" meta={scopeLabel} metaAccent={scope !== "ALL"} />
+            <InstHead
+              label="QUANTITIES"
+              meta={provisional ? `${scopeLabel} · STREAMING` : scopeLabel}
+              metaAccent={scope !== "ALL" || provisional}
+            />
             <div className="qrow">
-              <Readout label="PRODUCTS" value={q.products} d={0} unit="" />
-              <Readout label="SOLID VOL" value={q.m3} d={1} unit="m³" />
-              <Readout label="SURFACE" value={q.m2} d={0} unit="m²" />
-              <Readout label="MATERIALS" value={q.mats} d={0} unit="dist" />
-              <Readout label="MESHED" value={meshed} d={1} unit="%" muted fixed />
+              <Readout label="PRODUCTS" value={q.products} d={0} unit="" live={provisional} />
+              <Readout label="SOLID VOL" value={q.m3} d={1} unit="m³" live={provisional} />
+              <Readout label="SURFACE" value={q.m2} d={0} unit="m²" live={provisional} />
+              {/* materials and mesh coverage come from graphJson / qtoJson, which
+                  only run once the mesh pass is done — pending, not zero */}
+              <Readout label="MATERIALS" value={q.mats} d={0} unit="dist" pending={provisional} />
+              <Readout label="MESHED" value={meshed} d={1} unit="%" muted fixed pending={!qto} />
             </div>
           </section>
 
           {/* ─────────── STOREY STACK (section) ─────────── */}
           <section className="cell storey" style={{ gridArea: "storey" }}>
-            <InstHead label="STOREY SECTION" meta={`${storeys.length} LVL`} />
+            <InstHead
+              label="STOREY SECTION"
+              meta={
+                storeys.length
+                  ? `${storeys.length} LVL`
+                  : provisional && summary
+                    ? `${nfInt.format(summary.storeys)} LVL · PENDING`
+                    : "0 LVL"
+              }
+              metaAccent={provisional && !storeys.length}
+            />
             <div className="stack">
               {filterActive && (
                 <button className="stk-reset" onClick={clearFilters}>
@@ -1619,6 +1774,11 @@ function InstrumentChapter({
               )}
               <div className="stk-body">
                 <div className="stk-axis" />
+                {provisional && !storeys.length && (
+                  <div className="empty">
+                    STOREY NAMES + ELEVATIONS RESOLVE WHEN THE MESH PASS ENDS
+                  </div>
+                )}
                 {storeys.map((s) => {
                   const c = storeyCount.m.get(s.guid) ?? 0;
                   const sel = scope === s.guid;
@@ -1693,10 +1853,10 @@ function InstrumentChapter({
             <InstrumentViewport
               src={viewSrc}
               label={viewLabel}
-              guidLookup={guidLookup}
+              guidLookup={lookup}
               highlight={highlight}
-              working={drop.state.status === "working" ? `${drop.state.step} · ${drop.state.name}` : null}
-              workingSince={drop.state.status === "working" ? drop.state.startedAt : undefined}
+              working={workingLabel}
+              workingSince={workingLabel ? workingSince : undefined}
               stream={stream ?? null}
               onPick={onPick}
               pickedGuid={picked?.guid ?? null}
@@ -1715,12 +1875,20 @@ function InstrumentChapter({
 
           {/* ─────────── MATERIALS ─────────── */}
           <section className="cell mat" style={{ gridArea: "mat" }}>
-            <InstHead label="MATERIALS" meta={`${materials.length} DISTINCT`} />
+            <InstHead
+              label="MATERIALS"
+              meta={provisional ? "PENDING" : `${materials.length} DISTINCT`}
+              metaAccent={provisional}
+            />
             <div className="scrolly bars">
               {materials.length === 0 && (
-                <div className="empty">NO MATERIAL ASSIGNMENTS IN SCOPE</div>
+                <div className="empty">
+                  {provisional
+                    ? "MATERIAL ASSIGNMENTS RESOLVE WHEN THE MESH PASS ENDS"
+                    : "NO MATERIAL ASSIGNMENTS IN SCOPE"}
+                </div>
               )}
-              {materials.map((m) => (
+              {materials.slice(0, MAT_ROW_CAP).map((m) => (
                 <div key={m.name} className="bar-row mat-row">
                   <span className="bar-name mat-name" title={m.name}>
                     {m.name}
@@ -1734,6 +1902,11 @@ function InstrumentChapter({
                   <span className="bar-n">{m.count}</span>
                 </div>
               ))}
+              {materials.length > MAT_ROW_CAP && (
+                <div className="empty">
+                  +{nfInt.format(materials.length - MAT_ROW_CAP)} MORE · RANKED BY COUNT
+                </div>
+              )}
             </div>
           </section>
 
@@ -1756,57 +1929,14 @@ function InstrumentChapter({
           {/* ─────────── TYPE REGISTER ─────────── */}
           <section className="cell reg" style={{ gridArea: "reg" }}>
             <InstHead label="TYPE REGISTER" meta={`${manifest!.types.length} TYPES`} />
-            <div
-              className="scrolly reg-body"
-              onMouseLeave={() => {
-                setHotType(null);
-                setHotEntity(null);
-              }}
-            >
-              <div className="reg-head">
-                <span>ENT</span>
-                <span>TYPE</span>
-                <span className="ra">N</span>
-                <span>DIST</span>
-                <span className="ra">GLB</span>
-              </div>
-              {manifest!.types.map((t) => {
-                const entHot = hotEntity === t.entity;
-                const pinned = typeSel === t.type_name;
-                const inScope =
-                  scope === "ALL" ||
-                  dist.some((d) => d.entity === t.entity && d.count > 0);
-                return (
-                  <div
-                    key={t.slug}
-                    className={`reg-row${entHot ? " hot" : ""}${pinned ? " pin" : ""}${inScope ? "" : " dim"}`}
-                    onMouseEnter={() => {
-                      setHotType(t); // hover = live preview
-                      setHotEntity(t.entity);
-                    }}
-                    onClick={() => {
-                      // click = filter: return viewport to full glb, highlight this type
-                      setHotType(null);
-                      setEntitySel(null);
-                      setTypeSel(typeSel === t.type_name ? null : t.type_name);
-                    }}
-                  >
-                    <span className="reg-ent">{short(t.entity)}</span>
-                    <span className="reg-name" title={t.type_name}>
-                      {t.type_name}
-                    </span>
-                    <span className="reg-n ra">{t.count}</span>
-                    <span className="reg-spark">
-                      <span
-                        className="reg-sparkfill"
-                        style={{ width: `${(t.count / 50) * 100}%` }}
-                      />
-                    </span>
-                    <span className="reg-bytes ra">{t.bytes ? `${(t.bytes / 1024).toFixed(1)}k` : "—"}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <TypeRegister
+              types={manifest!.types}
+              hotEntity={hotEntity}
+              typeSel={typeSel}
+              inScope={inScopeEntities}
+              onHover={onRegisterHover}
+              onSelect={onRegisterSelect}
+            />
           </section>
         </div>
       )}
@@ -1863,6 +1993,8 @@ function Readout({
   d,
   unit,
   muted,
+  live,
+  pending,
 }: {
   label: string;
   value: number;
@@ -1870,14 +2002,25 @@ function Readout({
   unit: string;
   muted?: boolean;
   fixed?: boolean;
+  /** the value is being republished as geometry streams — show it raw, an ease
+   * on top of a number that moves 4x/s only makes it lag */
+  live?: boolean;
+  /** the quantity is not derivable yet (it needs graphJson / qtoJson) */
+  pending?: boolean;
 }) {
-  const anim = useCountUp(value);
+  const anim = useCountUp(value, live ? 0 : 520);
   return (
-    <div className={`ro${muted ? " ro-muted" : ""}`}>
+    <div className={`ro${muted || pending ? " ro-muted" : ""}`}>
       <div className="ro-k">{label}</div>
       <div className="ro-v">
-        {fmt(anim, d)}
-        {unit && <span className="ro-u">{unit}</span>}
+        {pending ? (
+          "—"
+        ) : (
+          <>
+            {fmt(anim, d)}
+            {unit && <span className="ro-u">{unit}</span>}
+          </>
+        )}
       </div>
     </div>
   );
@@ -1904,7 +2047,9 @@ function InstrumentViewport({
 }: {
   src: string;
   label: string;
-  guidLookup: Map<string, Meta>;
+  /** guid → product meta, resolved lazily (the map behind it is built on the
+   * first call, not on every graph change) */
+  guidLookup: (guid: string) => Meta | undefined;
   highlight: Highlight;
   /** non-null while a dropped model is being parsed — shows the interlude */
   working?: string | null;
@@ -1942,7 +2087,7 @@ function InstrumentViewport({
       return;
     }
     const guidKey = mat.name.includes("#") ? mat.name.slice(0, mat.name.indexOf("#")) : mat.name;
-    const meta = guidLookup.get(guidKey);
+    const meta = guidLookup(guidKey);
     if (!meta || GHOST_ENTITIES.has(meta.entity.toLowerCase())) {
       onPick(null); // unknown, or a space / opening (context, never a pick target)
       return;
@@ -1987,7 +2132,7 @@ function InstrumentViewport({
         m.pbrMetallicRoughness.setBaseColorFactor(HL_PICK);
         continue;
       }
-      const meta = guidLookup.get(guidKey);
+      const meta = guidLookup(guidKey);
       const isGhostEntity = !!meta && GHOST_ENTITIES.has(meta.entity.toLowerCase());
       // ghost OFF + ghost-by-nature entity → hidden regardless of filter
       if (!ghostMode && isGhostEntity) {
