@@ -407,9 +407,9 @@ export default function SceneInstrumentMockup() {
             <Reveal show={active === 0}>
               <p className="kicker">01 / OPEN</p>
               <h1 className="headline">
-                A real building,
+                Analyze your IFC model
                 <br />
-                read in a blink.
+                in a blink.
               </h1>
               <p className="lede">
                 This is the Duplex reference model — every wall, slab and window
