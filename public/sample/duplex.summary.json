@@ -7,7 +7,7 @@
   "unit_scale": 1.0,
   "unit_resolved": true,
   "length_unit": "m",
-  "cache_key": "cc5b250e7633c4bc",
+  "cache_key": "c842e8bb3aa46af6",
   "products": 289,
   "storeys": 4,
   "type_counts_total": 16,
@@ -149,7 +149,8 @@
         "material_name",
         "layer_thickness_mm",
         "category",
-        "fraction"
+        "fraction",
+        "source"
       ],
       "loaded": true
     },
@@ -162,7 +163,8 @@
         "identification",
         "name",
         "location",
-        "source"
+        "source",
+        "assignment_source"
       ],
       "loaded": true
     },
@@ -203,6 +205,7 @@
       "loaded": true
     }
   },
-  "parse_seconds": 0.02445197105407715,
-  "duplicate_step_ids": 0
+  "parse_seconds": 0.09916853904724121,
+  "duplicate_step_ids": 0,
+  "warnings": []
 }

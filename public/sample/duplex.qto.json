@@ -6,8 +6,8 @@
       "entity": "IfcFurnishingElement",
       "count": 61,
       "storeys": [],
-      "area_m2": 463.48040401950004,
-      "volume_m3": 21.113188497300005,
+      "area_m2": 463.48038685330005,
+      "volume_m3": 21.11318618799999,
       "triangles": 14068,
       "products_with_mesh": 61,
       "products_without_mesh": 0,
@@ -48,8 +48,8 @@
         "Level 2",
         "Roof"
       ],
-      "area_m2": 268.5908336638999,
-      "volume_m3": 2.9330868160000003,
+      "area_m2": 268.59083986289994,
+      "volume_m3": 2.9330840146000003,
       "triangles": 2656,
       "products_with_mesh": 24,
       "products_without_mesh": 0,
@@ -78,8 +78,8 @@
         "Level 2",
         "Roof"
       ],
-      "area_m2": 1718.0577306748003,
-      "volume_m3": 1025.9380397798998,
+      "area_m2": 1718.0577192307003,
+      "volume_m3": 1025.9380438925998,
       "triangles": 568,
       "products_with_mesh": 21,
       "products_without_mesh": 0,
@@ -106,8 +106,8 @@
         "Level 1",
         "Level 2"
       ],
-      "area_m2": 511.70680761340003,
-      "volume_m3": 5.7482877894,
+      "area_m2": 511.7067594528,
+      "volume_m3": 5.7482726498,
       "triangles": 308,
       "products_with_mesh": 13,
       "products_without_mesh": 0,
@@ -159,8 +159,8 @@
       "storeys": [
         "Level 1"
       ],
-      "area_m2": 16.029255867,
-      "volume_m3": 4.6572587471,
+      "area_m2": 16.0292400718,
+      "volume_m3": 4.657243017200001,
       "triangles": 2420,
       "products_with_mesh": 4,
       "products_without_mesh": 0,
@@ -211,7 +211,7 @@
       "storeys": [
         "Level 2"
       ],
-      "area_m2": 176.9546356201,
+      "area_m2": 176.9546508789,
       "volume_m3": 10.2830629349,
       "triangles": 76,
       "products_with_mesh": 1,

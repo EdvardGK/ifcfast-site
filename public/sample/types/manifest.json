@@ -1,6 +1,6 @@
 {
  "source": "Duplex_A_20110907.ifc",
- "generated_with": "0.4.42",
+ "generated_with": "0.5.0",
  "types": [
   {
    "slug": "openingelement-opening",
@@ -18,7 +18,7 @@
    "count": 18,
    "guid": "0wkEuT1wr1kOyafLY4vyMO",
    "glb": "/sample/types/furnishingelement-1000mm.glb",
-   "bytes": 3608
+   "bytes": 3612
   },
   {
    "slug": "wallstandardcase-basic-wall-interior-partition-9",
@@ -36,7 +36,7 @@
    "count": 13,
    "guid": "3bXiCStxP6Fgxdej$yc5T8",
    "glb": "/sample/types/covering-compound-ceiling-gypsum-board.glb",
-   "bytes": 1660
+   "bytes": 1672
   },
   {
    "slug": "window-819mm-x-759mm",
@@ -72,7 +72,7 @@
    "count": 8,
    "guid": "0wkEuT1wr1kOyafLY4vyu$",
    "glb": "/sample/types/furnishingelement-800-mm.glb",
-   "bytes": 3860
+   "bytes": 3864
   },
   {
    "slug": "wallstandardcase-basic-wall-interior-furring-38-",
@@ -117,7 +117,7 @@
    "count": 6,
    "guid": "0iEHWY1$XA8eQeeULq4j7w",
    "glb": "/sample/types/furnishingelement-1000-mm.glb",
-   "bytes": 8848
+   "bytes": 8852
   },
   {
    "slug": "furnishingelement-600mm-depth",
@@ -189,7 +189,7 @@
    "count": 4,
    "guid": "2gRXFgjRn2HPE$YoDLX0mp",
    "glb": "/sample/types/furnishingelement-650-x-450-mm.glb",
-   "bytes": 3264
+   "bytes": 3268
   },
   {
    "slug": "window-750mm-x-2200mm",
@@ -270,7 +270,7 @@
    "count": 2,
    "guid": "1Eo2$BaHX42AEkDvQQDocD",
    "glb": "/sample/types/window-1180-x-1170mm.glb",
-   "bytes": 3412
+   "bytes": 3408
   },
   {
    "slug": "door-1250mm-x-2010mm",
@@ -369,7 +369,7 @@
    "count": 2,
    "guid": "0wkEuT1wr1kOyafLY4v_PH",
    "glb": "/sample/types/railing-railing-1100mm-guard-rail.glb",
-   "bytes": 12272
+   "bytes": 12276
   },
   {
    "slug": "railing-railing-900mm-handrail-only",
