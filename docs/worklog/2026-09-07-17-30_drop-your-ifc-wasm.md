@@ -40,3 +40,8 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   `no-store` and loads glue + wasm with `?v=<hash>` — the pair is atomic.
   Rerun `scripts/sync-wasm.sh` after every parser wasm rebuild or the
   hash goes stale (the worker still works, just unpinned).
+- Interlude v3 (`27889df`) after Ed's second pass ("way too slow", "points
+  change from shape to shape"): one fixed 1 600-point cloud, nearest-
+  target assignment per transition (grid-hashed greedy), 1.0 s rest /
+  0.55 s flight, faint solid under the resting cloud. v2's per-shape
+  resampling matched by index was the scramble.
