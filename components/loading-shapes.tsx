@@ -3,8 +3,8 @@
  * LoadingShapes — the instrument's "parsing in this tab" interlude.
  *
  * A solid rests. It explodes into a rounded blob of points — every point
- * flies radially outward from the shape — the blob hangs, then gathers
- * into the next shape, and the next solid crossfades in DURING
+ * flies radially outward from the shape — and the moment it is fully
+ * expanded it contracts into the next shape, and the next solid crossfades in DURING
  * the last stretch of the gather, so the moment the points arrive the
  * body is already there and the points are gone. The cloud is ONE fixed
  * set of points for the whole run; at each gather every point is
@@ -18,7 +18,7 @@ import * as THREE from "three";
 const N = 900; // points in the cloud — fixed for the whole run (smooth > dense)
 const HOLD = 1.1; // s the solid rests
 const DISSOLVE = 0.7; // s solid → blob (points explode radially outward)
-const DRIFT = 0.5; // s the blob hangs, motionless apart from the slow rotation
+const DRIFT = 0.0; // no hang: the blob contracts the instant it has fully expanded
 const GATHER = 0.9; // s cloud → next shape; the solid crossfades in from CROSS on
 const CROSS = 0.62; // fraction of the gather at which the next solid starts fading in
 const PERIOD = HOLD + DISSOLVE + DRIFT + GATHER;
