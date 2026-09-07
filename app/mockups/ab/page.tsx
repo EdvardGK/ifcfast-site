@@ -2315,7 +2315,7 @@ function BootVeil({ ready }: { ready: boolean }) {
 /* Film styles (concept A) — clamp()-tuned for 1440 → 2560 → mobile     */
 /* ================================================================== */
 const CSS = `
-:root { --amber: ${ACCENT}; }
+:root { --amber: ${ACCENT}; --hud-h: 96px; }
 
 .scene-stage {
   position: fixed; inset: 0; z-index: 0;
@@ -2590,8 +2590,15 @@ const CSS = `
 .btn.ghost { color: #cbc8c1; border: 1px solid rgba(255,255,255,0.16); }
 .btn.ghost:hover { border-color: rgba(255,255,255,0.4); color: #f2efe9; }
 
-/* --- chapter 06 host — in-flow full-viewport instrument --- */
-.chapter-inst { position: relative; z-index: 10; min-height: 100svh; }
+/* --- chapter 06 host — in-flow full-viewport instrument ---
+   padding-top reserves a band for the fixed .hud-brand / .hud-cta so
+   they never sit on top of the instrument's own title/quant cells;
+   painted in the instrument's graphite so the band reads as the
+   instrument's own top strip, not the film showing through. */
+.chapter-inst {
+  position: relative; z-index: 10; min-height: 100svh; box-sizing: border-box;
+  padding-top: var(--hud-h); background: #0b0c0e;
+}
 
 /* ============ responsive ============ */
 @media (max-width: 1100px) {
@@ -2615,6 +2622,7 @@ const CSS = `
   .hud-cta-link { padding: 7px 9px; font-size: 11px; }
   .pip.pip-compact .pip-cmd { display: none; }
   .hud-cta-hint { display: none; }
+  :root { --hud-h: 72px; }
 }
 @media (min-width: 2000px) {
   .c-inner { width: min(100%, 1520px); }
@@ -2675,9 +2683,12 @@ function StyleBlock() {
    MATERIALS sits on top of the ENTITY DISTRIBUTION treemap in one narrow
    column; the width that column gives up goes to the viewport. */
 @media(min-width:1200px){
-  #inst-b.inst-inflow{ height:100svh; min-height:100svh; overflow:hidden; }
+  #inst-b.inst-inflow{
+    height:calc(100svh - var(--hud-h)); min-height:calc(100svh - var(--hud-h));
+    overflow:hidden;
+  }
   #inst-b .grid{
-    height:100dvh; min-height:0;
+    height:calc(100dvh - var(--hud-h)); min-height:0;
     grid-template-columns:216px minmax(0,1.6fr) minmax(0,0.72fr) 302px;
     grid-template-rows:auto minmax(0,0.85fr) minmax(0,1.15fr);
     grid-template-areas:
