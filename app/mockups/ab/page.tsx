@@ -1886,6 +1886,11 @@ function InstrumentViewport({
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // `?interlude` keeps the loading animation on screen for review
+  const [previewInterlude, setPreviewInterlude] = useState(false);
+  useEffect(() => {
+    setPreviewInterlude(new URLSearchParams(window.location.search).has("interlude"));
+  }, []);
   // click-to-select on the model-viewer path: a pointerdown/up pair that did
   // not drag → materialFromPoint → material name is the product GUID (GH #146)
   const downAt = useRef<[number, number] | null>(null);
@@ -2074,7 +2079,7 @@ function InstrumentViewport({
         <Ghost size={11} strokeWidth={ghostMode ? 2.2 : 1.6} />
         ghost {ghostMode ? "on" : "off"}
       </button>
-      {working ? <LoadingShapes caption={working} /> : null}
+      {working || previewInterlude ? <LoadingShapes caption={working ?? "interlude preview · add ?interlude to the url"} /> : null}
       {picked ? (
         <div className="vp-sel" title={picked.guid}>
           <span className="vp-sel-t">{picked.title}</span>

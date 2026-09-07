@@ -26,11 +26,22 @@ function load() {
   if (!modPromise) {
     modPromise = (async () => {
       const base = new URL("/wasm/", self.location.origin);
-      const mod = (await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ new URL("ifcfast_wasm.js", base).href)) as {
+      // version.json is fetched uncached and its hash pins BOTH files, so a
+      // cached glue can never be paired with a newer .wasm (that mismatch
+      // surfaces as "function import requires a callable").
+      let v = "";
+      try {
+        const r = await fetch(new URL("version.json", base).href, { cache: "no-store" });
+        if (r.ok) v = String((await r.json()).v ?? "");
+      } catch {
+        /* fall through: unpinned load */
+      }
+      const q = v ? `?v=${v}` : "";
+      const mod = (await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ new URL(`ifcfast_wasm.js${q}`, base).href)) as {
         default: (o: { module_or_path: string }) => Promise<unknown>;
         IfcModel: typeof IfcModelT;
       };
-      await mod.default({ module_or_path: new URL("ifcfast_wasm_bg.wasm", base).href });
+      await mod.default({ module_or_path: new URL(`ifcfast_wasm_bg.wasm${q}`, base).href });
       return { IfcModel: mod.IfcModel };
     })();
   }
@@ -93,7 +104,12 @@ self.onmessage = async (ev: MessageEvent<Req>) => {
       );
     }
   } catch (e) {
-    postMessage({ ok: false, error: e instanceof Error ? e.message : String(e) });
+    let msg = e instanceof Error ? e.message : String(e);
+    if (/requires a callable|WebAssembly\.instantiate|import #\d+/i.test(msg)) {
+      msg = "stale wasm in the browser cache — reload the page and drop the file again";
+      modPromise = null; // force a fresh, version-pinned load next time
+    }
+    postMessage({ ok: false, error: msg });
   } finally {
     try {
       model?.free();
