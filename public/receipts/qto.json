@@ -1,10 +1,10 @@
 {
  "generated": "2026-09-06",
- "ifcfast_version": "0.4.42",
+ "ifcfast_version": "0.5.0",
  "machine": "omarchy \u00b7 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz \u00b7 Linux",
  "values": "measured",
  "model": "Clinic_Architectural.ifc",
- "mesh_qto_s": 1.0,
+ "mesh_qto_s": 1.04,
  "products": 2855,
  "volume_reliable_share": 0.986,
  "classes": [

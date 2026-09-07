@@ -254,9 +254,10 @@ function Speed() {
 function Federation() {
   const cats = Object.entries(clash.by_category);
   const total = cats.reduce((a, [, n]) => a + n, 0) || 1;
-  const recall = clash.oracle.pair_recall;
-  const found = recall.reduce((a, [f]) => a + f, 0);
-  const truth = recall.reduce((a, [, t]) => a + t, 0);
+  const rounds = clash.oracle.rounds;
+  const found = rounds.reduce((a, r) => a + r.matched, 0);
+  const truth = rounds.reduce((a, r) => a + r.truth_pairs, 0);
+  const misses = truth - found;
 
   return (
     <Receipt
@@ -327,14 +328,27 @@ function Federation() {
 
       <div className="mt-9 max-w-[38rem] border-t border-rule pt-6">
         <p className="text-[0.9375rem] leading-[1.65] text-ink-2">
-          Against Solibri as ground truth on {clash.oracle.rounds} version-matched
+          Against Solibri as ground truth on {rounds.length} version-matched
           rounds of {clash.oracle.project}, ifcfast finds{" "}
           <strong className="font-medium text-ink">
             {found} of the {truth} clash pairs
           </strong>{" "}
-          Solibri reports, and both misses are attributed. The truth set is{" "}
+          Solibri reports. The {misses === 1 ? "one miss is" : `${misses} misses are`}{" "}
+          open issues on the tracker, not tolerated noise. The truth set is{" "}
           {clash.oracle.truth}.
         </p>
+        <table className="mt-4 w-full max-w-[26rem] border-collapse text-[0.8125rem]">
+          <tbody>
+            {rounds.map((r) => (
+              <tr key={r.round} className="border-b border-rule">
+                <td className="num py-1.5 pr-3 text-ink-3">{r.round}</td>
+                <td className="num py-1.5 text-right">
+                  {r.matched} / {r.truth_pairs}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <Stamp generated={clash.generated} values={clash.values} file="receipts/clash.json" />

@@ -19,11 +19,11 @@ import s from "./instrument.module.css";
  * ------------------------------------------------------------------ */
 
 const nf = new Intl.NumberFormat("en-US");
-const int = (n: number) => nf.format(Math.round(n)).replace(/,/g, " ");
+const int = (n: number) => nf.format(Math.round(n)).replace(/,/g, " ");
 const dec = (n: number, d: number) =>
   n
     .toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d })
-    .replace(/,/g, " ");
+    .replace(/,/g, " ");
 const short = (entity: string) => entity.replace(/^Ifc/, "");
 const mb = (n: number) => `${(n / 1e6).toFixed(1)} MB`;
 const HEAVY_BYTES = 5e6;

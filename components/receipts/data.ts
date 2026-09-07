@@ -82,14 +82,12 @@ export const clash = clashJson as unknown as {
     class_b: string;
     model_b: string;
     category: string;
-    kind: string;
-    storey: string;
+    kind: string | null;
   }[];
   oracle: {
     project: string;
-    rounds: number;
-    pair_recall: [number, number][];
     truth: string;
+    rounds: { round: string; matched: number; truth_pairs: number; topics: [number, number] }[];
   };
   command: string;
 };
@@ -133,7 +131,7 @@ const groupInt = new Intl.NumberFormat("en-US");
 
 /** 37772 -> "37 772" — a thin space, so long counts stay readable. */
 export function int(n: number): string {
-  return groupInt.format(Math.round(n)).replace(/,/g, " ");
+  return groupInt.format(Math.round(n)).replace(/,/g, " ");
 }
 
 export function dec(n: number, digits: number): string {

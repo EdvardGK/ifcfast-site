@@ -46,7 +46,7 @@ command that reproduces it.
      "category": "clash", "kind": "hard", "storey": "First Floor"}
   ],
   "oracle": {"project": "a live hospital project (client data, not shown)",
-             "rounds": 5, "pair_recall": [[13,13],[2,2],[2,2],[14,15],[18,19]],
+             "rounds": [{"round": "tmk13_plan5", "matched": 13, "truth_pairs": 13, "topics": [48, 49]}, "…"],
              "truth": "Solibri TMK BCF ground truth"},
   "command": "fed = ifcfast.federate([...5 bundles...], 'clinic.fed'); df = ifcfast.clash(fed)"
 }

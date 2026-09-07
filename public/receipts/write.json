@@ -1,6 +1,6 @@
 {
  "generated": "2026-09-06",
- "ifcfast_version": "0.4.42",
+ "ifcfast_version": "0.5.0",
  "machine": "omarchy \u00b7 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz \u00b7 Linux",
  "values": "measured",
  "model": "Clinic_Architectural.ifc",
@@ -16,7 +16,7 @@
   "guid": "0bk1ZfURb7DB4FOIglu8Y$",
   "class": "IfcWallStandardCase",
   "triangles": 12,
-  "seconds": 0.186,
+  "seconds": 0.184,
   "bytes_in": 13003205,
   "bytes_out": 13005075,
   "identical_prefix_bytes": 2800665,
@@ -37,7 +37,7 @@
  },
  "mutate": {
   "ops": 3,
-  "seconds": 0.209,
+  "seconds": 0.213,
   "stats": {
    "ops_applied": 3,
    "renamed": 1,

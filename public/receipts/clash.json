@@ -1,6 +1,6 @@
 {
  "generated": "2026-09-06",
- "ifcfast_version": "0.4.42",
+ "ifcfast_version": "0.5.0",
  "machine": "omarchy \u00b7 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz \u00b7 Linux",
  "values": "measured",
  "tolerance_m": 0.0,
@@ -56,8 +56,8 @@
   ]
  },
  "command": "fed = ifcfast.federate([...5 bundles...], 'clinic.fed'); df = ifcfast.clash(fed)",
- "federate_s": 0.84,
- "clash_s": 1.64,
+ "federate_s": 0.97,
+ "clash_s": 1.77,
  "unit_scales": {
   "Architectural": "1",
   "Structural": "1",
