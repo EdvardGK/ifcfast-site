@@ -97,3 +97,16 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   "picks random things").
 - Ed's rule, recorded in memory: Fable plans and coordinates, opus /
   sonnet write the code.
+- **Third agent (opus, `e6caabf`)** found the two real problems: (1) the
+  instrument grid required `qto && graph`, which a streaming model lacks
+  until "done" → the whole grid UNMOUNTED for the entire stream (6.75 s
+  blank on RIV; the viewer mounted at done and replayed 179 batches in
+  one 983 ms frame) — so every earlier "streams on screen" claim was the
+  replay; (2) the ~830 ms hitch was chapter 04's Constellation SVG fed
+  the dropped graph (71 629 DOM nodes). Fixes: provisional graph from
+  batch meta at 4 Hz, `ready` without qto, Constellation pinned to the
+  Duplex + memo, lazy guid lookup, memoised TypeRegister, useCountUp
+  freeze bug. RIV: first numbers 10.9 → 3.3 s, first geometry 11.9 →
+  4.9 s, worst frame after done 983 → 33 ms, 60 fps during the stream.
+  Note: the box was swapping (3/3 GB) during these runs — two Chrome
+  instances with RIV loaded + an agent worktree; cleaned up after.
