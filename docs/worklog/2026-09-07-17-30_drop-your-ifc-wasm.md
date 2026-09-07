@@ -27,3 +27,16 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   progress bar needs a streaming core API.
 - Per-type mini-glbs (register hover preview) are absent for dropped
   models by design (v1).
+
+## Evening: streaming viewer, interlude v2, cache pinning (`dc57330`, `95dce5d`)
+- Streaming: see the parser worklog addendum (RIV 130 MB: 5.5 s, 105 MB heap).
+- Interlude v2 after Ed's "really bad" on v1: one flat-shaded solid at a
+  time dissolving into an amber cloud that reforms as the next shape
+  (sphere → pyramid → tetrahedron → torus → cube → cone). `?interlude`
+  keeps it on screen. Frames verified in DevTools Chrome.
+- Ed's Windows PC: "WebAssembly.instantiate(): Import #0 … requires a
+  callable" = cached v1 glue + v2 wasm. `sync-wasm.sh` now writes
+  `public/wasm/version.json` (wasm content hash); the worker fetches it
+  `no-store` and loads glue + wasm with `?v=<hash>` — the pair is atomic.
+  Rerun `scripts/sync-wasm.sh` after every parser wasm rebuild or the
+  hash goes stale (the worker still works, just unpinned).
