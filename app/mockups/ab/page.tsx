@@ -435,7 +435,7 @@ export default function SceneInstrumentMockup() {
       </nav>
 
       {/* live parse badge, bottom-left */}
-      <div className="hud-badge">
+      <div className={`hud-badge${onInstrument ? " hud-retired" : ""}`}>
         {sampleSummary ? (
           <>
             <span className="dot" />
@@ -2421,6 +2421,8 @@ const CSS = `
   border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
   padding: 7px 14px;
 }
+/* the badge narrates the film; it steps aside on the instrument like the rail */
+.hud-badge.hud-retired { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 .hud-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
   box-shadow: 0 0 10px 1px rgba(255,143,58,0.8); }
 .hud-badge .dot.pulse { animation: pulse-a 1.2s ease-in-out infinite; }
