@@ -36,7 +36,7 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Code, ArrowLeft, Copy, Check } from "lucide-react";
+import { Code, Copy, Check, Ghost } from "lucide-react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
@@ -156,6 +156,9 @@ const ACCENT = "#ff8f3a";
 /* viewport material factors (sRGB/255, matching components/viewer.tsx) */
 const HL_ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
 const HL_DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
+const HL_HIDE: [number, number, number, number] = [0, 0, 0, 0];
+/* ghost-by-nature entities — translucent volumes that show structure; ghost OFF hides them */
+const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
 
 /* ================================================================== */
 /* FilmScene choreography constants                                    */
@@ -367,6 +370,29 @@ export default function SceneInstrumentMockup() {
         </span>
       </div>
 
+      {/* ---------- fixed CTA tab: install / GitHub / AGENTS.md — follows the viewport ---------- */}
+      <nav className="hud-cta" aria-label="get ifcfast">
+        <CopyPip compact />
+        <a
+          className="hud-cta-link"
+          href="https://github.com/EdvardGK/ifcfast"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Code size={13} /> GitHub
+        </a>
+        <a
+          className="hud-cta-link"
+          href="https://github.com/EdvardGK/ifcfast/blob/main/AGENTS.md"
+          target="_blank"
+          rel="noreferrer"
+          title="Give AGENTS.md to your agent — it boosts its ability to analyze models fast and build automated pipelines and tools"
+        >
+          AGENTS.md
+          <span className="hud-cta-hint">give it to your agent</span>
+        </a>
+      </nav>
+
       <nav
         className={`chapter-rail${onInstrument ? " rail-retired" : ""}`}
         aria-label="chapters"
@@ -526,28 +552,6 @@ export default function SceneInstrumentMockup() {
           />
         </section>
 
-        {/* ---------- final CTA outro strip ---------- */}
-        <footer className="outro">
-          <div className="outro-inner">
-            <p className="outro-kicker">06 / COMMAND · the instrument is yours</p>
-            <div className="cta">
-              <CopyPip />
-              <div className="cta-links">
-                <a
-                  className="btn primary"
-                  href="https://github.com/EdvardGK/ifcfast"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Code size={16} /> GitHub
-                </a>
-                <a className="btn ghost" href="/receipts">
-                  the receipts <ArrowLeft size={16} style={{ transform: "rotate(180deg)" }} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
       </main>
     </>
   );
@@ -1147,12 +1151,13 @@ function Terminal({ show }: { show: boolean }) {
 /* ================================================================== */
 /* CopyPip — the pip install line with copy button                     */
 /* ================================================================== */
-function CopyPip() {
+function CopyPip({ compact = false }: { compact?: boolean }) {
   const [copied, setCopied] = useState(false);
   const cmd = "pip install ifcfast";
   return (
     <button
-      className="pip"
+      className={compact ? "pip pip-compact" : "pip"}
+      title="copy to clipboard"
       onClick={() => {
         navigator.clipboard?.writeText(cmd).then(() => {
           setCopied(true);
@@ -1162,7 +1167,7 @@ function CopyPip() {
     >
       <span className="pip-prompt">$</span>
       <span className="pip-cmd">{cmd}</span>
-      <span className="pip-icon">{copied ? <Check size={15} /> : <Copy size={15} />}</span>
+      <span className="pip-icon">{copied ? <Check size={compact ? 13 : 15} /> : <Copy size={compact ? 13 : 15} />}</span>
     </button>
   );
 }
@@ -1696,6 +1701,9 @@ function InstrumentViewport({
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // ghost ON: non-selected fade to faint context · ghost OFF: non-selected
+  // (and spaces / openings) are hidden — the original site's viewer toggle
+  const [ghostMode, setGhostMode] = useState(true);
   const originals = useRef<
     Map<string, { color: [number, number, number, number]; alphaMode: string }>
   >(new Map());
@@ -1724,15 +1732,22 @@ function InstrumentViewport({
     for (const m of mats) {
       const orig = originals.current.get(m.name);
       if (!orig) continue;
+      // multi-segment products carry '<guid>#1', '<guid>#2', … — normalize
+      const guidKey = m.name.includes("#") ? m.name.slice(0, m.name.indexOf("#")) : m.name;
+      const meta = guidLookup.get(guidKey);
+      const isGhostEntity = !!meta && GHOST_ENTITIES.has(meta.entity.toLowerCase());
+      // ghost OFF + ghost-by-nature entity → hidden regardless of filter
+      if (!ghostMode && isGhostEntity) {
+        m.setAlphaMode("BLEND");
+        m.pbrMetallicRoughness.setBaseColorFactor(HL_HIDE);
+        continue;
+      }
       // no active filter (or mini-glb preview) → restore original look
       if (!highlight) {
         m.setAlphaMode(orig.alphaMode as "OPAQUE" | "BLEND");
         m.pbrMetallicRoughness.setBaseColorFactor(orig.color);
         continue;
       }
-      // multi-segment products carry '<guid>#1', '<guid>#2', … — normalize
-      const guidKey = m.name.includes("#") ? m.name.slice(0, m.name.indexOf("#")) : m.name;
-      const meta = guidLookup.get(guidKey);
       let match = false;
       if (meta) {
         if (highlight.mode === "storey") {
@@ -1751,11 +1766,12 @@ function InstrumentViewport({
         m.setAlphaMode("OPAQUE");
         m.pbrMetallicRoughness.setBaseColorFactor(HL_ACCENT);
       } else {
+        // filter active: ghost ON dims to faint context, ghost OFF hides
         m.setAlphaMode("BLEND");
-        m.pbrMetallicRoughness.setBaseColorFactor(HL_DIM);
+        m.pbrMetallicRoughness.setBaseColorFactor(ghostMode ? HL_DIM : HL_HIDE);
       }
     }
-  }, [highlight, guidLookup, storeyMatch]);
+  }, [highlight, guidLookup, storeyMatch, ghostMode]);
 
   // snapshot original material state on (re)load, then apply current filter
   useEffect(() => {
@@ -1829,6 +1845,17 @@ function InstrumentViewport({
           ["--poster-color" as string]: "transparent",
         }}
       />
+      <button
+        type="button"
+        className="vp-ghost"
+        onClick={() => setGhostMode((g) => !g)}
+        title={ghostMode ? "Ghost ON — non-selected fade" : "Ghost OFF — non-selected hidden"}
+        aria-pressed={ghostMode}
+        data-on={ghostMode}
+      >
+        <Ghost size={11} strokeWidth={ghostMode ? 2.2 : 1.6} />
+        ghost {ghostMode ? "on" : "off"}
+      </button>
       <div className="vp-cap">
         <span className="vp-dot" data-on={loaded} />
         {label}
@@ -1907,6 +1934,30 @@ const CSS = `
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em;
   text-transform: uppercase; color: #7d7b76;
   transition: color 0.4s ease;
+}
+
+/* --- fixed CTA tab (top-right): install / GitHub / AGENTS.md ---------- */
+.hud-cta {
+  position: fixed; top: clamp(14px,2vw,26px); right: clamp(16px,2.4vw,40px);
+  z-index: 31; display: flex; align-items: center; gap: 8px;
+  padding: 5px; border-radius: 999px;
+  background: rgba(10,11,13,0.62); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 8px 30px -12px rgba(0,0,0,0.8);
+}
+.hud-cta-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+  color: #cbc8c1; text-decoration: none; padding: 8px 12px; border-radius: 999px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.hud-cta-link:hover { color: #f2efe9; background: rgba(255,255,255,0.06); }
+.hud-cta-hint {
+  font-size: 10px; letter-spacing: 0.06em; color: var(--amber);
+  border-left: 1px solid rgba(255,255,255,0.12); padding-left: 8px;
+}
+.pip.pip-compact {
+  font-size: 12px; padding: 7px 12px; gap: 8px; border-radius: 999px;
 }
 
 .chapter-rail {
@@ -2102,19 +2153,6 @@ const CSS = `
 @keyframes blink { to { opacity: 0; } }
 
 /* --- outro CTA strip (page end) --- */
-.outro {
-  position: relative; z-index: 10;
-  background: linear-gradient(180deg, #0a0b0d 0%, #060708 100%);
-  border-top: 1px solid rgba(255,255,255,0.08);
-  padding: clamp(48px,7vw,96px) clamp(20px,8vw,200px);
-}
-.outro-inner { width: min(100%, 1180px); margin-inline: auto; }
-.outro-kicker {
-  font-family: var(--font-mono); font-size: clamp(11px,0.85vw,13px);
-  letter-spacing: 0.42em; text-transform: uppercase; color: var(--amber);
-  margin: 0 0 clamp(18px,2.4vw,30px); text-shadow: 0 0 18px rgba(255,143,58,0.35);
-}
-.cta { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(14px,2vw,28px); }
 .pip {
   display: inline-flex; align-items: center; gap: 12px; cursor: pointer;
   font-family: var(--font-mono); font-size: clamp(13px,1.1vw,16px);
@@ -2125,7 +2163,6 @@ const CSS = `
 .pip:hover { background: rgba(255,143,58,0.18); box-shadow: 0 0 26px -4px rgba(255,143,58,0.55); }
 .pip-prompt { color: var(--amber); }
 .pip-icon { color: var(--amber); display: inline-flex; }
-.cta-links { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.02em;
@@ -2158,7 +2195,10 @@ const CSS = `
   .numgrid { grid-template-columns: 1fr; }
   .hud-sub { display: none; }
   .num-val { font-size: clamp(2.6rem, 15vw, 4rem); }
-  .outro { padding-inline: 20px; }
+  .hud-cta { top: 12px; right: 12px; gap: 4px; padding: 4px; }
+  .hud-cta-link { padding: 7px 9px; font-size: 11px; }
+  .pip.pip-compact .pip-cmd { display: none; }
+  .hud-cta-hint { display: none; }
 }
 @media (min-width: 2000px) {
   .c-inner { width: min(100%, 1520px); }
@@ -2344,6 +2384,15 @@ function StyleBlock() {
   background:rgba(9,11,13,.72); padding:3px 7px; border:1px solid var(--ln); max-width:calc(100% - 16px);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+#inst-b .vp-ghost{
+  position:absolute; right:8px; top:8px; z-index:3; display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--mut); background:rgba(9,11,13,.72); border:1px solid var(--ln); padding:3px 7px;
+  cursor:pointer; transition:color .2s ease, border-color .2s ease;
+}
+#inst-b .vp-ghost:hover{ color:var(--fg); border-color:var(--ln2); }
+#inst-b .vp-ghost[data-on="true"]{ color:var(--fg); }
+#inst-b .vp-ghost[data-on="true"] svg{ color:var(--acc); }
 #inst-b .vp-dot{ width:5px; height:5px; border-radius:50%; background:var(--mut2); flex:0 0 auto; }
 #inst-b .vp-dot[data-on="true"]{ background:var(--acc); box-shadow:0 0 6px var(--acc); }
 #inst-b .vp-crosshair{ position:absolute; width:9px; height:9px; z-index:2; pointer-events:none; opacity:.5; }
