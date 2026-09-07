@@ -64,3 +64,15 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   Verified on G55_RIE: all three tick together, PARSE settles on the
   engine's own number (1 267 ms) once indexed. The model itself starts
   rendering at the first geometry batch, ~150 ms after "indexed".
+- Pick semantics (`458e760`), Ed: "click in the viewer highlights; the
+  cross-filter UI isolates. We don't hide the thing we're interfacing
+  with." A pick is now a separate selection drawn in a brighter accent on
+  top of the filters (both viewers); nothing is hidden by a pick; the
+  raycast prefers the first product INSIDE the active filter along the
+  ray, falling back to a ghosted one. Verified with a `__debugPick`
+  hook: batch index offsets sorted, binary-search product == brute
+  force, projected-vertex ray hits (6), no-filter pick == nearest hit,
+  filter survives a pick. Lesson: MEP models are mostly air — a ray
+  through the model centre often hits nothing; that is not a bug.
+  Note: a stale canvas rect after the filter button appears shifted a
+  synthetic click; real clicks read the live rect.
