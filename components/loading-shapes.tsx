@@ -2,21 +2,26 @@
 /**
  * LoadingShapes — the instrument's "parsing in this tab" interlude.
  *
- * ONE fixed cloud of points is the whole show. It rests as a shape,
- * then every point flies to the nearest free spot on the next shape
- * (greedy nearest-target assignment on a spatial grid, so nothing
- * scrambles — the cloud visibly flows from sphere to pyramid to
- * tetrahedron to torus to cube to cone). A faint solid fades in under
- * the resting cloud so the shape reads as a body, and drops out the
- * instant the points leave. Off-white solid, amber points, three only.
+ * A solid rests. It explodes into a rounded blob of points — every point
+ * flies radially outward from the shape — the blob hangs, then gathers
+ * into the next shape, and the next solid crossfades in DURING
+ * the last stretch of the gather, so the moment the points arrive the
+ * body is already there and the points are gone. The cloud is ONE fixed
+ * set of points for the whole run; at each gather every point is
+ * assigned the nearest still-free spot on the next shape (grid-hashed
+ * greedy), so it flows rather than scrambles. Points are never visible
+ * while the solid is. Off-white solid, amber points, three only.
  */
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 const N = 1600; // points in the cloud — fixed for the whole run
-const HOLD = 1.0; // s resting as a shape
-const FLY = 0.55; // s points travel to the next shape
-const PERIOD = HOLD + FLY;
+const HOLD = 1.1; // s the solid rests
+const DISSOLVE = 0.7; // s solid → blob (points explode radially outward)
+const DRIFT = 0.5; // s the blob hangs and breathes
+const GATHER = 0.9; // s cloud → next shape; the solid crossfades in from CROSS on
+const CROSS = 0.62; // fraction of the gather at which the next solid starts fading in
+const PERIOD = HOLD + DISSOLVE + DRIFT + GATHER;
 
 function mulberry32(seed: number) {
   let a = seed >>> 0;
@@ -121,9 +126,16 @@ export function LoadingShapes({ caption }: { caption?: string }) {
     renderer.setClearColor(0x000000, 0);
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
-    camera.position.set(0, 0.9, 5.2);
-    camera.lookAt(0, 0, 0);
+    const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 50);
+    // frame the blob (radius ≤ 1.85 + jitter) with margin whatever the
+    // viewport's aspect — the desktop instrument cell is portrait
+    const FRAME_R = 2.05;
+    const frameCamera = () => {
+      const half = Math.tan((camera.fov * Math.PI) / 360);
+      const dist = (FRAME_R / half / Math.min(1, camera.aspect)) * 1.04;
+      camera.position.set(0, dist * 0.16, dist);
+      camera.lookAt(0, 0, 0);
+    };
     scene.add(new THREE.HemisphereLight(0xfff4e6, 0x1a1c20, 0.8));
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
     keyLight.position.set(2.5, 3.5, 2.0);
@@ -154,7 +166,7 @@ export function LoadingShapes({ caption }: { caption?: string }) {
     const pointPos = new Float32Array(rest);
     const pointGeom = new THREE.BufferGeometry();
     pointGeom.setAttribute("position", new THREE.BufferAttribute(pointPos, 3));
-    const pointMat = new THREE.PointsMaterial({ color: 0xff8f3a, size: 0.04, sizeAttenuation: true, transparent: true, opacity: 0.95 });
+    const pointMat = new THREE.PointsMaterial({ color: 0xff8f3a, size: 0.034, sizeAttenuation: true, transparent: true, opacity: 0 });
     const points = new THREE.Points(pointGeom, pointMat);
     const pivot = new THREE.Group();
     pivot.add(points, ...solids);
@@ -165,10 +177,38 @@ export function LoadingShapes({ caption }: { caption?: string }) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      frameCamera();
     };
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(el);
+
+    // the blob: where each point goes when the shape explodes — radially out
+    // from the centre along its own direction (with a little jitter) to a
+    // shell of radius 1.55–2.1, so the cloud reads as a round body of points
+    const brng = mulberry32(42);
+    const jitter = new Float32Array(N * 3);
+    const shell = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      jitter[3 * i] = (brng() - 0.5) * 0.5;
+      jitter[3 * i + 1] = (brng() - 0.5) * 0.5;
+      jitter[3 * i + 2] = (brng() - 0.5) * 0.5;
+      shell[i] = 1.4 + brng() * 0.45;
+    }
+    const blob = new Float32Array(N * 3);
+    const buildBlob = (from: Float32Array) => {
+      for (let i = 0; i < N; i++) {
+        const o = 3 * i;
+        const dx = from[o] + jitter[o], dy = from[o + 1] + jitter[o + 1], dz = from[o + 2] + jitter[o + 2];
+        const len = Math.hypot(dx, dy, dz) || 1;
+        blob[o] = (dx / len) * shell[i];
+        blob[o + 1] = (dy / len) * shell[i];
+        blob[o + 2] = (dz / len) * shell[i];
+      }
+    };
+    buildBlob(rest);
+    const smooth = (x: number) => x * x * (3 - 2 * x);
+    const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
     const t0 = performance.now();
     let lastCycle = -1;
@@ -180,40 +220,60 @@ export function LoadingShapes({ caption }: { caption?: string }) {
       const next = (k + 1) % geoms.length;
       const ph = t % PERIOD;
       if (cycle !== lastCycle) {
-        // a new cycle: whatever we were flying to is now where we rest
-        if (lastCycle >= 0) rest = target;
+        if (lastCycle >= 0) rest = target; // the shape we gathered into is where we rest now
         lastCycle = cycle;
         targetFor = -1;
+        buildBlob(rest);
       }
-      const flying = ph >= HOLD;
-      if (flying && targetFor !== next) {
-        target = assign(rest, samples[next], 1000 + cycle);
+      if (targetFor !== next) {
+        // gather from the BLOB (not the old shape) — nearest free spot on the next shape
+        target = assign(blob, samples[next], 1000 + cycle);
         targetFor = next;
       }
-      // solid: fades in quickly once the points have settled, drops out the instant they leave
-      const solidOpacity = flying ? 0 : Math.min(1, ph / 0.18) * 0.6;
-      solids.forEach((s, i) => {
-        const on = i === k && solidOpacity > 0.01;
-        s.visible = on;
-        if (on) (s.material as THREE.MeshStandardMaterial).opacity = solidOpacity;
-      });
-      if (flying) {
-        const u = easeInOut((ph - HOLD) / FLY);
-        const bulge = Math.sin(u * Math.PI) * 0.12; // slight outward breath mid-flight
-        for (let i = 0; i < N; i++) {
-          const o = 3 * i;
-          const x = rest[o] + (target[o] - rest[o]) * u;
-          const y = rest[o + 1] + (target[o + 1] - rest[o + 1]) * u;
-          const z = rest[o + 2] + (target[o + 2] - rest[o + 2]) * u;
-          const len = Math.hypot(x, y, z) || 1;
-          pointPos[o] = x + (x / len) * bulge;
-          pointPos[o + 1] = y + (y / len) * bulge;
-          pointPos[o + 2] = z + (z / len) * bulge;
-        }
+
+      // e: 0 = on the shape, 1 = in the blob; g: 0 = blob, 1 = next shape
+      let solidIdx = k, solidOpacity = 1, cloudOpacity = 0, e = 0, g = 0, breathe = 0;
+      if (ph < HOLD) {
+        // solid rests; no points
+      } else if (ph < HOLD + DISSOLVE) {
+        const u = (ph - HOLD) / DISSOLVE;
+        solidOpacity = 1 - Math.min(1, u / 0.3); // gone in the first third of the explosion
+        cloudOpacity = Math.min(1, u / 0.15);
+        e = easeOut(u);
+      } else if (ph < HOLD + DISSOLVE + DRIFT) {
+        const u = (ph - HOLD - DISSOLVE) / DRIFT;
+        solidOpacity = 0;
+        cloudOpacity = 1;
+        e = 1;
+        breathe = Math.sin(u * Math.PI) * 0.08;
       } else {
-        pointPos.set(rest);
+        const u = easeInOut((ph - HOLD - DISSOLVE - DRIFT) / GATHER);
+        e = 1;
+        g = u;
+        // crossfade: the next solid rises while the points make their last approach,
+        // both hit their end state exactly at u = 1 — no step, no pause
+        const x = u < CROSS ? 0 : smooth((u - CROSS) / (1 - CROSS));
+        solidIdx = next;
+        solidOpacity = x;
+        cloudOpacity = 1 - x;
+      }
+      for (let i = 0; i < N; i++) {
+        const o = 3 * i;
+        for (let c = 0; c < 3; c++) {
+          const onShape = rest[o + c];
+          const inBlob = blob[o + c] * (1 + breathe);
+          const p0 = onShape + (inBlob - onShape) * e; // explode
+          pointPos[o + c] = p0 + (target[o + c] - p0) * g; // gather
+        }
       }
       (pointGeom.getAttribute("position") as THREE.BufferAttribute).needsUpdate = true;
+      pointMat.opacity = cloudOpacity;
+      points.visible = cloudOpacity > 0.01;
+      solids.forEach((sMesh, i) => {
+        const on = i === solidIdx && solidOpacity > 0.01;
+        sMesh.visible = on;
+        if (on) (sMesh.material as THREE.MeshStandardMaterial).opacity = solidOpacity;
+      });
       pivot.rotation.y = t * 0.35;
       pivot.rotation.x = -0.28 + Math.sin(t * 0.25) * 0.12;
       renderer.render(scene, camera);
