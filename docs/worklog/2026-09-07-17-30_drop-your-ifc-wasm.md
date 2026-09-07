@@ -51,3 +51,9 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   38 % of the gather); plus "explode into a blob between each shape"
   (radial shell 1.4–1.85) and "zoom out" (camera distance from viewport
   aspect so the blob fits the portrait desktop cell).
+- Smoothness pass after "laggy and choppy": interlude lap precomputed
+  (the per-transition assignment was the stall), 900 points, dpr ≤ 1.5,
+  Lambert; stream path: meta parsed + normals computed in the worker,
+  batches never touch React state (StreamingPill polls the store).
+  Measured: preview 60.3 fps / max 16.8 ms; RIV parse+stream 58.6 fps,
+  p99 16.8 ms, one 267 ms hitch at the "indexed" graph parse.
