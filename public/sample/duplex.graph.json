@@ -2021,13 +2021,13 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.2084542215,
-      "m2": 14.7850341797,
-      "lm": 3.7725000381,
+      "m3": 0.2084680498,
+      "m2": 14.8023748398,
+      "lm": 3.7723331451,
       "m_source": "direct",
-      "m3_direct": 0.2084542215,
-      "m2_direct": 14.7850341797,
-      "lm_direct": 3.7725000381,
+      "m3_direct": 0.2084680498,
+      "m2_direct": 14.8023748398,
+      "lm_direct": 3.7723331451,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -2096,9 +2096,9 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 2.6822951352999995,
-      "m2": 31.217491567099998,
-      "lm": 18.9740464687,
+      "m3": 2.6823089635999997,
+      "m2": 31.234832227200002,
+      "lm": 18.9738795757,
       "m_source": "aggregate-rollup",
       "m3_direct": null,
       "m2_direct": null,
@@ -3008,13 +3008,13 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0064638704,
-      "m2": 0.3844533861,
-      "lm": 0.4061999321,
+      "m3": 0.0064658406,
+      "m2": 0.3847012222,
+      "lm": 0.4067831039,
       "m_source": "direct",
-      "m3_direct": 0.0064638704,
-      "m2_direct": 0.3844533861,
-      "lm_direct": 0.4061999321,
+      "m3_direct": 0.0064658406,
+      "m2_direct": 0.3847012222,
+      "lm_direct": 0.4067831039,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -3308,13 +3308,13 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0064639682,
-      "m2": 0.3844593465,
-      "lm": 0.4061999321,
+      "m3": 0.0064658308,
+      "m2": 0.3847008646,
+      "lm": 0.4067833424,
       "m_source": "direct",
-      "m3_direct": 0.0064639682,
-      "m2_direct": 0.3844593465,
-      "lm_direct": 0.4061999321,
+      "m3_direct": 0.0064658308,
+      "m2_direct": 0.3847008646,
+      "lm_direct": 0.4067833424,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -6323,13 +6323,13 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.208452791,
-      "m2": 14.7850217819,
-      "lm": 3.772500515,
+      "m3": 0.2084666342,
+      "m2": 14.802365303,
+      "lm": 3.772333622,
       "m_source": "direct",
-      "m3_direct": 0.208452791,
-      "m2_direct": 14.7850217819,
-      "lm_direct": 3.772500515,
+      "m3_direct": 0.2084666342,
+      "m2_direct": 14.802365303,
+      "lm_direct": 3.772333622,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -6398,9 +6398,9 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 2.7623410720000003,
-      "m2": 31.2175583839,
-      "lm": 18.9740488529,
+      "m3": 2.7623549152000004,
+      "m2": 31.234901905,
+      "lm": 18.9738819599,
       "m_source": "aggregate-rollup",
       "m3_direct": null,
       "m2_direct": null,
@@ -7085,12 +7085,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0574525818,
-      "m2": 10.1726856232,
+      "m3": 0.0573995784,
+      "m2": 10.195391655,
       "lm": 7.4212989807,
       "m_source": "direct",
-      "m3_direct": 0.0574525818,
-      "m2_direct": 10.1726856232,
+      "m3_direct": 0.0573995784,
+      "m2_direct": 10.195391655,
       "lm_direct": 7.4212989807,
       "is_external": false,
       "load_bearing": true,
@@ -7110,12 +7110,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0479277447,
-      "m2": 9.1705026627,
+      "m3": 0.0478986241,
+      "m2": 9.1867818832,
       "lm": 6.1818871498,
       "m_source": "direct",
-      "m3_direct": 0.0479277447,
-      "m2_direct": 9.1705026627,
+      "m3_direct": 0.0478986241,
+      "m2_direct": 9.1867818832,
       "lm_direct": 6.1818871498,
       "is_external": false,
       "load_bearing": true,
@@ -7135,12 +7135,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.031949468,
-      "m2": 6.1188468933,
+      "m3": 0.0319300294,
+      "m2": 6.1296749115,
       "lm": 4.1212787628,
       "m_source": "direct",
-      "m3_direct": 0.031949468,
-      "m2_direct": 6.1188468933,
+      "m3_direct": 0.0319300294,
+      "m2_direct": 6.1296749115,
       "lm_direct": 4.1212787628,
       "is_external": false,
       "load_bearing": true,
@@ -7160,12 +7160,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0317873172,
-      "m2": 6.0873560905,
+      "m3": 0.0317679681,
+      "m2": 6.0981516838,
       "lm": 4.0999994278,
       "m_source": "direct",
-      "m3_direct": 0.0317873172,
-      "m2_direct": 6.0873560905,
+      "m3_direct": 0.0317679681,
+      "m2_direct": 6.0981516838,
       "lm_direct": 4.0999994278,
       "is_external": false,
       "load_bearing": true,
@@ -7185,12 +7185,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0574525893,
-      "m2": 10.1726865768,
+      "m3": 0.0573995858,
+      "m2": 10.1953935623,
       "lm": 7.4212999344,
       "m_source": "direct",
-      "m3_direct": 0.0574525893,
-      "m2_direct": 10.1726865768,
+      "m3_direct": 0.0573995858,
+      "m2_direct": 10.1953935623,
       "lm_direct": 7.4212999344,
       "is_external": false,
       "load_bearing": true,
@@ -7210,12 +7210,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.047923509,
-      "m2": 9.1704702377,
+      "m3": 0.0478943996,
+      "m2": 9.1867132187,
       "lm": 6.1818876266,
       "m_source": "direct",
-      "m3_direct": 0.047923509,
-      "m2_direct": 9.1704702377,
+      "m3_direct": 0.0478943996,
+      "m2_direct": 9.1867132187,
       "lm_direct": 6.1818876266,
       "is_external": false,
       "load_bearing": true,
@@ -7235,12 +7235,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0319493786,
-      "m2": 6.1188378334,
+      "m3": 0.0319299288,
+      "m2": 6.1296582222,
       "lm": 4.1212797165,
       "m_source": "direct",
-      "m3_direct": 0.0319493786,
-      "m2_direct": 6.1188378334,
+      "m3_direct": 0.0319299288,
+      "m2_direct": 6.1296582222,
       "lm_direct": 4.1212797165,
       "is_external": false,
       "load_bearing": true,
@@ -7260,12 +7260,12 @@
       "type_source": "objecttype",
       "materials": [],
       "layer_set": null,
-      "m3": 0.0317845084,
-      "m2": 6.0873346329,
+      "m3": 0.0317651667,
+      "m2": 6.0981059074,
       "lm": 4.0999999046,
       "m_source": "direct",
-      "m3_direct": 0.0317845084,
-      "m2_direct": 6.0873346329,
+      "m3_direct": 0.0317651667,
+      "m2_direct": 6.0981059074,
       "lm_direct": 4.0999999046,
       "is_external": false,
       "load_bearing": true,
@@ -7583,23 +7583,23 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 212,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
       "step_id": 1928,
       "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
       "entity": "IfcSpace"
     },
     {
@@ -7613,8 +7613,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
       "entity": "IfcSpace"
     },
     {
@@ -7623,38 +7623,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "step_id": 1442,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
       "entity": "IfcSpace"
     },
     {
@@ -7663,13 +7633,28 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1442,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
       "entity": "IfcSpace"
     },
     {
@@ -7678,8 +7663,23 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "step_id": 212,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
       "entity": "IfcSpace"
     }
   ],

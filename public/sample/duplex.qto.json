@@ -33,9 +33,9 @@
       "entity": "IfcOpeningElement",
       "count": 50,
       "storeys": [],
-      "area_m2": 335.04488629139996,
-      "volume_m3": 45.996345677400015,
-      "triangles": 870,
+      "area_m2": 335.04537564559996,
+      "volume_m3": 45.99634951020002,
+      "triangles": 856,
       "products_with_mesh": 50,
       "products_without_mesh": 0,
       "source": "mesh"
@@ -120,9 +120,9 @@
         "Level 1",
         "Level 2"
       ],
-      "area_m2": 63.098720550500005,
-      "volume_m3": 0.33822709700000003,
-      "triangles": 1488,
+      "area_m2": 63.219871044099996,
+      "volume_m3": 0.33798528089999996,
+      "triangles": 1120,
       "products_with_mesh": 8,
       "products_without_mesh": 0,
       "source": "mesh"
@@ -185,9 +185,9 @@
       "storeys": [
         "Level 1"
       ],
-      "area_m2": 29.570055961599998,
-      "volume_m3": 0.4169070125,
-      "triangles": 2664,
+      "area_m2": 29.6047401428,
+      "volume_m3": 0.416934684,
+      "triangles": 1584,
       "products_with_mesh": 2,
       "products_without_mesh": 0,
       "source": "mesh"

@@ -8,7 +8,7 @@
     "unit_scale": 1.0,
     "unit_resolved": true,
     "length_unit": "m",
-    "cache_key": "c842e8bb3aa46af6",
+    "cache_key": "24b944672a5c9a37",
     "products": 289,
     "storeys": 4,
     "type_counts_total": 16,
@@ -23,10 +23,10 @@
       "IfcCovering": 13,
       "IfcBeam": 8,
       "IfcFooting": 7,
-      "IfcMember": 4,
       "IfcRailing": 4,
-      "IfcStair": 2,
+      "IfcMember": 4,
       "IfcStairFlight": 2,
+      "IfcStair": 2,
       "IfcRoof": 1,
       "IfcWall": 1
     },
@@ -206,7 +206,7 @@
         "loaded": true
       }
     },
-    "parse_seconds": 0.09916853904724121,
+    "parse_seconds": 0.03688764572143555,
     "duplicate_step_ids": 0,
     "warnings": []
   },
@@ -2889,19 +2889,19 @@
       "mesh_stats": {
         "entity": "IfcStairFlight",
         "source": "extrusion",
-        "triangle_count": 1332,
-        "surface_area_m2": 14.7850341797,
-        "volume_abs_m3": 0.2084542215,
-        "aabb_volume_m3": 10.5212020874,
+        "triangle_count": 792,
+        "surface_area_m2": 14.8023748398,
+        "volume_abs_m3": 0.2084680498,
+        "aabb_volume_m3": 10.5207366943,
         "placement_x_m": 0.0,
         "placement_y_m": 0.0,
         "placement_z_m": 0.0,
         "centroid_x_m": 7.8758001328,
-        "centroid_y_m": -9.9387493134,
+        "centroid_y_m": -9.9386663437,
         "centroid_z_m": 1.5249999762,
-        "drift_distance_m": 12.7723369598,
-        "max_extent_m": 3.7725000381,
-        "drift_ratio": 3.3856425285,
+        "drift_distance_m": 12.7722730637,
+        "max_extent_m": 3.7723331451,
+        "drift_ratio": 3.3857755661,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -4236,19 +4236,19 @@
       "mesh_stats": {
         "entity": "IfcOpeningElement",
         "source": "extrusion",
-        "triangle_count": 144,
-        "surface_area_m2": 0.3844533861,
-        "volume_abs_m3": 0.0064638704,
-        "aabb_volume_m3": 0.0065544527,
+        "triangle_count": 140,
+        "surface_area_m2": 0.3847012222,
+        "volume_abs_m3": 0.0064658406,
+        "aabb_volume_m3": 0.0065733436,
         "placement_x_m": 6.1334376335,
         "placement_y_m": -7.4299998283,
         "placement_z_m": 0.0,
-        "centroid_x_m": 6.432975769,
+        "centroid_x_m": 6.4329752922,
         "centroid_y_m": -7.7189998627,
         "centroid_z_m": 0.8799999952,
-        "drift_distance_m": 0.9734701514,
-        "max_extent_m": 0.4061999321,
-        "drift_ratio": 2.3965296745,
+        "drift_distance_m": 0.9734699726,
+        "max_extent_m": 0.4067831039,
+        "drift_ratio": 2.3930933475,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -4656,21 +4656,21 @@
       "mesh_stats": {
         "entity": "IfcOpeningElement",
         "source": "extrusion",
-        "triangle_count": 150,
-        "surface_area_m2": 0.3844593465,
-        "volume_abs_m3": 0.0064639682,
-        "aabb_volume_m3": 0.0065544373,
+        "triangle_count": 140,
+        "surface_area_m2": 0.3847008646,
+        "volume_abs_m3": 0.0064658308,
+        "aabb_volume_m3": 0.0065733474,
         "placement_x_m": 2.6665623188,
         "placement_y_m": -10.3699998856,
         "placement_z_m": 0.0,
-        "centroid_x_m": 2.9660999775,
+        "centroid_x_m": 2.9661002159,
         "centroid_y_m": -10.6590003967,
         "centroid_z_m": 0.8799999952,
-        "drift_distance_m": 0.9734701514,
-        "max_extent_m": 0.4061999321,
-        "drift_ratio": 2.3965296745,
+        "drift_distance_m": 0.973470211,
+        "max_extent_m": 0.4067833424,
+        "drift_ratio": 2.3930926323,
         "drift_severity": "warn",
-        "mesh_quality": "open_shell"
+        "mesh_quality": "closed"
       }
     },
     {
@@ -8628,19 +8628,19 @@
       "mesh_stats": {
         "entity": "IfcStairFlight",
         "source": "extrusion",
-        "triangle_count": 1332,
-        "surface_area_m2": 14.7850217819,
-        "volume_abs_m3": 0.208452791,
-        "aabb_volume_m3": 10.5212020874,
+        "triangle_count": 792,
+        "surface_area_m2": 14.802365303,
+        "volume_abs_m3": 0.2084666342,
+        "aabb_volume_m3": 10.5207366943,
         "placement_x_m": 0.0,
         "placement_y_m": 0.0,
         "placement_z_m": 0.0,
         "centroid_x_m": 0.9241999984,
-        "centroid_y_m": -7.8612499237,
+        "centroid_y_m": -7.861333847,
         "centroid_z_m": 1.5249999762,
-        "drift_distance_m": 8.0609560013,
-        "max_extent_m": 3.772500515,
-        "drift_ratio": 2.1367673874,
+        "drift_distance_m": 8.0610380173,
+        "max_extent_m": 3.772333622,
+        "drift_ratio": 2.1368837357,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -9660,9 +9660,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 180,
-        "surface_area_m2": 10.1726856232,
-        "volume_abs_m3": 0.0574525818,
+        "triangle_count": 140,
+        "surface_area_m2": 10.195391655,
+        "volume_abs_m3": 0.0573995784,
         "aabb_volume_m3": 0.4564768076,
         "placement_x_m": 4.4000000954,
         "placement_y_m": -10.0,
@@ -9695,9 +9695,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 9.1705026627,
-        "volume_abs_m3": 0.0479277447,
+        "triangle_count": 140,
+        "surface_area_m2": 9.1867818832,
+        "volume_abs_m3": 0.0478986241,
         "aabb_volume_m3": 0.4478566051,
         "placement_x_m": 0.2084999979,
         "placement_y_m": -17.5230007172,
@@ -9730,9 +9730,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 6.1188468933,
-        "volume_abs_m3": 0.031949468,
+        "triangle_count": 140,
+        "surface_area_m2": 6.1296749115,
+        "volume_abs_m3": 0.0319300294,
         "aabb_volume_m3": 0.2985701859,
         "placement_x_m": 0.2666128874,
         "placement_y_m": -13.401720047,
@@ -9765,9 +9765,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 6.0873560905,
-        "volume_abs_m3": 0.0317873172,
+        "triangle_count": 140,
+        "surface_area_m2": 6.0981516838,
+        "volume_abs_m3": 0.0317679681,
         "aabb_volume_m3": 0.2970309556,
         "placement_x_m": 4.4289541245,
         "placement_y_m": -17.5287666321,
@@ -9800,9 +9800,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 180,
-        "surface_area_m2": 10.1726865768,
-        "volume_abs_m3": 0.0574525893,
+        "triangle_count": 140,
+        "surface_area_m2": 10.1953935623,
+        "volume_abs_m3": 0.0573995858,
         "aabb_volume_m3": 0.4564768672,
         "placement_x_m": 4.4000000954,
         "placement_y_m": -7.8000001907,
@@ -9835,9 +9835,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 9.1704702377,
-        "volume_abs_m3": 0.047923509,
+        "triangle_count": 140,
+        "surface_area_m2": 9.1867132187,
+        "volume_abs_m3": 0.0478943996,
         "aabb_volume_m3": 0.4478530586,
         "placement_x_m": 8.5915002823,
         "placement_y_m": -0.27700001,
@@ -9870,9 +9870,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 6.1188378334,
-        "volume_abs_m3": 0.0319493786,
+        "triangle_count": 140,
+        "surface_area_m2": 6.1296582222,
+        "volume_abs_m3": 0.0319299288,
         "aabb_volume_m3": 0.2985694408,
         "placement_x_m": 8.5333871841,
         "placement_y_m": -4.3982801437,
@@ -9905,9 +9905,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 188,
-        "surface_area_m2": 6.0873346329,
-        "volume_abs_m3": 0.0317845084,
+        "triangle_count": 140,
+        "surface_area_m2": 6.0981059074,
+        "volume_abs_m3": 0.0317651667,
         "aabb_volume_m3": 0.297028631,
         "placement_x_m": 4.3710455894,
         "placement_y_m": -0.2712331414,
@@ -120658,23 +120658,23 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 212,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
       "step_id": 1928,
       "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
       "entity": "IfcSpace"
     },
     {
@@ -120688,8 +120688,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
       "entity": "IfcSpace"
     },
     {
@@ -120698,38 +120698,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "step_id": 1442,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
       "entity": "IfcSpace"
     },
     {
@@ -120738,13 +120708,28 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1442,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
       "entity": "IfcSpace"
     },
     {
@@ -120753,8 +120738,23 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "step_id": 212,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
       "entity": "IfcSpace"
     }
   ],
@@ -122001,7 +122001,7 @@
     }
   ],
   "provenance": {
-    "ifcfast_version": "0.5.0",
+    "ifcfast_version": "0.5.1",
     "typedness_source": "ifcfast"
   }
 }
