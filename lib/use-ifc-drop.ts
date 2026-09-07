@@ -9,13 +9,14 @@
  * quantities. A v1 package (no streamMeshes) still works via one glb.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { StreamStore, type Progress } from "./stream-store";
+import { StreamStore, type Progress, type StreamStats } from "./stream-store";
 
 export const MAX_BYTES = 300 * 1024 * 1024; // browser-tab memory ceiling, stated up front
 
 export type DroppedModel = {
   name: string;
   summary: unknown;
+  /** null while geometry streams — it is built after the mesh pass */
   graph: unknown;
   qto: unknown | null;
   manifest: unknown;
@@ -25,6 +26,8 @@ export type DroppedModel = {
   glbUrl: string | null;
   store: StreamStore | null;
   ms: { parse: number; mesh?: number; glb?: number; batches?: number };
+  /** full per-phase budget (worker + main), surfaced in the pill tooltip */
+  perf?: StreamStats;
   /** geometry still arriving */
   streaming: boolean;
   /** performance.now() when the file was picked — drives the live timer */
@@ -67,12 +70,18 @@ export function useIfcDrop() {
     workerRef.current?.terminate();
     if (urlRef.current) URL.revokeObjectURL(urlRef.current);
     urlRef.current = null;
+    const startedAt = performance.now();
+    const s0 = performance.now();
     const worker = new Worker(new URL("./ifc-worker.ts", import.meta.url), { type: "module" });
     workerRef.current = worker;
-    const startedAt = performance.now();
+    const spawnMs = performance.now() - s0;
     setState({ status: "working", name: file.name, step: "reading", startedAt });
+    const r0 = performance.now();
     const bytes = await file.arrayBuffer();
+    const readMs = performance.now() - r0;
     const store = new StreamStore();
+    store.stats.read = readMs;
+    store.stats.spawn = spawnMs;
     let model: DroppedModel | null = null;
 
     worker.onmessage = (ev: MessageEvent) => {
@@ -89,12 +98,18 @@ export function useIfcDrop() {
       }
       switch (d.phase) {
         case "indexed": {
+          const pj = performance.now();
+          const parsedSummary = JSON.parse(d.summary);
+          const parsedTypes = JSON.parse(d.types);
+          store.stats.indexedParse = performance.now() - pj;
           model = {
             name: file.name,
-            summary: JSON.parse(d.summary),
-            graph: JSON.parse(d.graph),
+            summary: parsedSummary,
+            // the product graph is a post-stream product now (see ifc-worker):
+            // panels stay empty for a few seconds, geometry starts ~9 s sooner
+            graph: null,
             qto: null,
-            manifest: JSON.parse(d.types),
+            manifest: parsedTypes,
             bySource: {},
             stats: {},
             glbUrl: null,
@@ -110,20 +125,38 @@ export function useIfcDrop() {
           // no React state here: the viewer subscribes to the store directly and
           // the pill polls store.progress — re-rendering the instrument per batch
           // is what made the interlude stutter on big files
+          const h0 = performance.now();
+          if (!store.stats.firstBatch) store.stats.firstBatch = h0 - startedAt;
           store.push({ meta: d.meta, positions: d.positions, indices: d.indices, normals: d.normals }, d.progress as Progress);
+          const h1 = performance.now();
+          store.stats.handle += h1 - h0;
+          store.stats.lastBatch = h1 - startedAt;
           return;
         }
         case "done": {
+          const entered = performance.now();
+          store.stats.doneLag = d.sentAt ? performance.timeOrigin + entered - d.sentAt : 0;
           store.shift = JSON.parse(d.shift);
           store.finish();
           if (!model) return;
+          const j0 = performance.now();
+          const graph = JSON.parse(d.graph);
+          const qto = JSON.parse(d.qto);
+          const bySource = JSON.parse(d.bySource);
+          const stats = JSON.parse(d.stats);
+          store.stats.doneParse = performance.now() - j0;
+          const w = (d.ms?.w ?? {}) as Partial<StreamStats> & { recvAt?: number };
+          if (w.recvAt) store.stats.handoff = w.recvAt - postedAt;
+          delete w.recvAt;
+          Object.assign(store.stats, w);
           model = {
             ...model,
-            graph: JSON.parse(d.graph),
-            qto: JSON.parse(d.qto),
-            bySource: JSON.parse(d.bySource),
-            stats: JSON.parse(d.stats),
+            graph,
+            qto,
+            bySource,
+            stats,
             ms: d.ms,
+            perf: { ...store.stats },
             streaming: false,
             finishedAt: performance.now(),
           };
@@ -154,6 +187,7 @@ export function useIfcDrop() {
       }
     };
     worker.onerror = (e) => setState({ status: "error", name: file.name, error: e.message || "worker crashed" });
+    const postedAt = performance.timeOrigin + performance.now();
     worker.postMessage({ bytes, name: file.name, batch: 200 }, [bytes]);
   }, []);
 

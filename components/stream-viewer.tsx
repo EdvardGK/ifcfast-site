@@ -26,23 +26,33 @@ const DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
 const HIDE: [number, number, number, number] = [0, 0, 0, 0];
 const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
 
+// No normal attribute: the face normal is recovered per-fragment from the
+// screen-space derivatives of the view-space position (WebGL2 core). That
+// removes the worker's O(indices) vertex-normal pass from the critical path
+// AND 12 bytes/vertex from both the postMessage transfer and the GPU upload.
+// The lighting term is byte-for-byte the one the smooth path used, evaluated
+// on the flat face normal — same hemisphere-ish lambert, same amber palette.
 const VERT = `
 attribute vec4 color;
 varying vec4 vColor;
-varying vec3 vNormal;
+varying vec3 vView;
 void main() {
   vColor = color;
-  vNormal = normalize(normalMatrix * normal);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vView = mv.xyz;
+  gl_Position = projectionMatrix * mv;
 }`;
 const FRAG = `
 precision highp float;
 varying vec4 vColor;
-varying vec3 vNormal;
+varying vec3 vView;
 void main() {
   if (vColor.a <= 0.001) discard;
+  // cross(dFdx, dFdy) of the view position always points back at the eye, so
+  // this is inherently two-sided — which is what DoubleSide geometry wants.
+  vec3 n = normalize(cross(dFdx(vView), dFdy(vView)));
   // hemisphere-ish lambert: sky from above, warm bounce from below
-  float up = dot(normalize(vNormal), normalize(vec3(0.35, 0.9, 0.25)));
+  float up = dot(n, normalize(vec3(0.35, 0.9, 0.25)));
   float light = 0.55 + 0.45 * clamp(up, -1.0, 1.0) * 0.5 + 0.25;
   gl_FragColor = vec4(vColor.rgb * light, vColor.a);
 }`;
@@ -129,39 +139,65 @@ export function StreamViewer({
     const root = new THREE.Group();
     root.rotation.x = -Math.PI / 2;
     scene.add(root);
+    // root never moves again: bake its world matrix once, while it is childless,
+    // so a batch can derive its own without re-walking the group
+    root.updateMatrixWorld(true);
+    root.matrixAutoUpdate = false;
 
     const bbox = new THREE.Box3();
     let fitTarget: { center: THREE.Vector3; radius: number } | null = null;
+    // where the camera was when the fit started — the animation interpolates
+    // from here to the wanted pose so it CONVERGES, whatever the refit rate
+    const fitFrom = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
     let fitLerp = 1;
 
-    const refit = () => {
+    let lastRefit = 0;
+    const refit = (force = false) => {
       if (bbox.isEmpty()) return;
+      // the camera fit is an animation, not a per-batch duty: re-aiming it
+      // 179 times in 8 s is both wasted work and visible jitter
+      const now = performance.now();
+      if (!force && now - lastRefit < 120) return;
+      lastRefit = now;
       const wb = bbox.clone().applyMatrix4(root.matrixWorld);
       const center = wb.getCenter(new THREE.Vector3());
       const radius = Math.max(wb.getSize(new THREE.Vector3()).length() / 2, 0.5);
       fitTarget = { center, radius };
+      fitFrom.pos.copy(camera.position);
+      fitFrom.target.copy(controls.target);
       fitLerp = 0;
     };
 
     const addBatch = (b: Batch) => {
+      const a0 = performance.now();
       const geom = new THREE.BufferGeometry();
       geom.setAttribute("position", new THREE.BufferAttribute(b.positions, 3));
       geom.setIndex(new THREE.BufferAttribute(b.indices, 1));
-      if (b.normals) geom.setAttribute("normal", new THREE.BufferAttribute(b.normals, 3));
-      else geom.computeVertexNormals();
-      const color = new THREE.BufferAttribute(new Float32Array(b.positions.length / 3 * 4), 4);
+      // colour is a normalized Uint8 RGBA: 4 bytes/vertex instead of 16, and
+      // paint() writes bytes. It is re-uploaded on every filter change, so its
+      // size matters more than the position buffer's.
+      const color = new THREE.BufferAttribute(new Uint8Array((b.positions.length / 3) * 4), 4, true);
       color.setUsage(THREE.DynamicDrawUsage);
       geom.setAttribute("color", color);
       const mesh = new THREE.Mesh(geom, material);
       mesh.frustumCulled = true;
+      mesh.matrixAutoUpdate = false; // batches are static once uploaded
       root.add(mesh);
-      root.updateMatrixWorld(true);
+      // root's world matrix is already baked; root.updateMatrixWorld(true) here
+      // would re-walk every earlier batch, which is O(n²) across the stream
+      mesh.updateMatrixWorld(true);
       geom.computeBoundingBox();
       if (geom.boundingBox) bbox.union(geom.boundingBox);
       const gpu: BatchGpu = { mesh, geom, color, meta: b.meta, i0s: b.meta.map((m) => m.i0) };
       gpuRef.current.push(gpu);
+      const a1 = performance.now();
       paint(gpu, hlRef.current.hl, hlRef.current.ghost, hlRef.current.picked);
+      const a2 = performance.now();
       refit();
+      const a3 = performance.now();
+      store.stats.upload += a1 - a0;
+      store.stats.paint += a2 - a1;
+      store.stats.refit += a3 - a2;
       // debug surface for automation: batch count + bounds + camera distance
       el.dataset.batches = String(gpuRef.current.length);
       el.dataset.bbox = bbox.isEmpty() ? "" : [bbox.min.x, bbox.min.y, bbox.min.z, bbox.max.x, bbox.max.y, bbox.max.z].map((v) => v.toFixed(2)).join(",");
@@ -169,6 +205,7 @@ export function StreamViewer({
     const unsub = store.subscribe((b) => {
       if (disposed) return;
       if (b) addBatch(b);
+      else refit(true); // last batch in: one final, unthrottled fit
     });
 
     // click-to-select: a click is a pointerdown/up pair that did not drag
@@ -306,8 +343,8 @@ export function StreamViewer({
         const dist = fitTarget.radius / Math.sin((camera.fov * Math.PI) / 360);
         const dir = tmp.set(0.9, 0.75, 1).normalize();
         const want = fitTarget.center.clone().addScaledVector(dir, dist * 1.05);
-        camera.position.lerp(want, k * 0.35);
-        controls.target.lerp(fitTarget.center, k * 0.35);
+        camera.position.copy(fitFrom.pos).lerp(want, k);
+        controls.target.copy(fitFrom.target).lerp(fitTarget.center, k);
         camera.near = Math.max(0.05, dist / 500);
         camera.far = dist * 20;
         camera.updateProjectionMatrix();
@@ -340,15 +377,16 @@ export function StreamViewer({
 }
 
 function paint(b: BatchGpu, hl: StreamHighlight, ghost: boolean, picked: string | null) {
-  const arr = b.color.array as Float32Array;
+  const arr = b.color.array as Uint8Array;
   for (const m of b.meta) {
     const c = targetColor(m, hl, ghost, picked);
+    const r = (c[0] * 255) | 0, g = (c[1] * 255) | 0, bl = (c[2] * 255) | 0, a = (c[3] * 255) | 0;
     const end = (m.v0 + m.vn) * 4;
     for (let i = m.v0 * 4; i < end; i += 4) {
-      arr[i] = c[0];
-      arr[i + 1] = c[1];
-      arr[i + 2] = c[2];
-      arr[i + 3] = c[3];
+      arr[i] = r;
+      arr[i + 1] = g;
+      arr[i + 2] = bl;
+      arr[i + 3] = a;
     }
   }
   b.color.needsUpdate = true;

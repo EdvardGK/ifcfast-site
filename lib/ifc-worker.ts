@@ -22,8 +22,14 @@ type Req = { bytes: ArrayBuffer; name: string; batch?: number };
 
 let modPromise: Promise<{ IfcModel: typeof IfcModelT }> | null = null;
 
+/** Ship vertex normals? No: the viewer flat-shades from screen-space
+ * derivatives of the view position (GH #172 v2 perf pass), which removes both
+ * this O(indices) pass from the worker's critical path and 12 bytes/vertex from
+ * the transfer. Flip to `true` to A/B the old path. */
+const NORMALS: boolean = false;
+
 /** Area-weighted vertex normals (what three's computeVertexNormals does),
- * computed off the main thread. */
+ * computed off the main thread. Unused while NORMALS is false. */
 function vertexNormals(pos: Float32Array, idx: Uint32Array): Float32Array {
   const n = new Float32Array(pos.length);
   for (let t = 0; t < idx.length; t += 3) {
@@ -69,10 +75,13 @@ function load() {
 }
 
 self.onmessage = async (ev: MessageEvent<Req>) => {
+  const recvAt = performance.timeOrigin + performance.now();
   const { bytes, name, batch = 200 } = ev.data;
   let model: IfcModelT | null = null;
   try {
+    const l0 = performance.now();
     const { IfcModel } = await load();
+    const loadMs = performance.now() - l0;
     postMessage({ progress: "parsing" });
     const t0 = performance.now();
     model = IfcModel.fromBytes(new Uint8Array(bytes), name);
@@ -80,37 +89,97 @@ self.onmessage = async (ev: MessageEvent<Req>) => {
     const canStream = typeof (model as unknown as { streamMeshes?: unknown }).streamMeshes === "function";
 
     if (canStream) {
+      // Only the cheap extractors run before the stream. graphJson() is NOT
+      // one of them: on a 35 789-product model the first call costs ~8.8 s
+      // (it forces the whole product graph eagerly), and it costs a fraction
+      // of that once the mesh pass has run — so it belongs after the stream,
+      // where the mesh-derived quantities are ready anyway. Nothing in the
+      // instrument needs the graph before geometry appears.
+      const s0 = performance.now();
+      const summary = model.summaryJson();
+      const s1 = performance.now();
+      const types = model.typesJson();
+      const s2 = performance.now();
       postMessage({
         phase: "indexed",
-        summary: model.summaryJson(),
-        graph: model.graphJson(),
-        types: model.typesJson(),
-        ms: { parse },
+        summary,
+        types,
+        ms: { parse, w: { recvAt, load: loadMs } },
       });
+      const s3 = performance.now();
+      const idx = { summaryJson: s1 - s0, graphJson: 0, typesJson: s2 - s1, post: s3 - s2 };
       const t1 = performance.now();
       let nBatches = 0;
+      // per-phase budget — the pill's tooltip is the only place this surfaces,
+      // and it is the difference between "the wasm is slow" and "we are slow"
+      let cbTotal = 0, copyMs = 0, normalsMs = 0, metaMs = 0, postMs = 0;
+      let vertices = 0, triangles = 0;
       model.streamMeshes(batch, (metaJson: string, positions: Float32Array, indices: Uint32Array, progressJson: string) => {
+        const c0 = performance.now();
         // copy out of wasm memory — the views alias the linear memory, which
-        // may grow (and relocate) during the pass. Parse the meta and compute
-        // the normals HERE so the main thread only uploads to the GPU.
+        // may grow (and relocate) during the pass.
         const p = positions.slice();
         const i = indices.slice();
-        const n = vertexNormals(p, i);
+        const c1 = performance.now();
+        copyMs += c1 - c0;
+        const n = NORMALS ? vertexNormals(p, i) : null;
+        const c2 = performance.now();
+        normalsMs += c2 - c1;
+        const meta = JSON.parse(metaJson);
+        const prog = JSON.parse(progressJson);
+        const c3 = performance.now();
+        metaMs += c3 - c2;
         nBatches++;
-        postMessage(
-          { phase: "batch", meta: JSON.parse(metaJson), positions: p, indices: i, normals: n, progress: JSON.parse(progressJson) },
-          [p.buffer, i.buffer, n.buffer],
-        );
+        vertices += p.length / 3;
+        triangles += i.length / 3;
+        const transfer = (n ? [p.buffer, i.buffer, n.buffer] : [p.buffer, i.buffer]) as ArrayBuffer[];
+        postMessage({ phase: "batch", meta, positions: p, indices: i, normals: n ?? undefined, progress: prog }, transfer);
+        const c4 = performance.now();
+        postMs += c4 - c3;
+        cbTotal += c4 - c0;
       });
       const mesh = performance.now() - t1;
+      const t2 = performance.now();
+      const graph = model.graphJson();
+      const t3 = performance.now();
+      const qto = model.qtoJson();
+      const bySource = model.bySourceJson();
+      const stats = model.statsJson();
+      const shift = model.streamShiftJson();
+      const finalMs = performance.now() - t2;
+      const finalGraphMs = t3 - t2;
       postMessage({
         phase: "done",
-        graph: model.graphJson(),
-        qto: model.qtoJson(),
-        bySource: model.bySourceJson(),
-        stats: model.statsJson(),
-        shift: model.streamShiftJson(),
-        ms: { parse, mesh, batches: nBatches },
+        graph,
+        qto,
+        bySource,
+        stats,
+        shift,
+        // absolute epoch ms: a dedicated worker's timeOrigin is its own creation
+        // time, so raw performance.now() is NOT comparable across the boundary
+        sentAt: performance.timeOrigin + performance.now(),
+        ms: {
+          parse,
+          mesh,
+          batches: nBatches,
+          w: {
+            recvAt,
+            load: loadMs,
+            idxSummary: idx.summaryJson,
+            idxGraph: idx.graphJson,
+            idxTypes: idx.typesJson,
+            idxPost: idx.post,
+            wasm: mesh - cbTotal,
+            copy: copyMs,
+            normals: normalsMs,
+            meta: metaMs,
+            post: postMs,
+            final: finalMs,
+            finalGraph: finalGraphMs,
+            vertices,
+            triangles,
+          },
+        },
       });
     } else {
       // v1 package: one glb for the whole model
@@ -124,7 +193,7 @@ self.onmessage = async (ev: MessageEvent<Req>) => {
       const t1 = performance.now();
       const glb = model.toGlb(true, false).slice().buffer;
       postMessage(
-        { phase: "glb", summary, graph, qto, types, bySource, stats, glb, ms: { parse, glb: performance.now() - t1 } },
+        { phase: "glb", summary, graph, qto, types, bySource, stats, glb, ms: { parse, glb: performance.now() - t1, w: { recvAt, load: loadMs } } },
         [glb],
       );
     }

@@ -37,7 +37,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
-import { useIfcDrop, MAX_BYTES, type DropState } from "@/lib/use-ifc-drop";
+import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
@@ -268,7 +268,10 @@ export default function SceneInstrumentMockup() {
   const summary = (dropped?.summary as Summary | undefined) ?? sampleSummary;
   const qto = (dropped?.qto as Qto | undefined) ?? sampleQto;
   const manifest = (dropped?.manifest as Manifest | undefined) ?? sampleManifest;
-  const graph = (dropped?.graph as Graph | undefined) ?? sampleGraph;
+  // a dropped model owns the panels outright: its graph is null while geometry
+  // streams (it is built after the mesh pass) and the panels must show ITS state,
+  // never fall back to the Duplex's
+  const graph = dropped ? ((dropped.graph as Graph | null) ?? null) : sampleGraph;
 
   /* chapter 06 lifecycle: entered (first IO hit) → booted (veil lifts) */
   const [instEntered, setInstEntered] = useState(false);
@@ -531,7 +534,7 @@ export default function SceneInstrumentMockup() {
                   stack, each node a product contained on that level.
                 </p>
               </div>
-              <Constellation graph={graph} />
+              <Constellation graph={graph ?? sampleGraph} />
             </Reveal>
           </div>
         </section>
@@ -1189,6 +1192,30 @@ function StreamingPill({ name, store, since }: { name: string; store: StreamStor
   );
 }
 
+/** Per-phase budget for the pill tooltip. Every number here is measured, not
+ * inferred: worker phases come back in the "done" message, main-thread phases
+ * are accumulated in the StreamStore as batches land. If the wall-clock and the
+ * sum diverge, the difference IS the main-thread backlog. */
+function dropBreakdown(m: DroppedModel, unhandled: number): string {
+  const ms = (v: number | undefined) => `${Math.round(v ?? 0)} ms`;
+  const head = `parsed ${ms(m.ms.parse)}${m.ms.mesh != null ? ` · meshed ${ms(m.ms.mesh)} in ${m.ms.batches ?? 0} batches` : ""}${
+    m.ms.glb != null ? ` · glb ${ms(m.ms.glb)}` : ""
+  }`;
+  const p = m.perf;
+  if (!p) return `${head} · never left this tab${unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""}`;
+  const wall = (m.finishedAt ?? 0) - m.startedAt;
+  const pre = `pre: read ${ms(p.read)} · spawn ${ms(p.spawn)} · handoff ${ms(p.handoff)} · wasm-load ${ms(p.load)}`;
+  const idx = `indexed: summaryJson ${ms(p.idxSummary)} · graphJson ${ms(p.idxGraph)} · typesJson ${ms(p.idxTypes)} · post ${ms(p.idxPost)}`;
+  const worker = `worker: wasm ${ms(p.wasm)} · copy ${ms(p.copy)} · normals ${ms(p.normals)} · meta ${ms(p.meta)} · post ${ms(p.post)} · final-json ${ms(p.final)} (graphJson ${ms(p.finalGraph)})`;
+  const main = `main: indexed-parse ${ms(p.indexedParse)} · first batch ${ms(p.firstBatch)} → last ${ms(p.lastBatch)} · handle ${ms(
+    p.handle,
+  )} (upload ${ms(p.upload)} · paint ${ms(p.paint)} · refit ${ms(p.refit)}) · done lag ${ms(p.doneLag)} · done-parse ${ms(p.doneParse)}`;
+  const size = `${nfInt.format(Math.round(p.vertices))} verts · ${nfInt.format(Math.round(p.triangles))} tris`;
+  return `${head} · wall ${ms(wall)}\n${pre}\n${idx}\n${worker}\n${main}\n${size} · never left this tab${
+    unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""
+  }`;
+}
+
 /* ================================================================== */
 /* DropPill — "drop your IFC, it stays in this tab" (GH #172)          */
 /* ================================================================== */
@@ -1231,9 +1258,7 @@ function DropPill({
     return (
       <span
         className="tb-drop tb-drop-ok"
-        title={`parsed ${m.ms.parse.toFixed(0)} ms${m.ms.mesh != null ? ` · meshed ${m.ms.mesh.toFixed(0)} ms in ${m.ms.batches ?? 0} batches` : ""}${m.ms.glb != null ? ` · glb ${m.ms.glb.toFixed(0)} ms` : ""} · never left this tab${
-          unhandled ? ` · ${unhandled} items not tessellated (by_source)` : ""
-        }`}
+        title={dropBreakdown(m, unhandled)}
       >
         your model · {m.name} · <LiveTimer since={m.startedAt} done={m.finishedAt ?? m.startedAt} />
         {unhandled ? <span className="tb-drop-warn">{unhandled} unhandled</span> : null}
