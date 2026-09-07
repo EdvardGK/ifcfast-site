@@ -45,3 +45,9 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   target assignment per transition (grid-hashed greedy), 1.0 s rest /
   0.55 s flight, faint solid under the resting cloud. v2's per-shape
   resampling matched by index was the scramble.
+- Interlude v4 (final for tonight): Ed clarified — keep the v2 cadence,
+  fixed point set, points hidden whenever the mesh shows, and NO pause
+  between "points formed" and "mesh appears" (crossfade during the last
+  38 % of the gather); plus "explode into a blob between each shape"
+  (radial shell 1.4–1.85) and "zoom out" (camera distance from viewport
+  aspect so the blob fits the portrait desktop cell).
