@@ -139,7 +139,6 @@ type Highlight =
   | { mode: "storey"; value: string }
   | { mode: "entity"; value: string; storeyScope?: string }
   | { mode: "type"; value: string; storeyScope?: string }
-  | { mode: "product"; value: string }
   | null;
 
 /** what the viewport shows for a tapped product */
@@ -164,6 +163,7 @@ const ACCENT = "#ff8f3a";
 /* viewport material factors (sRGB/255, matching components/viewer.tsx) */
 const HL_ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
 const HL_DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
+const HL_PICK: [number, number, number, number] = [1.0, 0.92, 0.72, 1.0];
 const HL_HIDE: [number, number, number, number] = [0, 0, 0, 0];
 /* ghost-by-nature entities — translucent volumes that show structure; ghost OFF hides them */
 const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
@@ -1458,7 +1458,7 @@ function InstrumentChapter({
         ? "UNPLACED · OPENINGS + FURNISHINGS"
         : storeys.find((s) => s.guid === scope)?.name ?? scope;
 
-  const filterActive = !!(picked || hotEntity || entitySel || typeSel || scope !== "ALL");
+  const filterActive = !!(hotEntity || entitySel || typeSel || scope !== "ALL");
 
   /* ── viewport source: register hover previews a type mini-glb ── */
   const previewing = !!hotType && !!hotType.glb;
@@ -1473,14 +1473,13 @@ function InstrumentChapter({
   /* ── highlight descriptor (precedence: hover → type click → entity click → storey) ── */
   const highlight: Highlight = useMemo(() => {
     if (previewing) return null; // mini-glb preview: no cross-filter
-    if (picked) return { mode: "product", value: picked.guid };
     const storeyScope = scope === "ALL" ? undefined : scope;
     const ent = hotEntity ?? entitySel;
     if (ent) return { mode: "entity", value: ent, storeyScope };
     if (typeSel) return { mode: "type", value: typeSel, storeyScope };
     if (scope !== "ALL") return { mode: "storey", value: scope };
     return null;
-  }, [previewing, picked, hotEntity, entitySel, typeSel, scope]);
+  }, [previewing, hotEntity, entitySel, typeSel, scope]);
 
   // product lookup for the tap receipt (m3 / m2 land with the "done" phase)
   const productByGuid = useMemo(() => {
@@ -1675,6 +1674,7 @@ function InstrumentChapter({
               workingSince={drop.state.status === "working" ? drop.state.startedAt : undefined}
               stream={stream ?? null}
               onPick={onPick}
+              pickedGuid={picked?.guid ?? null}
               picked={
                 picked
                   ? {
@@ -1892,6 +1892,7 @@ function InstrumentViewport({
   workingSince,
   stream,
   onPick,
+  pickedGuid = null,
   picked,
   onClearPick,
 }: {
@@ -1905,6 +1906,8 @@ function InstrumentViewport({
   /** streamed geometry (dropped model, v2) — rendered by StreamViewer instead of model-viewer */
   stream?: StreamStore | null;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
+  /** guid of the tapped product — drawn on top of the filter, never replacing it */
+  pickedGuid?: string | null;
   picked?: { title: string; sub: string; guid: string } | null;
   onClearPick?: () => void;
 }) {
@@ -1973,6 +1976,11 @@ function InstrumentViewport({
       if (!orig) continue;
       // multi-segment products carry '<guid>#1', '<guid>#2', … — normalize
       const guidKey = m.name.includes("#") ? m.name.slice(0, m.name.indexOf("#")) : m.name;
+      if (pickedGuid && guidKey === pickedGuid) {
+        m.setAlphaMode("OPAQUE");
+        m.pbrMetallicRoughness.setBaseColorFactor(HL_PICK);
+        continue;
+      }
       const meta = guidLookup.get(guidKey);
       const isGhostEntity = !!meta && GHOST_ENTITIES.has(meta.entity.toLowerCase());
       // ghost OFF + ghost-by-nature entity → hidden regardless of filter
@@ -1999,8 +2007,6 @@ function InstrumentViewport({
           match =
             (meta.type_name ?? "—") === highlight.value &&
             (highlight.storeyScope ? storeyMatch(meta, highlight.storeyScope) : true);
-        } else if (highlight.mode === "product") {
-          match = guidKey === highlight.value;
         }
       }
       if (match) {
@@ -2012,7 +2018,7 @@ function InstrumentViewport({
         m.pbrMetallicRoughness.setBaseColorFactor(ghostMode ? HL_DIM : HL_HIDE);
       }
     }
-  }, [highlight, guidLookup, storeyMatch, ghostMode]);
+  }, [highlight, guidLookup, storeyMatch, ghostMode, pickedGuid]);
 
   // snapshot original material state on (re)load, then apply current filter
   useEffect(() => {
@@ -2061,7 +2067,7 @@ function InstrumentViewport({
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
       {stream ? (
-        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} onPick={onPick} />
+        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} />
       ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer

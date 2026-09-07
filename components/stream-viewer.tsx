@@ -17,10 +17,11 @@ export type StreamHighlight =
   | { mode: "storey"; value: string }
   | { mode: "entity"; value: string; storeyScope?: string }
   | { mode: "type"; value: string; storeyScope?: string }
-  | { mode: "product"; value: string }
   | null;
 
 const ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
+/** the tapped product — brighter than the filter accent, on top of whatever filter is active */
+const PICK: [number, number, number, number] = [1.0, 0.92, 0.72, 1.0];
 const DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
 const HIDE: [number, number, number, number] = [0, 0, 0, 0];
 const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
@@ -58,18 +59,21 @@ function storeyMatch(m: ProductMeta, value: string) {
   return value === "UNPLACED" ? m.storey_guid == null : m.storey_guid === value;
 }
 
-function targetColor(m: ProductMeta, hl: StreamHighlight, ghost: boolean): [number, number, number, number] {
+/** true when the product is inside the active filter (or there is no filter) */
+function inFilter(m: ProductMeta, hl: StreamHighlight): boolean {
+  if (!hl) return true;
+  if (hl.mode === "storey") return storeyMatch(m, hl.value);
+  if (hl.mode === "entity")
+    return m.entity.toLowerCase() === hl.value.toLowerCase() && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
+  return (m.type_name ?? "—") === hl.value && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
+}
+
+function targetColor(m: ProductMeta, hl: StreamHighlight, ghost: boolean, picked: string | null): [number, number, number, number] {
   const isGhostEntity = GHOST_ENTITIES.has(m.entity.toLowerCase());
   if (!ghost && isGhostEntity) return HIDE;
+  if (picked && m.guid === picked) return PICK; // a pick sits on top of the filter, never replaces it
   if (!hl) return m.rgba;
-  let match = false;
-  if (hl.mode === "storey") match = storeyMatch(m, hl.value);
-  else if (hl.mode === "entity")
-    match = m.entity.toLowerCase() === hl.value.toLowerCase() && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
-  else if (hl.mode === "type")
-    match = (m.type_name ?? "—") === hl.value && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
-  else if (hl.mode === "product") match = m.guid === hl.value;
-  if (match) return ACCENT;
+  if (inFilter(m, hl)) return ACCENT;
   return ghost ? DIM : HIDE;
 }
 
@@ -77,23 +81,26 @@ export function StreamViewer({
   store,
   highlight,
   ghost,
+  picked = null,
   onPick,
 }: {
   store: StreamStore;
   highlight: StreamHighlight;
   ghost: boolean;
+  /** guid of the tapped product (selection within the filter) */
+  picked?: string | null;
   onPick?: (meta: ProductMeta | null) => void;
 }) {
   const host = useRef<HTMLDivElement | null>(null);
   const gpuRef = useRef<BatchGpu[]>([]);
-  const hlRef = useRef<{ hl: StreamHighlight; ghost: boolean }>({ hl: highlight, ghost });
+  const hlRef = useRef<{ hl: StreamHighlight; ghost: boolean; picked: string | null }>({ hl: highlight, ghost, picked });
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
 
-  // restyle on highlight / ghost change — rewrite the RGBA attribute per product range
+  // restyle on highlight / ghost / pick change — rewrite the RGBA attribute per product range
   useEffect(() => {
-    hlRef.current = { hl: highlight, ghost };
-    for (const b of gpuRef.current) paint(b, highlight, ghost);
-  }, [highlight, ghost]);
+    hlRef.current = { hl: highlight, ghost, picked };
+    for (const b of gpuRef.current) paint(b, highlight, ghost, picked);
+  }, [highlight, ghost, picked]);
 
   useEffect(() => {
     const el = host.current;
@@ -153,7 +160,7 @@ export function StreamViewer({
       if (geom.boundingBox) bbox.union(geom.boundingBox);
       const gpu: BatchGpu = { mesh, geom, color, meta: b.meta, i0s: b.meta.map((m) => m.i0) };
       gpuRef.current.push(gpu);
-      paint(gpu, hlRef.current.hl, hlRef.current.ghost);
+      paint(gpu, hlRef.current.hl, hlRef.current.ghost, hlRef.current.picked);
       refit();
       // debug surface for automation: batch count + bounds + camera distance
       el.dataset.batches = String(gpuRef.current.length);
@@ -179,7 +186,9 @@ export function StreamViewer({
       const r = renderer.domElement.getBoundingClientRect();
       ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
-      const hits = ray.intersectObjects(gpuRef.current.map((g) => g.mesh), false);
+      const hits = ray.intersectObjects(gpuRef.current.map((g) => g.mesh), false); // nearest first
+      const { hl, ghost: gh } = hlRef.current;
+      let fallback: ProductMeta | null = null;
       for (const h of hits) {
         const gpu = gpuRef.current.find((g) => g.mesh === h.object);
         if (!gpu || h.faceIndex == null) continue;
@@ -192,16 +201,89 @@ export function StreamViewer({
           else hi = mid - 1;
         }
         const m = gpu.meta[lo];
-        // skip hidden / ghosted-out products so a click reaches what is visible
-        const c = targetColor(m, hlRef.current.hl, hlRef.current.ghost);
-        if (c[3] <= 0.001) continue;
-        onPick(m);
-        return;
+        if (!gh && GHOST_ENTITIES.has(m.entity.toLowerCase())) continue; // hidden outright
+        // With a filter active, the first product INSIDE the filter along the
+        // ray wins — ghosted ones in front are see-through and must not steal
+        // the click. Without a filter, the nearest product wins.
+        if (inFilter(m, hl)) {
+          onPick(m);
+          return;
+        }
+        if (!fallback && gh) fallback = m; // a ghosted product, only if nothing in-filter is behind it
       }
-      onPick(null);
+      onPick(fallback);
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
+    // debug surface for automation: raw raycast at a canvas fraction
+    (el as unknown as { __debugPick?: (fx: number, fy: number) => unknown }).__debugPick = (fx, fy) => {
+      ndc.set(fx * 2 - 1, -(fy * 2) + 1);
+      ray.setFromCamera(ndc, camera);
+      const meshes = gpuRef.current.map((g) => g.mesh);
+      const hits = ray.intersectObjects(meshes, false);
+      const m0 = meshes[0];
+      return {
+        meshes: meshes.length,
+        hits: hits.length,
+        first: hits[0] ? { dist: hits[0].distance, face: hits[0].faceIndex } : null,
+        camPos: camera.position.toArray().map((v) => +v.toFixed(1)),
+        target: controls.target.toArray().map((v) => +v.toFixed(1)),
+        near: camera.near,
+        far: camera.far,
+        rayDir: ray.ray.direction.toArray().map((v) => +v.toFixed(3)),
+        m0: m0 ? { bs: m0.geometry.boundingSphere ? [m0.geometry.boundingSphere.radius, ...m0.geometry.boundingSphere.center.toArray().map((v) => +v.toFixed(1))] : null, worldPos: m0.getWorldPosition(new THREE.Vector3()).toArray().map((v) => +v.toFixed(1)), side: (m0.material as THREE.Material).side } : null,
+        probe: m0 ? probeMesh(m0) : null,
+        i0sSorted: gpuRef.current.every((g) => g.i0s.every((v, i, a) => i === 0 || a[i - 1] <= v)),
+        i0sSample: gpuRef.current[0]?.i0s.slice(0, 8),
+        vnSample: gpuRef.current[0]?.meta.slice(0, 8).map((m) => [m.v0, m.vn, m.i0, m.in]),
+        // what the click handler would resolve for the nearest hit at this ray
+        resolve: (() => {
+          for (const h of hits) {
+            const gpu = gpuRef.current.find((g) => g.mesh === h.object);
+            if (!gpu || h.faceIndex == null) continue;
+            const idx = h.faceIndex * 3;
+            let lo = 0, hi = gpu.i0s.length - 1;
+            while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (gpu.i0s[mid] <= idx) lo = mid; else hi = mid - 1; }
+            const m = gpu.meta[lo];
+            // brute-force check: which product's [i0, i0+in) actually contains idx?
+            const truth = gpu.meta.find((x) => idx >= x.i0 && idx < x.i0 + x.in);
+            return { faceIdx: idx, bs: m.guid, bsEntity: m.entity, truth: truth?.guid ?? null, truthEntity: truth?.entity ?? null, same: truth?.guid === m.guid };
+          }
+          return null;
+        })(),
+      };
+    };
+    // deeper probe: world sphere/box tests + a vertex projected to screen + a direct hit test on that vertex
+    const probeMesh = (m: THREE.Mesh) => {
+      const g = m.geometry;
+      if (!g.boundingSphere) g.computeBoundingSphere();
+      if (!g.boundingBox) g.computeBoundingBox();
+      const ws = g.boundingSphere!.clone().applyMatrix4(m.matrixWorld);
+      const wb = g.boundingBox!.clone().applyMatrix4(m.matrixWorld);
+      const pos = g.getAttribute("position") as THREE.BufferAttribute;
+      const v = new THREE.Vector3().fromBufferAttribute(pos, Math.floor(pos.count / 2)).applyMatrix4(m.matrixWorld);
+      const p = v.clone().project(camera);
+      const fx = (p.x + 1) / 2, fy = (1 - p.y) / 2;
+      const r2 = new THREE.Raycaster();
+      r2.setFromCamera(new THREE.Vector2(p.x, p.y), camera);
+      const direct = r2.intersectObject(m, false);
+      const anyMesh = r2.intersectObjects(gpuRef.current.map((x) => x.mesh), false);
+      return {
+        sphereHit: ray.ray.intersectsSphere(ws),
+        boxHit: ray.ray.intersectsBox(wb),
+        wsCenter: ws.center.toArray().map((x) => +x.toFixed(1)),
+        wsRadius: +ws.radius.toFixed(1),
+        vertexWorld: v.toArray().map((x) => +x.toFixed(2)),
+        vertexScreen: [+fx.toFixed(3), +fy.toFixed(3)],
+        matrixWorld: m.matrixWorld.toArray().map((x) => +x.toFixed(2)),
+        directHits: direct.length,
+        anyHitsAtVertex: anyMesh.length,
+        posCount: pos.count,
+        indexCount: g.index?.count ?? null,
+        idxType: g.index ? g.index.array.constructor.name : null,
+        nanPos: (() => { const a = pos.array as Float32Array; let n = 0; for (let i = 0; i < a.length; i++) if (!Number.isFinite(a[i])) n++; return n; })(),
+      };
+    };
 
     const resize = () => {
       const w = el.clientWidth || 300, h = el.clientHeight || 200;
@@ -257,10 +339,10 @@ export function StreamViewer({
   return <div className="sv-host" ref={host} />;
 }
 
-function paint(b: BatchGpu, hl: StreamHighlight, ghost: boolean) {
+function paint(b: BatchGpu, hl: StreamHighlight, ghost: boolean, picked: string | null) {
   const arr = b.color.array as Float32Array;
   for (const m of b.meta) {
-    const c = targetColor(m, hl, ghost);
+    const c = targetColor(m, hl, ghost, picked);
     const end = (m.v0 + m.vn) * 4;
     for (let i = m.v0 * 4; i < end; i += 4) {
       arr[i] = c[0];
