@@ -92,6 +92,7 @@ export function StreamViewer({
   highlight,
   ghost,
   picked = null,
+  active = true,
   onPick,
 }: {
   store: StreamStore;
@@ -99,12 +100,24 @@ export function StreamViewer({
   ghost: boolean;
   /** guid of the tapped product (selection within the filter) */
   picked?: string | null;
+  /** false while this viewer is the instrument's inset: pixel ratio drops to
+   * 1 and the loop renders at <=15 fps, so two live views cost ~1.15 frames,
+   * not 2. Batches, repaints and camera fits still land immediately — only
+   * the cadence of the presentation changes. */
+  active?: boolean;
   onPick?: (meta: ProductMeta | null) => void;
 }) {
   const host = useRef<HTMLDivElement | null>(null);
   const gpuRef = useRef<BatchGpu[]>([]);
   const hlRef = useRef<{ hl: StreamHighlight; ghost: boolean; picked: string | null }>({ hl: highlight, ghost, picked });
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const activeRef = useRef(active);
+  const setActiveRef = useRef<((a: boolean) => void) | null>(null);
+
+  useEffect(() => {
+    activeRef.current = active;
+    setActiveRef.current?.(active);
+  }, [active]);
 
   // restyle on highlight / ghost / pick change — rewrite the RGBA attribute per product range
   useEffect(() => {
@@ -199,6 +212,7 @@ export function StreamViewer({
       store.stats.paint += a2 - a1;
       store.stats.refit += a3 - a2;
       // debug surface for automation: batch count + bounds + camera distance
+      dirty = true;
       el.dataset.batches = String(gpuRef.current.length);
       el.dataset.bbox = bbox.isEmpty() ? "" : [bbox.min.x, bbox.min.y, bbox.min.z, bbox.max.x, bbox.max.y, bbox.max.z].map((v) => v.toFixed(2)).join(",");
     };
@@ -326,6 +340,7 @@ export function StreamViewer({
 
     const resize = () => {
       const w = el.clientWidth || 300, h = el.clientHeight || 200;
+      renderer.setPixelRatio(activeRef.current ? Math.min(devicePixelRatio, 2) : 1);
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -333,12 +348,33 @@ export function StreamViewer({
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(el);
+    // focus swaps re-box the canvas and re-rate the loop; the scene, the
+    // batches and the camera are untouched
+    setActiveRef.current = (a: boolean) => {
+      activeRef.current = a;
+      resize();
+      dirty = true;
+    };
 
     let raf = 0;
     let frameNo = 0;
+    let lastDraw = 0;
+    let dirty = true;
+    const INACTIVE_MS = 1000 / 15;
     const tmp = new THREE.Vector3();
     const frame = () => {
       if (disposed) return;
+      // as the inset: <=15 fps, and only when something moved. controls.update()
+      // is the damping integrator, so it stays on the fast path.
+      if (!activeRef.current) {
+        const now = performance.now();
+        if (!dirty && !(fitTarget && fitLerp < 1) && now - lastDraw < INACTIVE_MS) {
+          raf = requestAnimationFrame(frame);
+          return;
+        }
+        lastDraw = now;
+        dirty = false;
+      }
       if (fitTarget && fitLerp < 1) {
         fitLerp = Math.min(1, fitLerp + 0.06);
         const k = 1 - Math.pow(1 - fitLerp, 3);
@@ -360,6 +396,7 @@ export function StreamViewer({
 
     return () => {
       disposed = true;
+      setActiveRef.current = null;
       cancelAnimationFrame(raf);
       unsub();
       ro.disconnect();

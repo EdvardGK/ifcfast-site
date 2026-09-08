@@ -41,6 +41,7 @@ import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
 import EntityTreemap from "@/components/entity-treemap";
+import { InstrumentGraph, type IgState } from "@/components/instrument-graph";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -122,6 +123,12 @@ type Graph = {
   products: Product[];
   storeys: Storey[];
   contained_in: { product_guid: string; storey_guid: string }[];
+  /* the spatial spine above the storeys — real graphJson output carries all
+     four; the provisional streaming fold carries none of them */
+  buildings?: { guid: string; name?: string | null }[];
+  sites?: { guid: string; name?: string | null }[];
+  projects?: { guid: string; name?: string | null }[];
+  storey_building?: { storey_guid: string; building_guid: string }[];
 };
 type MType = {
   slug: string;
@@ -1531,8 +1538,16 @@ function InstrumentChapter({
   // pinned viewport filters (clicks)
   const [entitySel, setEntitySel] = useState<string | null>(null);
   const [typeSel, setTypeSel] = useState<string | null>(null);
-  // tapped product in the viewport (click-to-select) — wins over the panel filters
+  // tapped product in the viewport (click-to-select) — a highlight, never a filter
   const [picked, setPicked] = useState<Picked | null>(null);
+  // a pick belongs to one model: drop it when another file lands
+  const modelKey = summary?.path ?? null;
+  useEffect(() => {
+    setPicked(null);
+  }, [modelKey]);
+  // which of the viewport cell's two views owns the cell; the other one stays
+  // mounted as the inset, so a swap is a layout change, never a reload
+  const [view, setView] = useState<"model" | "graph">("model");
 
   /* ── storey ordering (top elevation first) ── */
   const storeys = useMemo(() => {
@@ -1761,6 +1776,38 @@ function InstrumentChapter({
     setHotEntity(null);
   };
 
+  /* ── GRAPH view wiring. Every callback is stable: the graph's d3 scene is
+     built once per graph and must not be re-created because the parent
+     re-rendered (the stream re-renders it 4x/s). ── */
+  const onGraphStorey = useCallback((storeyKey: string) => {
+    setEntitySel(null);
+    setTypeSel(null);
+    setScope((cur) => (cur === storeyKey ? "ALL" : storeyKey));
+  }, []);
+  const onGraphEntity = useCallback((entity: string) => {
+    setTypeSel(null);
+    setEntitySel((cur) => (cur === entity ? null : entity));
+  }, []);
+  const onGraphClear = useCallback(() => {
+    setScope("ALL");
+    setEntitySel(null);
+    setTypeSel(null);
+  }, []);
+  /* the graph's own state snapshot — memoised so a provisional republish that
+     changed nothing does not repaint every node */
+  const igState: IgState = useMemo(
+    () => ({
+      scope,
+      entitySel,
+      typeSel,
+      hotEntity,
+      pickedGuid: picked?.guid ?? null,
+      pickedEntity: picked?.entity ?? null,
+      pickedStorey: pickStorey,
+    }),
+    [scope, entitySel, typeSel, hotEntity, picked, pickStorey],
+  );
+
   const fileName = summary ? summary.path.split("/").pop() ?? summary.path : "—";
   // qto is deliberately NOT required: it only lands at "done", and gating the
   // whole instrument on it unmounted the grid — viewport, pill and all — for the
@@ -1928,34 +1975,78 @@ function InstrumentChapter({
             </div>
           </section>
 
-          {/* ─────────── 3D VIEWPORT (cross-filtered) ─────────── */}
+          {/* ─────────── VIEWPORT · MODEL ⇄ GRAPH (cross-filtered) ─────────── */}
+          {/* Both views stay MOUNTED. The tab (and a click on the inset) only
+              re-boxes them, so the 3D scene keeps its camera and the graph
+              keeps its layout across a swap. The inset sits bottom-right —
+              the only free corner (vp-sel top-left, ghost top-right, vp-cap
+              bottom-left). */}
           <section className="cell view" style={{ gridArea: "view" }}>
             <InstHead
               label="VIEWPORT"
               meta={previewing ? "TYPE PREVIEW" : highlight ? "FILTERED" : "GLB"}
               metaAccent={previewing || !!highlight}
+              right={<ViewTabs value={view} onChange={setView} />}
             />
-            <InstrumentViewport
-              src={viewSrc}
-              label={viewLabel}
-              guidLookup={lookup}
-              highlight={highlight}
-              working={workingLabel}
-              workingSince={workingLabel ? workingSince : undefined}
-              stream={stream ?? null}
-              onPick={onPick}
-              pickedGuid={picked?.guid ?? null}
-              picked={
-                picked
-                  ? {
-                      title: `${short(picked.entity)}${picked.type_name ? ` · ${picked.type_name}` : ""}`,
-                      sub: `${storeyName(picked.storey_guid)}${picked.m3 != null ? ` · ${picked.m3 < 0.01 ? picked.m3.toFixed(4) : fmt(picked.m3, 2)} m³` : ""}${picked.m2 != null ? ` · ${fmt(picked.m2, 1)} m²` : ""}`,
-                      guid: picked.guid,
-                    }
-                  : null
-              }
-              onClearPick={() => setPicked(null)}
-            />
+            <div className="vp-split">
+              <div className="vp-pane" data-role={view === "model" ? "main" : "inset"}>
+                <InstrumentViewport
+                  src={viewSrc}
+                  label={viewLabel}
+                  guidLookup={lookup}
+                  highlight={highlight}
+                  working={workingLabel}
+                  workingSince={workingLabel ? workingSince : undefined}
+                  stream={stream ?? null}
+                  active={view === "model"}
+                  onPick={onPick}
+                  pickedGuid={picked?.guid ?? null}
+                  picked={
+                    picked
+                      ? {
+                          title: `${short(picked.entity)}${picked.type_name ? ` · ${picked.type_name}` : ""}`,
+                          sub: `${storeyName(picked.storey_guid)}${picked.m3 != null ? ` · ${picked.m3 < 0.01 ? picked.m3.toFixed(4) : fmt(picked.m3, 2)} m³` : ""}${picked.m2 != null ? ` · ${fmt(picked.m2, 1)} m²` : ""}`,
+                          guid: picked.guid,
+                        }
+                      : null
+                  }
+                  onClearPick={() => setPicked(null)}
+                />
+                {view !== "model" && (
+                  <button
+                    type="button"
+                    className="vp-inset-hit"
+                    onClick={() => setView("model")}
+                    aria-label="focus the model view"
+                  >
+                    <span className="vp-inset-tag">MODEL</span>
+                  </button>
+                )}
+              </div>
+              <div className="vp-pane" data-role={view === "graph" ? "main" : "inset"}>
+                <InstrumentGraph
+                  graph={graph}
+                  provisional={provisional}
+                  focused={view === "graph"}
+                  state={igState}
+                  onPickProduct={onPick}
+                  onHotEntity={setHotEntity}
+                  onSelectEntity={onGraphEntity}
+                  onSelectStorey={onGraphStorey}
+                  onClear={onGraphClear}
+                />
+                {view !== "graph" && (
+                  <button
+                    type="button"
+                    className="vp-inset-hit"
+                    onClick={() => setView("graph")}
+                    aria-label="focus the spatial graph"
+                  >
+                    <span className="vp-inset-tag">GRAPH</span>
+                  </button>
+                )}
+              </div>
+            </div>
           </section>
 
           {/* ─────────── MATERIALS ─────────── */}
@@ -2069,15 +2160,80 @@ function InstHead({
   label,
   meta,
   metaAccent,
+  right,
 }: {
   label: string;
   meta?: string;
   metaAccent?: boolean;
+  /** control that shares the meta slot (the viewport's MODEL | GRAPH tabs) */
+  right?: React.ReactNode;
 }) {
   return (
     <div className="ihead">
       <span className="ihead-l">{label}</span>
-      {meta && <span className={`ihead-m${metaAccent ? " acc" : ""}`}>{meta}</span>}
+      <span className="ihead-r">
+        {meta && <span className={`ihead-m${metaAccent ? " acc" : ""}`}>{meta}</span>}
+        {right}
+      </span>
+    </div>
+  );
+}
+
+/* ── viewport view tabs — MODEL | GRAPH, keyboard operable ──
+   A tablist: arrows move AND select (there is no hidden third state), Home /
+   End jump to the ends. The focused view fills the cell; the other is the
+   inset, which is itself a button back. */
+const VIEW_TABS: { key: "model" | "graph"; label: string }[] = [
+  { key: "model", label: "MODEL" },
+  { key: "graph", label: "GRAPH" },
+];
+function ViewTabs({
+  value,
+  onChange,
+}: {
+  value: "model" | "graph";
+  onChange: (v: "model" | "graph") => void;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const move = (dir: number) => {
+    const i = VIEW_TABS.findIndex((t) => t.key === value);
+    const n = VIEW_TABS[(i + dir + VIEW_TABS.length) % VIEW_TABS.length];
+    onChange(n.key);
+    requestAnimationFrame(() => {
+      ref.current?.querySelector<HTMLButtonElement>(`[data-tab="${n.key}"]`)?.focus();
+    });
+  };
+  return (
+    <div className="vp-tabs" role="tablist" aria-label="viewport view" ref={ref}>
+      {VIEW_TABS.map((t) => (
+        <button
+          key={t.key}
+          type="button"
+          role="tab"
+          data-tab={t.key}
+          aria-selected={value === t.key}
+          tabIndex={value === t.key ? 0 : -1}
+          className={`vp-tab${value === t.key ? " on" : ""}`}
+          onClick={() => onChange(t.key)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+              e.preventDefault();
+              move(1);
+            } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+              e.preventDefault();
+              move(-1);
+            } else if (e.key === "Home") {
+              e.preventDefault();
+              onChange(VIEW_TABS[0].key);
+            } else if (e.key === "End") {
+              e.preventDefault();
+              onChange(VIEW_TABS[VIEW_TABS.length - 1].key);
+            }
+          }}
+        >
+          {t.label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -2136,6 +2292,7 @@ function InstrumentViewport({
   working,
   workingSince,
   stream,
+  active = true,
   onPick,
   pickedGuid = null,
   picked,
@@ -2152,6 +2309,10 @@ function InstrumentViewport({
   workingSince?: number;
   /** streamed geometry (dropped model, v2) — rendered by StreamViewer instead of model-viewer */
   stream?: StreamStore | null;
+  /** false while this view is the inset: the StreamViewer drops to dpr 1 and
+   * <=15 fps, and model-viewer's auto-rotate stops (its renderer is
+   * on-demand, so a still model-viewer costs no frames at all) */
+  active?: boolean;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
   /** guid of the tapped product — drawn on top of the filter, never replacing it */
   pickedGuid?: string | null;
@@ -2314,7 +2475,7 @@ function InstrumentViewport({
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
       {stream ? (
-        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} />
+        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} active={active} />
       ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer
@@ -2324,7 +2485,7 @@ function InstrumentViewport({
         onPointerDown={onMvDown}
         onPointerUp={onMvUp}
         camera-controls
-        auto-rotate
+        {...(active ? { "auto-rotate": true } : {})}
         rotation-per-second="16deg"
         environment-image="neutral"
         shadow-intensity="0.9"
@@ -2817,8 +2978,21 @@ function StyleBlock() {
   background:linear-gradient(180deg,#14171b,#101216); flex:0 0 auto;
 }
 #inst-b .ihead-l{ font-size:9.5px; letter-spacing:.19em; color:var(--fg); font-weight:600; }
-#inst-b .ihead-m{ font-size:8.5px; letter-spacing:.14em; color:var(--mut); }
+#inst-b .ihead-r{ display:flex; align-items:center; gap:9px; min-width:0; }
+#inst-b .ihead-m{ font-size:8.5px; letter-spacing:.14em; color:var(--mut); white-space:nowrap; }
 #inst-b .ihead-m.acc{ color:var(--acc); }
+
+/* ── viewport view tabs (MODEL | GRAPH) ── */
+#inst-b .vp-tabs{ display:inline-flex; border:1px solid var(--ln2); flex:0 0 auto; }
+#inst-b .vp-tab{
+  font-family:var(--mono); font-size:8px; letter-spacing:.18em; color:var(--mut);
+  background:transparent; border:0; border-right:1px solid var(--ln2);
+  padding:3px 8px 2px; cursor:pointer; transition:color .15s ease, background-color .15s ease;
+}
+#inst-b .vp-tab:last-child{ border-right:0; }
+#inst-b .vp-tab:hover{ color:var(--fg); background:rgba(255,255,255,.03); }
+#inst-b .vp-tab.on{ color:#0b0c0e; background:var(--acc); }
+#inst-b .vp-tab:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
 
 /* ── title block ── */
 #inst-b .titleblk{ background:linear-gradient(180deg,#111418,#0d0f12); }
@@ -2892,23 +3066,50 @@ function StyleBlock() {
 #inst-b .tb-acc{ color:var(--acc); }
 #inst-b .tb-mono{ font-size:10px; color:var(--mut); letter-spacing:.05em; }
 
-/* ── quantities strip ── */
+/* ── quantities strip ──
+   Five readouts in a cell that is ~590 px wide at 1440 (the middle column
+   gave its width to the viewport): 118 px each, against a 29 px tabular
+   "2,022.7 m³" that needs ~150. The values ran into each other.
+   Two fixes, both container-relative so no viewport width can undo them:
+     • 3 + 2 rows until the strip is wide enough for five (the strip is in
+       the auto grid row next to the title block, so the height is free);
+     • the value size tracks the STRIP, not the viewport — 2.1vw kept
+       growing the number while its column was shrinking. */
+#inst-b .quant{ container-type:inline-size; }
 #inst-b .qrow{
   flex:1 1 auto; display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr)); align-items:stretch;
+  grid-template-columns:repeat(6,minmax(0,1fr)); align-items:stretch;
 }
 #inst-b .ro{
-  border-right:1px solid var(--ln); padding:9px 11px 10px;
+  grid-column:span 2;
+  border-right:1px solid var(--ln); border-bottom:1px solid var(--ln);
+  padding:9px 11px 10px;
   display:flex; flex-direction:column; justify-content:center; gap:5px; min-width:0;
+  overflow:hidden;
 }
-#inst-b .ro:last-child{ border-right:0; }
+/* 3 + 2: the two on the second row take half the strip each */
+#inst-b .ro:nth-child(4),#inst-b .ro:nth-child(5){ grid-column:span 3; }
+#inst-b .ro:nth-child(3),#inst-b .ro:nth-child(5){ border-right:0; }
+#inst-b .ro:nth-child(4),#inst-b .ro:nth-child(5){ border-bottom:0; }
 #inst-b .ro-k{ font-size:8px; letter-spacing:.16em; color:var(--mut); }
 #inst-b .ro-v{
-  font-size:clamp(19px,2.1vw,29px); line-height:.95; color:var(--fg);
+  font-size:clamp(15px,4.2cqw,27px); line-height:.95; color:var(--fg);
   font-variant-numeric:tabular-nums; letter-spacing:-.01em; white-space:nowrap;
+  overflow:hidden; text-overflow:clip;
 }
 #inst-b .ro-u{ font-size:10px; color:var(--mut); margin-left:5px; letter-spacing:.05em; }
 #inst-b .ro-muted .ro-v{ color:var(--steel2); }
+@container (min-width:900px){
+  #inst-b .qrow{ grid-template-columns:repeat(5,minmax(0,1fr)); }
+  #inst-b .ro,#inst-b .ro:nth-child(4),#inst-b .ro:nth-child(5){
+    grid-column:auto; border-bottom:0;
+  }
+  #inst-b .ro:nth-child(3){ border-right:1px solid var(--ln); }
+  #inst-b .ro:last-child{ border-right:0; }
+  /* five across = a fifth of the strip per value; the cap has to come down
+     with it or a nine-digit volume runs out of column again */
+  #inst-b .ro-v{ font-size:clamp(15px,2.9cqw,25px); }
+}
 
 /* ── storey stack ── */
 #inst-b .stack{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
@@ -2949,7 +3150,45 @@ function StyleBlock() {
 #inst-b .stk-count{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:12px; font-variant-numeric:tabular-nums; color:var(--fg); }
 #inst-b .stk-row.unplaced .stk-name,#inst-b .stk-row.unplaced .stk-elev{ color:var(--mut2); }
 
-/* ── viewport ── */
+/* ── viewport: two panes, one cell ──
+   Both views are mounted at all times; data-role only re-boxes them, so a
+   swap never remounts the three.js scene or relayouts the graph. The inset
+   is bottom-right — the one corner nothing else claims (vp-sel top-left,
+   vp-ghost top-right, vp-cap bottom-left, the tabs in the head). */
+#inst-b .vp-split{ position:relative; flex:1 1 auto; min-height:0; }
+#inst-b .vp-pane{ position:absolute; display:flex; flex-direction:column; overflow:hidden; }
+#inst-b .vp-pane[data-role="main"]{ inset:0; z-index:1; }
+#inst-b .vp-pane[data-role="inset"]{
+  inset:auto 10px 10px auto; width:30%; min-width:132px; max-width:330px;
+  aspect-ratio:4/3; z-index:6;
+  border:1px solid var(--ln2); background:var(--sheet2);
+  box-shadow:0 8px 26px rgba(0,0,0,.55);
+}
+/* the inset is a thumbnail: its own chrome would be unreadable at 30% */
+#inst-b .vp-pane[data-role="inset"] .vp-cap,
+#inst-b .vp-pane[data-role="inset"] .vp-ghost,
+#inst-b .vp-pane[data-role="inset"] .vp-sel,
+#inst-b .vp-pane[data-role="inset"] .vp-crosshair,
+#inst-b .vp-pane[data-role="inset"] .ig-cap,
+#inst-b .vp-pane[data-role="inset"] .ig-note,
+#inst-b .vp-pane[data-role="inset"] .ig-tip{ display:none !important; }
+#inst-b .vp-pane[data-role="inset"] .ig-svg{ cursor:pointer; }
+#inst-b .vp-inset-hit{
+  position:absolute; inset:0; z-index:8; padding:0; border:0; cursor:pointer;
+  background:transparent; display:block;
+}
+#inst-b .vp-inset-hit:hover{ background:rgba(255,143,58,.08); }
+#inst-b .vp-inset-hit:focus-visible{ outline:1px solid var(--acc); outline-offset:-2px; }
+#inst-b .vp-inset-tag{
+  position:absolute; left:5px; top:4px;
+  font-family:var(--mono); font-size:7.5px; letter-spacing:.18em; color:var(--mut);
+  background:rgba(9,11,13,.78); border:1px solid var(--ln); padding:1px 4px;
+}
+#inst-b .vp-inset-hit:hover .vp-inset-tag{ color:var(--acc); border-color:var(--acc); }
+@media(max-width:520px){
+  #inst-b .vp-pane[data-role="inset"]{ width:38%; }
+}
+
 #inst-b .vp{ flex:1 1 auto; position:relative; min-height:0; overflow:hidden; }
 #inst-b .vp model-viewer{ display:block; }
 #inst-b .vp-cap{
