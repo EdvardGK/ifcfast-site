@@ -68,7 +68,7 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Code, Copy, Check, Ghost, Upload, X, Scan } from "lucide-react";
+import { Code, Copy, Check, Ghost, Upload, X, Scan, FileDown } from "lucide-react";
 import { useIfcDrop, LIMIT_OPTIONS, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
@@ -94,6 +94,15 @@ import {
   type PickMeta,
   type Sel,
 } from "@/lib/crossfilter";
+import {
+  REPORT_TABLES,
+  downloadAllCsvTables,
+  downloadBlob,
+  downloadCombinedCsv,
+  downloadCsvTable,
+  type ReportSnapshot,
+  type ReportTable,
+} from "@/lib/report";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -198,6 +207,9 @@ type Meta = { entity: string; storey_guid: string | null; type_name: string | nu
 /** the picked product's meta — the companion to `sel.product` (the guid),
  *  written and cleared in the same commit; never an independent channel */
 type Picked = PickMeta;
+
+/** a still of a viewport pane — what the REPORT's PDF embeds */
+type ViewShot = { dataUrl: string; width: number; height: number };
 
 /* ------------------------------------------------------------------ */
 /* Chapter rail (labels only — the film's camera choreography now lives */
@@ -304,6 +316,114 @@ const fmt = (n: number, d = 0) =>
   n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 const nfInt = new Intl.NumberFormat("en-US");
 const short = (e: string) => e.replace(/^Ifc/i, "").toUpperCase();
+/** class-name comparison, the same case-insensitive one lib/crossfilter uses */
+const eqName = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+
+/* ── REPORT: the graph pane is an SVG, so it is serialised rather than read
+   back from a GL buffer. A serialised SVG carries no stylesheet, so the
+   properties the page's <style> supplies are inlined onto the clone first;
+   the result is drawn onto the panel's own dark ground (data: URIs in an
+   <img> are what the site's CSP allows, and nothing leaves the tab). ── */
+const SVG_INLINE_PROPS = [
+  "fill", "fill-opacity", "stroke", "stroke-width", "stroke-opacity", "stroke-dasharray",
+  "opacity", "font-family", "font-size", "font-weight", "letter-spacing", "text-anchor",
+  "display", "visibility",
+];
+/** true pixel size of a PNG data URL, read from its IHDR — model-viewer's
+ *  `toDataURL()` hands back a canvas whose size need not match the element's
+ *  CSS box, and a guessed aspect ratio distorts the picture in the PDF. */
+function pngSize(dataUrl: string): { width: number; height: number } | null {
+  try {
+    const b64 = dataUrl.slice(dataUrl.indexOf(",") + 1, dataUrl.indexOf(",") + 1 + 64);
+    const bin = atob(b64);
+    if (bin.length < 24) return null;
+    const at = (o: number) =>
+      (bin.charCodeAt(o) << 24) | (bin.charCodeAt(o + 1) << 16) | (bin.charCodeAt(o + 2) << 8) | bin.charCodeAt(o + 3);
+    const w = at(16);
+    const h = at(20);
+    return w > 0 && h > 0 ? { width: w, height: h } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** the viewport's own dark ground — a captured pane must land in the PDF
+ *  looking like the pane, not like a product render on white paper. The GL
+ *  canvas and model-viewer both draw with alpha 0 and take their background
+ *  from CSS, which a `toDataURL()` read-back does not see. */
+function paintPanelGround(ctx: CanvasRenderingContext2D, w: number, h: number, graph = false) {
+  const g = ctx.createRadialGradient(w * 0.5, h * 0.08, 0, w * 0.5, h * 0.08, Math.max(w, h));
+  g.addColorStop(0, graph ? "#191d22" : "#202429");
+  g.addColorStop(0.45, graph ? "#121519" : "#14171b");
+  g.addColorStop(1, graph ? "#0b0d10" : "#0c0e11");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+}
+
+/** composite a transparent capture onto that ground */
+async function onPanelGround(dataUrl: string, w: number, h: number): Promise<ViewShot> {
+  const raw: ViewShot = { dataUrl, width: w, height: h };
+  try {
+    const img = new Image();
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("png decode"));
+      img.src = dataUrl;
+    });
+    const cv = document.createElement("canvas");
+    cv.width = w;
+    cv.height = h;
+    const ctx = cv.getContext("2d");
+    if (!ctx) return raw;
+    paintPanelGround(ctx, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    return { dataUrl: cv.toDataURL("image/png"), width: w, height: h };
+  } catch {
+    return raw;
+  }
+}
+
+async function captureSvgPane(svg: SVGSVGElement): Promise<ViewShot | null> {
+  try {
+    const r = svg.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width));
+    const h = Math.max(1, Math.round(r.height));
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    const src = svg.querySelectorAll<SVGElement>("*");
+    const dst = clone.querySelectorAll<SVGElement>("*");
+    for (let i = 0; i < src.length && i < dst.length; i++) {
+      const cs = getComputedStyle(src[i]);
+      let css = "";
+      for (const prop of SVG_INLINE_PROPS) {
+        const v = cs.getPropertyValue(prop);
+        if (v) css += `${prop}:${v};`;
+      }
+      dst[i].setAttribute("style", css);
+    }
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clone.setAttribute("width", String(w));
+    clone.setAttribute("height", String(h));
+    const xml = new XMLSerializer().serializeToString(clone);
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
+    const img = new Image();
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("svg decode"));
+      img.src = url;
+    });
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    const ctx = cv.getContext("2d");
+    if (!ctx) return null;
+    paintPanelGround(ctx, cv.width, cv.height, true);
+    ctx.drawImage(img, 0, 0, cv.width, cv.height);
+    return { dataUrl: cv.toDataURL("image/png"), width: cv.width, height: cv.height };
+  } catch {
+    return null;
+  }
+}
 
 /* ================================================================== */
 /* Page                                                                */
@@ -1624,6 +1744,182 @@ const TypeRegister = memo(function TypeRegister({
 });
 
 /* ================================================================== */
+/* ReportMenu — the title bar's REPORT control (next to CLEAR)          */
+/* ==================================================================
+   A two-level menu in one popover: CSV (which expands its four tables in
+   place) and PDF. Everything it emits describes the CURRENT selection —
+   the label under the button says which, so nobody has to open a file to
+   find out what it covers.
+
+   Keyboard: Enter / Space / ArrowDown open, arrows rove, Home / End jump,
+   Escape closes. Escape is stopped here so it closes the menu instead of
+   travelling on to the instrument's ONE clear (rule 7) and wiping the
+   selection the user was about to export. */
+const CSV_MENU: { key: ReportTable | "all-files" | "all-one-file"; label: string; note: string }[] = [
+  ...REPORT_TABLES.map((t) => ({ key: t.key, label: t.label, note: `${t.key}.csv` })),
+  { key: "all-files" as const, label: "ALL TABLES", note: "4 files" },
+  { key: "all-one-file" as const, label: "ALL TABLES", note: "one file" },
+];
+
+function ReportMenu({
+  filterLabel,
+  onCsv,
+  onPdf,
+}: {
+  filterLabel: string;
+  onCsv: (t: ReportTable | "all-files" | "all-one-file") => void;
+  onPdf: () => void | Promise<void>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [csvOpen, setCsvOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const wrap = useRef<HTMLDivElement | null>(null);
+  const btn = useRef<HTMLButtonElement | null>(null);
+
+  const close = useCallback(() => {
+    setOpen(false);
+    setCsvOpen(false);
+  }, []);
+
+  // a click anywhere else dismisses it (pointerdown, so a drag on the
+  // viewport behind the menu is not swallowed by a stale popover)
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) close();
+    };
+    window.addEventListener("pointerdown", onDown);
+    return () => window.removeEventListener("pointerdown", onDown);
+  }, [open, close]);
+
+  const items = () =>
+    Array.from(wrap.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? []);
+  const rove = (dir: number) => {
+    const list = items();
+    if (!list.length) return;
+    const i = list.indexOf(document.activeElement as HTMLButtonElement);
+    list[(i + dir + list.length) % list.length]?.focus();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      // rule 7 lives on window; this Escape belongs to the menu
+      e.stopPropagation();
+      e.preventDefault();
+      close();
+      btn.current?.focus();
+      return;
+    }
+    if (!open) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      rove(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      rove(-1);
+    } else if (e.key === "Home" || e.key === "End") {
+      e.preventDefault();
+      const list = items();
+      (e.key === "Home" ? list[0] : list[list.length - 1])?.focus();
+    }
+  };
+
+  const run = async (fn: () => void | Promise<void>) => {
+    setBusy(true);
+    try {
+      await fn();
+    } finally {
+      setBusy(false);
+      close();
+      btn.current?.focus();
+    }
+  };
+
+  return (
+    <div className="tb-report" ref={wrap} onKeyDown={onKeyDown}>
+      <button
+        type="button"
+        ref={btn}
+        className="tb-rep-btn"
+        data-report="open"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        title={`export this view — ${filterLabel} · built in this tab, nothing uploaded`}
+        onClick={() => {
+          setOpen((o) => !o);
+          setCsvOpen(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" && !open) {
+            e.preventDefault();
+            setOpen(true);
+            requestAnimationFrame(() => items()[0]?.focus());
+          }
+        }}
+      >
+        <FileDown size={10} strokeWidth={2} />
+        REPORT
+      </button>
+      {open && (
+        <div className="tb-rep-menu" role="menu" aria-label="report">
+          <div className="tb-rep-scope">
+            <span className="tb-rep-scope-k">SCOPE</span>
+            <span className="tb-rep-scope-v" title={filterLabel}>
+              {filterLabel}
+            </span>
+          </div>
+          <button
+            type="button"
+            role="menuitem"
+            className={`tb-rep-item${csvOpen ? " on" : ""}`}
+            data-report="csv"
+            aria-expanded={csvOpen}
+            onClick={() => setCsvOpen((c) => !c)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowRight" && !csvOpen) {
+                e.preventDefault();
+                setCsvOpen(true);
+              } else if (e.key === "ArrowLeft" && csvOpen) {
+                e.preventDefault();
+                setCsvOpen(false);
+              }
+            }}
+          >
+            <span className="tb-rep-lbl">CSV</span>
+            <span className="tb-rep-note">{csvOpen ? "pick a table" : "4 tables"}</span>
+          </button>
+          {csvOpen &&
+            CSV_MENU.map((m) => (
+              <button
+                key={`${m.key}-${m.note}`}
+                type="button"
+                role="menuitem"
+                className="tb-rep-item tb-rep-sub"
+                data-report={`csv:${m.key}`}
+                onClick={() => void run(() => onCsv(m.key))}
+              >
+                <span className="tb-rep-lbl">{m.label}</span>
+                <span className="tb-rep-note">{m.note}</span>
+              </button>
+            ))}
+          <button
+            type="button"
+            role="menuitem"
+            className="tb-rep-item"
+            data-report="pdf"
+            onClick={() => void run(onPdf)}
+          >
+            <span className="tb-rep-lbl">PDF</span>
+            <span className="tb-rep-note">{busy ? "rendering…" : "A4 summary"}</span>
+          </button>
+          <div className="tb-rep-foot">built in this tab · nothing uploaded</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================== */
 /* InstrumentChapter — concept B, adapted as film chapter 06           */
 /* ================================================================== */
 function InstrumentChapter({
@@ -1661,6 +1957,8 @@ function InstrumentChapter({
      own: nothing in this file sets it without setting `sel.product`. */
   const [sel, setSel] = useState<Sel>(EMPTY_SEL);
   const [pickMeta, setPickMeta] = useState<Picked | null>(null);
+  /** the instrument's root — Escape's scope test and the REPORT's SVG capture */
+  const rootRef = useRef<HTMLDivElement | null>(null);
   // synchronous mirrors: two commits inside one event (a click that both
   // isolates and re-frames, say) must compose, not race the next render
   const selRef = useRef(sel);
@@ -1977,11 +2275,152 @@ function InstrumentChapter({
      changed nothing does not repaint every node */
   const igState: IgState = useMemo(() => ({ sel, pick: pickMeta }), [sel, pickMeta]);
 
+  /* ── REPORT (CSV + PDF) ────────────────────────────────────────────
+     One snapshot, built from the SAME derived data the panels render, so
+     a downloaded file cannot disagree with the screen. The selection is
+     read PINNED (storey / entity / type / product) — `sel.hover` is a
+     preview that must never reach a file, and the ghost toggle is a
+     viewer treatment, not a filter. ── */
+  const viewCapture = useRef<(() => Promise<ViewShot | null>) | null>(null);
+
+  /** the pinned in-filter test the ENTITY DISTRIBUTION panel dims by */
+  const classInFilter = useCallback(
+    (entity: string) => {
+      if (sel.entity) return eqName(entity, sel.entity);
+      if (sel.type) return typeEntity ? eqName(entity, typeEntity) : true;
+      return true;
+    },
+    [sel.entity, sel.type, typeEntity],
+  );
+  /** the pinned in-filter test the TYPE REGISTER dims by (scope + isolation) */
+  const typeRowInFilter = useCallback(
+    (t: MType) => {
+      if (inScopeEntities && !inScopeEntities.has(t.entity)) return false;
+      if (sel.entity) return eqName(t.entity, sel.entity);
+      if (sel.type) return t.type_name === sel.type;
+      return true;
+    },
+    [inScopeEntities, sel.entity, sel.type],
+  );
+
+  /** the filter, spelled out for a header line — "whole model" when clean */
+  const filterLabel = useMemo(() => {
+    const bits: string[] = [];
+    if (sel.storey)
+      bits.push(sel.storey === UNPLACED ? "unplaced" : storeys.find((st) => st.guid === sel.storey)?.name ?? sel.storey);
+    if (sel.entity) bits.push(sel.entity);
+    if (sel.type) bits.push(sel.type);
+    if (sel.product) bits.push(`product ${sel.product}`);
+    return bits.length ? bits.join(" · ") : "whole model";
+  }, [sel.storey, sel.entity, sel.type, sel.product, storeys]);
+
+  const buildSnapshot = useCallback(
+    (viewport: ViewShot & { label: string } | null): ReportSnapshot | null => {
+      if (!summary || !manifest) return null;
+      const name = summary.path.split("/").pop() ?? summary.path;
+      return {
+        model: {
+          name,
+          stem: name.replace(/\.(ifc|ifczip|step|stp)$/i, ""),
+          schema: summary.schema,
+          project: summary.project_name,
+          authoringApp: summary.authoring_app,
+          lengthUnit: summary.length_unit,
+          unitScale: summary.unit_scale,
+          sizeBytes: summary.size_bytes,
+          parseMs: summary.parse_seconds * 1000,
+          entities: summary.type_counts_total,
+          cacheKey: summary.cache_key,
+        },
+        version: manifest.generated_with,
+        generatedAt: new Date(),
+        filterLabel,
+        filter: { storey: sel.storey, entity: sel.entity, type: sel.type, product: sel.product },
+        quantities: {
+          products: q.products,
+          m3: q.m3,
+          m2: q.m2,
+          materials: provisional ? null : q.mats,
+          meshedPct: qto ? meshed : null,
+        },
+        classes: dist.map((d) => ({
+          entity: d.entity,
+          count: d.count,
+          m3: d.m3,
+          m2: d.m2,
+          noMesh: d.noMesh,
+          inFilter: classInFilter(d.entity),
+        })),
+        storeys: [
+          ...storeys.map((st) => ({
+            guid: st.guid,
+            name: st.name,
+            elevation: st.elevation,
+            products: storeyCount.m.get(st.guid) ?? 0,
+            inFilter: !sel.storey || sel.storey === st.guid,
+          })),
+          {
+            guid: UNPLACED,
+            name: "UNPLACED",
+            elevation: null,
+            products: storeyCount.unplaced,
+            inFilter: !sel.storey || sel.storey === UNPLACED,
+          },
+        ],
+        types: manifest.types.map((t) => ({
+          entity: t.entity,
+          typeName: t.type_name,
+          count: t.count,
+          bytes: t.bytes,
+          inFilter: typeRowInFilter(t),
+        })),
+        materials,
+        viewport,
+        provisional,
+      };
+    },
+    [
+      summary, manifest, filterLabel, sel.storey, sel.entity, sel.type, sel.product,
+      q, provisional, qto, meshed, dist, storeys, storeyCount, materials,
+      classInFilter, typeRowInFilter,
+    ],
+  );
+
+  /** a still of whichever pane owns the viewport cell right now */
+  const captureViewport = useCallback(async (): Promise<(ViewShot & { label: string }) | null> => {
+    if (view === "graph") {
+      const svg = rootRef.current?.querySelector<SVGSVGElement>(".ig-svg");
+      const shot = svg ? await captureSvgPane(svg) : null;
+      if (shot) return { ...shot, label: `SPATIAL GRAPH · ${filterLabel}` };
+    }
+    const shot = (await viewCapture.current?.()) ?? null;
+    return shot ? { ...shot, label: viewLabel } : null;
+  }, [view, viewLabel, filterLabel]);
+
+  const onReportCsv = useCallback(
+    (table: ReportTable | "all-files" | "all-one-file") => {
+      const snap = buildSnapshot(null);
+      if (!snap) return;
+      if (table === "all-files") void downloadAllCsvTables(snap);
+      else if (table === "all-one-file") downloadCombinedCsv(snap);
+      else downloadCsvTable(snap, table);
+    },
+    [buildSnapshot],
+  );
+
+  const onReportPdf = useCallback(async () => {
+    const viewport = await captureViewport();
+    const snap = buildSnapshot(viewport);
+    if (!snap) return;
+    // lazy: jspdf + autotable are their own chunk, never in the first load
+    const { buildReportPdf, reportPdfFileName } = await import("@/lib/report-pdf");
+    downloadBlob(buildReportPdf(snap), reportPdfFileName(snap));
+  }, [buildSnapshot, captureViewport]);
+
   /* Rule 7: Escape is the keyboard half of the ONE clear. It fires while
      focus is inside the instrument — and while nothing is focused at all
      (clicking a WebGL canvas leaves focus on <body>), provided the
      instrument is actually the thing on screen. */
-  const rootRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
@@ -2038,6 +2477,14 @@ function InstrumentChapter({
                 onReset={drop.reset}
                 limitMB={drop.limitMB}
                 onLimitChange={drop.setLimitMB}
+              />
+              {/* REPORT — the current selection, on paper or in a spreadsheet.
+                  Everything it produces is built in this tab from data that is
+                  already here; no request is made. */}
+              <ReportMenu
+                filterLabel={filterLabel}
+                onCsv={onReportCsv}
+                onPdf={onReportPdf}
               />
               {/* the ONE clear (rule 7). Always present, greyed and inert when
                   nothing is selected, so its position never moves. */}
@@ -2217,6 +2664,7 @@ function InstrumentChapter({
                   stream={stream ?? null}
                   active={view === "model"}
                   frameRef={modelFrame}
+                  captureRef={viewCapture}
                   onPick={onPick}
                   picked={
                     pickMeta
@@ -2522,6 +2970,7 @@ function InstrumentViewport({
   stream,
   active = true,
   frameRef,
+  captureRef,
   onPick,
   picked,
   onClearPick,
@@ -2544,6 +2993,11 @@ function InstrumentViewport({
   active?: boolean;
   /** filled with this view's frame action (see MV_ORBIT below) */
   frameRef?: React.MutableRefObject<(() => void) | null>;
+  /** filled with "PNG of what this pane shows right now" — the REPORT's
+   * viewport snapshot. StreamViewer reads its own WebGL buffer;
+   * model-viewer has `toDataURL()`. Neither re-renders off-screen, so the
+   * picture in the PDF is the frame the user was looking at. */
+  captureRef?: React.MutableRefObject<(() => Promise<ViewShot | null>) | null>;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
   /** the picked product's readout chip (the pick itself lives in `sel`) */
   picked?: { title: string; sub: string; guid: string } | null;
@@ -2646,6 +3100,39 @@ function InstrumentViewport({
       frameRef.current = null;
     };
   }, [frameRef, doFrame]);
+
+  /* ── REPORT capture ── */
+  const svCapture = useRef<(() => ViewShot | null) | null>(null);
+  const doCapture = useCallback(async (): Promise<ViewShot | null> => {
+    // StreamViewer composites its own ground inside the same task as the
+    // render (its drawing buffer is not preserved); model-viewer hands back
+    // a transparent PNG, so it is composited here.
+    if (stream) return svCapture.current?.() ?? null;
+    const mv = ref.current as unknown as { toDataURL?: (t?: string) => string } | null;
+    const el = ref.current as HTMLElement | null;
+    if (!mv?.toDataURL || !el) return null;
+    try {
+      const dataUrl = mv.toDataURL("image/png");
+      if (!dataUrl || !dataUrl.startsWith("data:image")) return null;
+      const r = el.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const size = pngSize(dataUrl) ?? {
+        width: Math.max(1, Math.round(r.width * dpr)),
+        height: Math.max(1, Math.round(r.height * dpr)),
+      };
+      return await onPanelGround(dataUrl, size.width, size.height);
+    } catch {
+      return null;
+    }
+  }, [stream]);
+  useEffect(() => {
+    if (!captureRef) return;
+    captureRef.current = doCapture;
+    return () => {
+      captureRef.current = null;
+    };
+  }, [captureRef, doCapture]);
+
   const originals = useRef<
     Map<string, { color: [number, number, number, number]; alphaMode: string }>
   >(new Map());
@@ -2748,7 +3235,7 @@ function InstrumentViewport({
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
       {stream ? (
-        <StreamViewer store={stream} sel={sel} ghost={ghostMode} onPick={onPick} active={active} frameRef={svFrame} />
+        <StreamViewer store={stream} sel={sel} ghost={ghostMode} onPick={onPick} active={active} frameRef={svFrame} captureRef={svCapture} />
       ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer
@@ -3319,6 +3806,49 @@ function StyleBlock() {
 }
 #inst-b .tb-limit:hover{ color:var(--fg); border-color:var(--acc); }
 #inst-b .tb-limit:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
+/* ── REPORT (CSV + PDF) — a popover anchored to the title bar ── */
+#inst-b .tb-report{ position:relative; flex:0 0 auto; }
+#inst-b .tb-rep-btn{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--mut); background:transparent; border:1px solid var(--ln2); padding:3px 7px;
+  cursor:pointer; transition:color .18s ease, border-color .18s ease, background-color .18s ease;
+}
+#inst-b .tb-rep-btn:hover,#inst-b .tb-rep-btn[aria-expanded="true"]{
+  color:var(--acc); border-color:var(--acc); background:rgba(255,143,58,.1);
+}
+#inst-b .tb-rep-btn:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
+#inst-b .tb-rep-menu{
+  position:absolute; top:calc(100% + 4px); right:0; z-index:60; min-width:186px;
+  background:#0e1114; border:1px solid var(--ln2); box-shadow:0 10px 26px rgba(0,0,0,.55);
+  display:flex; flex-direction:column; padding:3px;
+}
+#inst-b .tb-rep-scope{
+  display:flex; align-items:baseline; gap:6px; padding:5px 7px 6px;
+  border-bottom:1px solid var(--ln); margin-bottom:3px; min-width:0;
+}
+#inst-b .tb-rep-scope-k{ font-size:7px; letter-spacing:.19em; color:var(--mut2); flex:0 0 auto; }
+#inst-b .tb-rep-scope-v{
+  font-size:8.5px; letter-spacing:.06em; color:var(--acc); min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+#inst-b .tb-rep-item{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--fg); background:transparent; border:0; padding:5px 7px; cursor:pointer;
+  text-align:left;
+}
+#inst-b .tb-rep-item:hover,#inst-b .tb-rep-item:focus-visible{
+  background:rgba(255,143,58,.13); color:var(--acc); outline:none;
+}
+#inst-b .tb-rep-item.on{ color:var(--acc); }
+#inst-b .tb-rep-sub{ padding-left:16px; border-left:1px solid var(--ln2); margin-left:7px; }
+#inst-b .tb-rep-note{ font-size:7.5px; letter-spacing:.1em; color:var(--mut2); text-transform:none; }
+#inst-b .tb-rep-foot{
+  border-top:1px solid var(--ln); margin-top:3px; padding:5px 7px 4px;
+  font-size:7px; letter-spacing:.11em; color:var(--mut2); text-transform:uppercase;
+}
+
 /* ── the ONE clear (rule 7) ──
    Always present so its position never moves; greyed and inert when nothing
    is selected; a badge counting the active facets when something is. */

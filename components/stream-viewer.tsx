@@ -90,6 +90,7 @@ export function StreamViewer({
   ghost,
   active = true,
   frameRef,
+  captureRef,
   onPick,
 }: {
   store: StreamStore;
@@ -103,6 +104,12 @@ export function StreamViewer({
   active?: boolean;
   /** filled with "frame everything the filter leaves visible" */
   frameRef?: React.MutableRefObject<(() => void) | null>;
+  /** filled with "give me a PNG of what is on screen right now" (REPORT).
+   * The renderer runs with `preserveDrawingBuffer:false`, so the read-back
+   * only works inside the same synchronous task as a `render()` — which is
+   * exactly what the capture below does, rather than flipping the flag and
+   * paying for a preserved buffer on every frame of every session. */
+  captureRef?: React.MutableRefObject<(() => { dataUrl: string; width: number; height: number } | null) | null>;
   onPick?: (meta: ProductMeta | null) => void;
 }) {
   const host = useRef<HTMLDivElement | null>(null);
@@ -112,6 +119,7 @@ export function StreamViewer({
   const activeRef = useRef(active);
   const setActiveRef = useRef<((a: boolean) => void) | null>(null);
   const doFrameRef = useRef<(() => void) | null>(null);
+  const doCaptureRef = useRef<(() => { dataUrl: string; width: number; height: number } | null) | null>(null);
   /** "put the cream edge ring around this product" (null = no ring) */
   const setRingRef = useRef<((guid: string | null) => void) | null>(null);
 
@@ -122,6 +130,14 @@ export function StreamViewer({
       frameRef.current = null;
     };
   }, [frameRef]);
+
+  useEffect(() => {
+    if (!captureRef) return;
+    captureRef.current = () => doCaptureRef.current?.() ?? null;
+    return () => {
+      captureRef.current = null;
+    };
+  }, [captureRef]);
 
   useEffect(() => {
     activeRef.current = active;
@@ -512,6 +528,37 @@ export function StreamViewer({
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
+
+    /* REPORT: a still of exactly what is on screen. render() then read the
+       buffer in the SAME task (the drawing buffer is not preserved), and
+       composite onto the panel's own dark ground — the GL canvas is drawn
+       with alpha 0 and would otherwise land in the PDF as a transparent
+       (i.e. white-on-white) rectangle. */
+    doCaptureRef.current = () => {
+      try {
+        renderer.render(scene, camera);
+        const src = renderer.domElement;
+        const w = src.width;
+        const h = src.height;
+        if (!w || !h) return null;
+        const off = document.createElement("canvas");
+        off.width = w;
+        off.height = h;
+        const ctx = off.getContext("2d");
+        if (!ctx) return null;
+        const g = ctx.createRadialGradient(w * 0.5, h * 0.08, 0, w * 0.5, h * 0.08, Math.max(w, h));
+        g.addColorStop(0, "#202429");
+        g.addColorStop(0.45, "#14171b");
+        g.addColorStop(1, "#0c0e11");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(src, 0, 0);
+        return { dataUrl: off.toDataURL("image/png"), width: w, height: h };
+      } catch {
+        return null;
+      }
+    };
+
     // the restyle effect runs before this one on mount, so its setRing call
     // found no scene — apply the pick the selection already holds. (It must
     // come after `dirty` exists: setRing marks the scene dirty.)
@@ -521,6 +568,7 @@ export function StreamViewer({
       disposed = true;
       setActiveRef.current = null;
       doFrameRef.current = null;
+      doCaptureRef.current = null;
       setRingRef.current = null;
       ring.geometry.dispose();
       ringMat.dispose();
