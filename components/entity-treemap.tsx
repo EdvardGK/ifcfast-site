@@ -12,6 +12,10 @@
  *   click  → onSelect(entity)  (the caller toggles its own selection)
  * plus keyboard focus (Enter / Space) with the class name as aria-label.
  *
+ * `picked` is the third channel: the class of the product tapped in the
+ * VIEWPORT. It highlights (cream ring on the amber cell) and never
+ * isolates — a pick never dims the rest and never pins a filter.
+ *
  * Palette is the instrument's graphite ramp (darker = fewer products),
  * amber for the hovered / selected class, and the register's `.dim`
  * opacity for everything else while a selection is pinned.
@@ -63,6 +67,7 @@ export default function EntityTreemap({
   data,
   hot,
   selected,
+  picked = null,
   onHover,
   onSelect,
   label = shortName,
@@ -72,6 +77,8 @@ export default function EntityTreemap({
   hot: string | null;
   /** pinned entity filter */
   selected: string | null;
+  /** entity of the product picked in the viewport — highlight only */
+  picked?: string | null;
   onHover: (entity: string | null) => void;
   onSelect: (entity: string) => void;
   label?: (entity: string) => string;
@@ -135,8 +142,10 @@ export default function EntityTreemap({
         <div className="tm-empty">NO PRODUCTS IN SCOPE</div>
       )}
       {cells.map((c) => {
+        const isPick = !!picked && picked === c.entity;
         const isHot = hot === c.entity || selected === c.entity;
-        const isDim = !!selected && selected !== c.entity;
+        // a pick never dims its neighbours, and is never itself dimmed
+        const isDim = !!selected && selected !== c.entity && !isPick;
         const name = label(c.entity);
         const room = Math.max(0, Math.floor((c.w - 9) / CHAR_W));
         const showName = c.w >= NAME_MIN_W && c.h >= NAME_MIN_H && room >= 3;
@@ -149,13 +158,13 @@ export default function EntityTreemap({
             aria-label={`${c.entity}, ${c.count} products`}
             aria-pressed={selected === c.entity}
             title={`${c.entity} · ${c.count} · ${c.m3.toFixed(1)} m³${c.noMesh ? " · NO MESH" : ""}`}
-            className={`tm-cell${isHot ? " hot" : ""}${selected === c.entity ? " pin" : ""}${isDim ? " dim" : ""}`}
+            className={`tm-cell${isHot ? " hot" : ""}${isPick ? " pick" : ""}${selected === c.entity ? " pin" : ""}${isDim ? " dim" : ""}`}
             style={{
               left: c.x,
               top: c.y,
               width: c.w,
               height: c.h,
-              background: isHot ? undefined : ramp(c.count / maxCount),
+              background: isHot || isPick ? undefined : ramp(c.count / maxCount),
             }}
             onMouseEnter={() => onHover(c.entity)}
             onFocus={() => onHover(c.entity)}
@@ -194,6 +203,10 @@ const TM_CSS = `
   transition:background-color .16s linear, opacity .16s linear;
 }
 #inst-b .tm-cell.hot{ background:linear-gradient(150deg,var(--acc-dim),var(--acc)); border-color:var(--acc); }
+#inst-b .tm-cell.pick{
+  background:linear-gradient(150deg,var(--acc),var(--pick));
+  border-color:var(--pick); box-shadow:inset 0 0 0 2px var(--pick);
+}
 #inst-b .tm-cell.pin{ box-shadow:inset 0 0 0 1px var(--acc), inset 3px 0 0 var(--acc); }
 #inst-b .tm-cell.dim{ opacity:.32; }
 #inst-b .tm-cell:focus-visible{ outline:1px solid var(--acc); outline-offset:-3px; }
@@ -212,5 +225,8 @@ const TM_CSS = `
   position:absolute; top:3px; right:3px; width:4px; height:4px; background:var(--acc);
 }
 #inst-b .tm-cell.hot .tm-nm{ background:#0b0c0e; }
+#inst-b .tm-cell.pick .tm-name{ color:#0b0c0e; }
+#inst-b .tm-cell.pick .tm-n{ color:#0b0c0e; opacity:.85; }
+#inst-b .tm-cell.pick .tm-nm{ background:#0b0c0e; }
 #inst-b .tm-empty{ padding:14px 12px; font-size:9px; letter-spacing:.1em; color:var(--mut2); }
 `;

@@ -1372,6 +1372,55 @@ const VOID_ENTITIES = new Set(["IfcSpace", "IfcOpeningElement"]);
  * would otherwise put ~14 000 nodes in the DOM for rows nobody scrolls to. */
 const MAT_ROW_CAP = 400;
 
+/* ── bring a picked row into view inside ITS OWN scroll container only.
+   el.scrollIntoView({block:"nearest"}) walks every scrollable ancestor up to
+   the document, so a pick deep in the register scrolled the whole film — the
+   viewport the user had just clicked in left the screen. This moves the
+   `.scrolly` box and nothing else, and clears the register's sticky head. ── */
+function scrollIntoScroller(el: HTMLElement | null) {
+  const box = el?.closest(".scrolly") as HTMLElement | null;
+  if (!el || !box) return;
+  const head = box.querySelector(".reg-head") as HTMLElement | null;
+  const pad = head ? head.getBoundingClientRect().height : 0;
+  const a = el.getBoundingClientRect();
+  const b = box.getBoundingClientRect();
+  if (a.top < b.top + pad) box.scrollTop += a.top - b.top - pad;
+  else if (a.bottom > b.bottom) box.scrollTop += a.bottom - b.bottom;
+}
+
+/* ── one MATERIALS row. `pick` is the viewport-pick cross-highlight (the
+   picked product uses this material); `scrollTo` brings the first such row
+   into view, since a pick can land 300 rows down a ranked list. ── */
+function MatRow({
+  name,
+  count,
+  max,
+  pick,
+  scrollTo,
+}: {
+  name: string;
+  count: number;
+  max: number;
+  pick?: boolean;
+  scrollTo?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (pick && scrollTo) scrollIntoScroller(ref.current);
+  }, [pick, scrollTo]);
+  return (
+    <div ref={ref} className={`bar-row mat-row${pick ? " pick" : ""}`}>
+      <span className="bar-name mat-name" title={name}>
+        {name}
+      </span>
+      <span className="bar-track">
+        <span className="bar-fill mat-fill" style={{ width: `${(count / max) * 100}%` }} />
+      </span>
+      <span className="bar-n">{count}</span>
+    </div>
+  );
+}
+
 /* ================================================================== */
 /* TypeRegister — rows are TYPES, not products, but the list re-renders  */
 /* on every provisional-graph tick unless its props are stable. `inScope` */
@@ -1382,6 +1431,8 @@ const TypeRegister = memo(function TypeRegister({
   types,
   hotEntity,
   typeSel,
+  pickEntity = null,
+  pickType = null,
   inScope,
   onHover,
   onSelect,
@@ -1389,11 +1440,19 @@ const TypeRegister = memo(function TypeRegister({
   types: MType[];
   hotEntity: string | null;
   typeSel: string | null;
+  /** entity + type of the product picked in the viewport — highlight only */
+  pickEntity?: string | null;
+  pickType?: string | null;
   /** entities present in the current scope — null means "no scope filter" */
   inScope: Set<string> | null;
   onHover: (t: MType | null) => void;
   onSelect: (t: MType) => void;
 }) {
+  // a pick in a 164-type register is unfindable unless we bring it to the eye
+  const pickRowRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    scrollIntoScroller(pickRowRef.current);
+  }, [pickEntity, pickType]);
   return (
     <div className="scrolly reg-body" onMouseLeave={() => onHover(null)}>
       <div className="reg-head">
@@ -1406,11 +1465,13 @@ const TypeRegister = memo(function TypeRegister({
       {types.map((t) => {
         const entHot = hotEntity === t.entity;
         const pinned = typeSel === t.type_name;
-        const dim = inScope ? !inScope.has(t.entity) : false;
+        const isPick = !!pickType && t.type_name === pickType && t.entity === pickEntity;
+        const dim = inScope ? !inScope.has(t.entity) && !isPick : false;
         return (
           <div
             key={t.slug}
-            className={`reg-row${entHot ? " hot" : ""}${pinned ? " pin" : ""}${dim ? " dim" : ""}`}
+            ref={isPick ? pickRowRef : undefined}
+            className={`reg-row${entHot ? " hot" : ""}${isPick ? " pick" : ""}${pinned ? " pin" : ""}${dim ? " dim" : ""}`}
             onMouseEnter={() => onHover(t)}
             onClick={() => onSelect(t)}
           >
@@ -1648,6 +1709,29 @@ function InstrumentChapter({
     [lookup],
   );
 
+  /* ── pick cross-highlight. A viewport pick HIGHLIGHTS the panels; it never
+     isolates, so scope / entitySel / typeSel are untouched. Materials come from
+     the graph's per-product assignment list, which the provisional streaming
+     fold does not carry — then we simply do not highlight a material. ── */
+  const pickStorey = picked ? (picked.storey_guid ?? "UNPLACED") : null;
+  const pickMaterials = useMemo(() => {
+    if (!picked) return null;
+    const mats = lookup(picked.guid)?.materials;
+    return mats && mats.length ? new Set(mats) : null;
+  }, [picked, lookup]);
+
+  /* rows for the picked product's materials that rank below MAT_ROW_CAP */
+  const pickBelowCap = useMemo(() => {
+    if (!pickMaterials) return [] as { name: string; count: number }[];
+    return materials.slice(MAT_ROW_CAP).filter((m) => pickMaterials.has(m.name));
+  }, [pickMaterials, materials]);
+  /* the first picked material row in render order — the one we scroll to */
+  const pickScrollName = useMemo(() => {
+    if (!pickMaterials) return null;
+    const inCap = materials.slice(0, MAT_ROW_CAP).find((m) => pickMaterials.has(m.name));
+    return inCap?.name ?? pickBelowCap[0]?.name ?? null;
+  }, [pickMaterials, materials, pickBelowCap]);
+
   /* ── which classes the register may show as in-scope. Null (= everything) for
      the whole model, which is what the stream publishes 20 times in a row — a
      stable prop, so the memoized register does not re-render per tick. ── */
@@ -1782,10 +1866,11 @@ function InstrumentChapter({
                 {storeys.map((s) => {
                   const c = storeyCount.m.get(s.guid) ?? 0;
                   const sel = scope === s.guid;
+                  const pick = pickStorey === s.guid;
                   return (
                     <button
                       key={s.guid}
-                      className={`stk-row${sel ? " sel" : ""}`}
+                      className={`stk-row${sel ? " sel" : ""}${pick ? " pick" : ""}`}
                       onClick={() => {
                         setEntitySel(null);
                         setTypeSel(null);
@@ -1815,7 +1900,7 @@ function InstrumentChapter({
                   );
                 })}
                 <button
-                  className={`stk-row unplaced${scope === "UNPLACED" ? " sel" : ""}`}
+                  className={`stk-row unplaced${scope === "UNPLACED" ? " sel" : ""}${pickStorey === "UNPLACED" ? " pick" : ""}`}
                   onClick={() => {
                     setEntitySel(null);
                     setTypeSel(null);
@@ -1889,24 +1974,32 @@ function InstrumentChapter({
                 </div>
               )}
               {materials.slice(0, MAT_ROW_CAP).map((m) => (
-                <div key={m.name} className="bar-row mat-row">
-                  <span className="bar-name mat-name" title={m.name}>
-                    {m.name}
-                  </span>
-                  <span className="bar-track">
-                    <span
-                      className="bar-fill mat-fill"
-                      style={{ width: `${(m.count / matMax) * 100}%` }}
-                    />
-                  </span>
-                  <span className="bar-n">{m.count}</span>
-                </div>
+                <MatRow
+                  key={m.name}
+                  name={m.name}
+                  count={m.count}
+                  max={matMax}
+                  pick={!!pickMaterials?.has(m.name)}
+                  scrollTo={m.name === pickScrollName}
+                />
               ))}
               {materials.length > MAT_ROW_CAP && (
                 <div className="empty">
                   +{nfInt.format(materials.length - MAT_ROW_CAP)} MORE · RANKED BY COUNT
                 </div>
               )}
+              {/* a picked product's materials can rank below the cap (an ARK model
+                  has thousands); show those rows anyway rather than lie by omission */}
+              {pickBelowCap.map((m) => (
+                <MatRow
+                  key={`pick-${m.name}`}
+                  name={m.name}
+                  count={m.count}
+                  max={matMax}
+                  pick
+                  scrollTo={m.name === pickScrollName}
+                />
+              ))}
             </div>
           </section>
 
@@ -1917,6 +2010,7 @@ function InstrumentChapter({
               data={dist}
               hot={hotEntity}
               selected={entitySel}
+              picked={picked?.entity ?? null}
               onHover={setHotEntity}
               onSelect={(entity) => {
                 setTypeSel(null);
@@ -1933,6 +2027,8 @@ function InstrumentChapter({
               types={manifest!.types}
               hotEntity={hotEntity}
               typeSel={typeSel}
+              pickEntity={picked?.entity ?? null}
+              pickType={picked?.type_name ?? null}
               inScope={inScopeEntities}
               onHover={onRegisterHover}
               onSelect={onRegisterSelect}
@@ -2647,6 +2743,8 @@ function StyleBlock() {
   --ln:#22262c; --ln2:#2c313a;
   --fg:#e9e7e1; --mut:#71767e; --mut2:#565b62;
   --acc:${ACCENT}; --acc-dim:#b3671f; --steel:#454d56; --steel2:#5b636d;
+  /* viewport pick accent — the cream HL_PICK the viewers paint the product in */
+  --pick:#ffeab8;
   --mono:var(--font-mono),"JetBrains Mono",ui-monospace,monospace;
   position:fixed; inset:0; z-index:40;
   background:
@@ -2835,6 +2933,9 @@ function StyleBlock() {
 }
 #inst-b .stk-row:hover{ background:rgba(255,255,255,.025); }
 #inst-b .stk-row.sel{ background:rgba(255,143,58,.07); }
+#inst-b .stk-row.pick{ background:rgba(255,143,58,.10); box-shadow:inset -3px 0 0 var(--pick); }
+#inst-b .stk-row.pick .stk-name{ color:var(--pick); }
+#inst-b .stk-row.pick .stk-fill{ background:linear-gradient(90deg,var(--acc),var(--pick)); }
 #inst-b .stk-sel{ position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--acc); box-shadow:0 0 8px var(--acc); }
 #inst-b .stk-elev{
   grid-row:1/3; align-self:center; text-align:right; padding-left:10px;
@@ -2887,6 +2988,9 @@ function StyleBlock() {
 #inst-b .mat-row{ grid-template-columns:1fr 70px 32px; cursor:default; }
 #inst-b .bar-row.hot{ background:rgba(255,143,58,.09); }
 #inst-b .bar-row.pin{ box-shadow:inset 3px 0 0 var(--acc); }
+#inst-b .bar-row.pick{ background:rgba(255,143,58,.13); box-shadow:inset 3px 0 0 var(--pick); }
+#inst-b .bar-row.pick .mat-name{ color:var(--pick); }
+#inst-b .bar-row.pick .mat-fill{ background:linear-gradient(90deg,var(--acc),var(--pick)); }
 #inst-b .bar-name{ font-size:9.5px; letter-spacing:.06em; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px; }
 #inst-b .mat-name{ color:var(--mut); letter-spacing:.02em; }
 #inst-b .bar-flag{ font-size:7px; letter-spacing:.08em; color:#0b0c0e; background:var(--acc); padding:1px 3px; }
@@ -2912,6 +3016,9 @@ function StyleBlock() {
 #inst-b .reg-row{ border-bottom:1px solid rgba(34,38,44,.45); cursor:pointer; }
 #inst-b .reg-row:hover,#inst-b .reg-row.hot{ background:rgba(255,143,58,.10); }
 #inst-b .reg-row.pin{ background:rgba(255,143,58,.14); box-shadow:inset 3px 0 0 var(--acc); }
+#inst-b .reg-row.pick{ background:rgba(255,143,58,.16); box-shadow:inset 3px 0 0 var(--pick); }
+#inst-b .reg-row.pick .reg-name{ color:var(--pick); }
+#inst-b .reg-row.pick .reg-sparkfill{ background:var(--pick); }
 #inst-b .reg-row.dim{ opacity:.32; }
 #inst-b .reg-ent{ font-size:8px; letter-spacing:.03em; color:var(--acc); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 #inst-b .reg-name{ font-size:9px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:.01em; }
