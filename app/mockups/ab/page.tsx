@@ -36,12 +36,13 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { Code, Copy, Check, Ghost, Upload, X } from "lucide-react";
+import { Code, Copy, Check, Ghost, Upload, X, Scan } from "lucide-react";
 import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
 import EntityTreemap from "@/components/entity-treemap";
 import { InstrumentGraph, type IgState } from "@/components/instrument-graph";
+import { useMiddleDoubleClick } from "@/lib/frame-gesture";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -1548,6 +1549,21 @@ function InstrumentChapter({
   // which of the viewport cell's two views owns the cell; the other one stays
   // mounted as the inset, so a swap is a layout change, never a reload
   const [view, setView] = useState<"model" | "graph">("model");
+  /* ── FRAME ──
+     Each view publishes one imperative action ("fit what is active"), and
+     the two panes each own the gesture that drives THEIR view. The head's
+     FRAME button drives whichever view currently owns the cell, so the
+     button and the gesture never disagree about the subject. */
+  const modelFrame = useRef<(() => void) | null>(null);
+  const graphFrame = useRef<(() => void) | null>(null);
+  const frameModel = useCallback(() => modelFrame.current?.(), []);
+  const frameGraph = useCallback(() => graphFrame.current?.(), []);
+  const frameFocused = useCallback(() => {
+    (view === "graph" ? graphFrame : modelFrame).current?.();
+  }, [view]);
+  // callback refs: the panes mount with the grid, long after this component
+  const modelPane = useMiddleDoubleClick(frameModel);
+  const graphPane = useMiddleDoubleClick(frameGraph);
 
   /* ── storey ordering (top elevation first) ── */
   const storeys = useMemo(() => {
@@ -1986,10 +2002,24 @@ function InstrumentChapter({
               label="VIEWPORT"
               meta={previewing ? "TYPE PREVIEW" : highlight ? "FILTERED" : "GLB"}
               metaAccent={previewing || !!highlight}
-              right={<ViewTabs value={view} onChange={setView} />}
+              right={
+                <>
+                  <ViewTabs value={view} onChange={setView} />
+                  <button
+                    type="button"
+                    className="vp-frame"
+                    onClick={frameFocused}
+                    title="frame active · double-click the scroll wheel"
+                    aria-label="frame active"
+                  >
+                    <Scan size={10} strokeWidth={1.9} />
+                    frame
+                  </button>
+                </>
+              }
             />
             <div className="vp-split">
-              <div className="vp-pane" data-role={view === "model" ? "main" : "inset"}>
+              <div className="vp-pane" ref={modelPane} data-role={view === "model" ? "main" : "inset"}>
                 <InstrumentViewport
                   src={viewSrc}
                   label={viewLabel}
@@ -1999,6 +2029,7 @@ function InstrumentChapter({
                   workingSince={workingLabel ? workingSince : undefined}
                   stream={stream ?? null}
                   active={view === "model"}
+                  frameRef={modelFrame}
                   onPick={onPick}
                   pickedGuid={picked?.guid ?? null}
                   picked={
@@ -2023,12 +2054,13 @@ function InstrumentChapter({
                   </button>
                 )}
               </div>
-              <div className="vp-pane" data-role={view === "graph" ? "main" : "inset"}>
+              <div className="vp-pane" ref={graphPane} data-role={view === "graph" ? "main" : "inset"}>
                 <InstrumentGraph
                   graph={graph}
                   provisional={provisional}
                   focused={view === "graph"}
                   state={igState}
+                  frameRef={graphFrame}
                   onPickProduct={onPick}
                   onHotEntity={setHotEntity}
                   onSelectEntity={onGraphEntity}
@@ -2280,10 +2312,23 @@ function Readout({
 
 /* ================================================================== */
 /* InstrumentViewport — 3D instrument with GUID-material cross-filter   */
+/* MV_ORBIT / MV_FOV are declared once and used BOTH as the element's    */
+/* markup defaults and as the pose FRAME restores — a frame that read a  */
+/* different number from the markup would drift on every press.          */
 /* Materials in duplex.glb are named by product GUID ('<guid>' or       */
 /* '<guid>#N' per segment). We snapshot originals on load, then recolour */
 /* matches to the amber accent and dim the rest per the active filter.   */
 /* ================================================================== */
+const MV_ORBIT = "40deg 68deg auto";
+const MV_FOV = "26deg";
+/** the slice of model-viewer's element API the frame action drives */
+type MvFraming = {
+  cameraOrbit: string;
+  cameraTarget: string;
+  fieldOfView: string;
+  updateFraming?: () => Promise<void>;
+};
+
 function InstrumentViewport({
   src,
   label,
@@ -2293,6 +2338,7 @@ function InstrumentViewport({
   workingSince,
   stream,
   active = true,
+  frameRef,
   onPick,
   pickedGuid = null,
   picked,
@@ -2313,6 +2359,8 @@ function InstrumentViewport({
    * <=15 fps, and model-viewer's auto-rotate stops (its renderer is
    * on-demand, so a still model-viewer costs no frames at all) */
   active?: boolean;
+  /** filled with this view's frame action (see MV_ORBIT below) */
+  frameRef?: React.MutableRefObject<(() => void) | null>;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
   /** guid of the tapped product — drawn on top of the filter, never replacing it */
   pickedGuid?: string | null;
@@ -2354,6 +2402,62 @@ function InstrumentViewport({
   // ghost ON: non-selected fade to faint context · ghost OFF: non-selected
   // (and spaces / openings) are hidden — the original site's viewer toggle
   const [ghostMode, setGhostMode] = useState(true);
+  /* ── FRAME ──
+     Streamed model: hand it to StreamViewer, which knows every product's
+     bbox and the filter, so it frames the FILTERED subset.
+     model-viewer (the Duplex sample): its API exposes framing, not geometry
+     — there is no way to ask it for the bounds of a subset of materials. So
+     the sample frames the WHOLE model: recompute the framing (the model's
+     own ideal radius) and put the camera back on the orbit the markup
+     declares. `auto` radius is what makes it a fit rather than a jump to a
+     remembered distance. */
+  const svFrame = useRef<(() => void) | null>(null);
+  const vpRef = useRef<HTMLDivElement | null>(null);
+  const doFrame = useCallback(() => {
+    if (stream) {
+      svFrame.current?.();
+      return;
+    }
+    const mv = ref.current as unknown as MvFraming | null;
+    if (!mv) return;
+    void (async () => {
+      /* model-viewer's framing API has two quirks, and the sequence below is
+         the one that survives both (measured on the Duplex sample, 624x591):
+
+         (a) `cameraOrbit` is a STYLE property: writing the string it already
+             holds is a no-op. After the first FRAME the attribute always
+             already reads MV_ORBIT — an orbit drag moves the camera without
+             touching it — so every write is doubled through a sentinel.
+         (b) `updateFraming()` recomputes the model's ideal camera distance
+             for the pane's current aspect, but it also rewrites the goal
+             orbit from wherever the camera currently IS. Called last it
+             throws the pose away; called first, the `auto` radius still
+             resolves against the stale ideal (81.75 instead of 65.95 — the
+             model ends up 24 % too far out).
+
+         So: pose, reframe, pose again. The second write is what makes `auto`
+         resolve against the freshly computed ideal, which is the distance
+         the model rests at on load. */
+      const pose = () => {
+        mv.cameraOrbit = "auto auto auto";
+        mv.cameraOrbit = MV_ORBIT;
+      };
+      mv.fieldOfView = MV_FOV;
+      mv.cameraTarget = "auto auto auto";
+      pose();
+      await mv.updateFraming?.();
+      pose();
+      const host = vpRef.current;
+      if (host) host.dataset.frames = String((+(host.dataset.frames ?? 0) || 0) + 1);
+    })();
+  }, [stream]);
+  useEffect(() => {
+    if (!frameRef) return;
+    frameRef.current = doFrame;
+    return () => {
+      frameRef.current = null;
+    };
+  }, [frameRef, doFrame]);
   const originals = useRef<
     Map<string, { color: [number, number, number, number]; alphaMode: string }>
   >(new Map());
@@ -2469,13 +2573,13 @@ function InstrumentViewport({
   }, [apply, loaded]);
 
   return (
-    <div className="vp">
+    <div className="vp" ref={vpRef}>
       <div className="vp-crosshair vp-ch-tl" />
       <div className="vp-crosshair vp-ch-tr" />
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
       {stream ? (
-        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} active={active} />
+        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} active={active} frameRef={svFrame} />
       ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer
@@ -2493,10 +2597,10 @@ function InstrumentViewport({
         exposure="1.15"
         tone-mapping="commerce"
         interaction-prompt="none"
-        camera-orbit="40deg 68deg auto"
+        camera-orbit={MV_ORBIT}
         min-camera-orbit="auto auto 55%"
         max-camera-orbit="auto auto 260%"
-        field-of-view="26deg"
+        field-of-view={MV_FOV}
         style={{
           width: "100%",
           height: "100%",
@@ -2993,6 +3097,17 @@ function StyleBlock() {
 #inst-b .vp-tab:hover{ color:var(--fg); background:rgba(255,255,255,.03); }
 #inst-b .vp-tab.on{ color:#0b0c0e; background:var(--acc); }
 #inst-b .vp-tab:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
+
+/* ── FRAME (fit the active nodes / the visible model) ── */
+#inst-b .vp-frame{
+  display:inline-flex; align-items:center; gap:4px; flex:0 0 auto;
+  font-family:var(--mono); font-size:8px; letter-spacing:.18em; color:var(--mut);
+  background:transparent; border:1px solid var(--ln2); padding:2px 7px 2px 6px;
+  cursor:pointer; transition:color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+#inst-b .vp-frame:hover{ color:var(--acc); border-color:var(--acc); background:rgba(255,143,58,.07); }
+#inst-b .vp-frame:active{ background:rgba(255,143,58,.16); }
+#inst-b .vp-frame:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
 
 /* ── title block ── */
 #inst-b .titleblk{ background:linear-gradient(180deg,#111418,#0d0f12); }

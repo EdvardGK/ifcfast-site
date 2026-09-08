@@ -63,6 +63,10 @@ type BatchGpu = {
   color: THREE.BufferAttribute;
   meta: ProductMeta[];
   i0s: number[]; // sorted index offsets for pick lookup
+  /** per-product AABB, 6 floats each, in batch-local space. Built lazily on
+   * the first FRAME so the stream never pays for a framing nobody asked
+   * for; after that a frame is O(products), not O(vertices). */
+  pbox: Float32Array | null;
 };
 
 function storeyMatch(m: ProductMeta, value: string) {
@@ -93,6 +97,7 @@ export function StreamViewer({
   ghost,
   picked = null,
   active = true,
+  frameRef,
   onPick,
 }: {
   store: StreamStore;
@@ -105,6 +110,8 @@ export function StreamViewer({
    * not 2. Batches, repaints and camera fits still land immediately — only
    * the cadence of the presentation changes. */
   active?: boolean;
+  /** filled with "frame everything the filter leaves visible" */
+  frameRef?: React.MutableRefObject<(() => void) | null>;
   onPick?: (meta: ProductMeta | null) => void;
 }) {
   const host = useRef<HTMLDivElement | null>(null);
@@ -113,6 +120,15 @@ export function StreamViewer({
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
   const activeRef = useRef(active);
   const setActiveRef = useRef<((a: boolean) => void) | null>(null);
+  const doFrameRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (!frameRef) return;
+    frameRef.current = () => doFrameRef.current?.();
+    return () => {
+      frameRef.current = null;
+    };
+  }, [frameRef]);
 
   useEffect(() => {
     activeRef.current = active;
@@ -172,13 +188,85 @@ export function StreamViewer({
       const now = performance.now();
       if (!force && now - lastRefit < 120) return;
       lastRefit = now;
-      const wb = bbox.clone().applyMatrix4(root.matrixWorld);
+      aimAt(bbox);
+    };
+    /** point the converging fit at a batch-local box (the SAME animation the
+     *  stream's own refit uses — one code path, one easing) */
+    const aimAt = (localBox: THREE.Box3) => {
+      const wb = localBox.clone().applyMatrix4(root.matrixWorld);
       const center = wb.getCenter(new THREE.Vector3());
       const radius = Math.max(wb.getSize(new THREE.Vector3()).length() / 2, 0.5);
       fitTarget = { center, radius };
       fitFrom.pos.copy(camera.position);
       fitFrom.target.copy(controls.target);
       fitLerp = 0;
+    };
+
+    /* ── FRAME: fit the camera to what is actually on screen ──────────
+       The filtered bbox is the union of the per-product AABBs of the
+       products the current filter leaves solid (ACCENT / PICK / their own
+       colour). DIM (alpha .06) and HIDE (alpha 0) are excluded, so framing
+       follows the eye rather than the model: with a storey filter the
+       camera lands on that storey, with no filter on the whole model.
+       Products with a translucent authored colour (spaces) are not solid,
+       so a model that is entirely translucent falls back to the full
+       bbox rather than framing nothing. */
+    const ensureBoxes = (gpu: BatchGpu) => {
+      if (gpu.pbox) return gpu.pbox;
+      const pos = gpu.geom.getAttribute("position") as THREE.BufferAttribute;
+      const arr = pos.array as Float32Array;
+      const out = new Float32Array(gpu.meta.length * 6);
+      for (let p = 0; p < gpu.meta.length; p++) {
+        const m = gpu.meta[p];
+        let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity;
+        const end = (m.v0 + m.vn) * 3;
+        for (let i = m.v0 * 3; i < end; i += 3) {
+          const x = arr[i], y = arr[i + 1], z = arr[i + 2];
+          if (x < x0) x0 = x;
+          if (y < y0) y0 = y;
+          if (z < z0) z0 = z;
+          if (x > x1) x1 = x;
+          if (y > y1) y1 = y;
+          if (z > z1) z1 = z;
+        }
+        out.set([x0, y0, z0, x1, y1, z1], p * 6);
+      }
+      gpu.pbox = out;
+      return out;
+    };
+
+    const frameBox = new THREE.Box3();
+    const frameActive = () => {
+      const { hl, ghost: gh, picked: pk } = hlRef.current;
+      frameBox.makeEmpty();
+      let n = 0;
+      for (const gpu of gpuRef.current) {
+        const boxes = ensureBoxes(gpu);
+        for (let p = 0; p < gpu.meta.length; p++) {
+          // solid == what the shader draws at full strength; DIM/HIDE are out
+          if (targetColor(gpu.meta[p], hl, gh, pk)[3] <= 0.5) continue;
+          const o = p * 6;
+          if (!Number.isFinite(boxes[o])) continue;
+          // scalar min/max: a Vector3 per product would be 2 allocations x 17 000
+          const mn = frameBox.min, mx = frameBox.max;
+          if (boxes[o] < mn.x) mn.x = boxes[o];
+          if (boxes[o + 1] < mn.y) mn.y = boxes[o + 1];
+          if (boxes[o + 2] < mn.z) mn.z = boxes[o + 2];
+          if (boxes[o + 3] > mx.x) mx.x = boxes[o + 3];
+          if (boxes[o + 4] > mx.y) mx.y = boxes[o + 4];
+          if (boxes[o + 5] > mx.z) mx.z = boxes[o + 5];
+          n++;
+        }
+      }
+      const target = n ? frameBox : bbox;
+      if (target.isEmpty()) return;
+      aimAt(target);
+      el.dataset.frames = String((+(el.dataset.frames ?? 0) || 0) + 1);
+      el.dataset.framebox = [target.min.x, target.min.y, target.min.z, target.max.x, target.max.y, target.max.z]
+        .map((v) => v.toFixed(2))
+        .join(",");
+      el.dataset.framen = String(n);
+      dirty = true;
     };
 
     const addBatch = (b: Batch) => {
@@ -201,7 +289,7 @@ export function StreamViewer({
       mesh.updateMatrixWorld(true);
       geom.computeBoundingBox();
       if (geom.boundingBox) bbox.union(geom.boundingBox);
-      const gpu: BatchGpu = { mesh, geom, color, meta: b.meta, i0s: b.meta.map((m) => m.i0) };
+      const gpu: BatchGpu = { mesh, geom, color, meta: b.meta, i0s: b.meta.map((m) => m.i0), pbox: null };
       gpuRef.current.push(gpu);
       const a1 = performance.now();
       paint(gpu, hlRef.current.hl, hlRef.current.ghost, hlRef.current.picked);
@@ -355,6 +443,7 @@ export function StreamViewer({
       resize();
       dirty = true;
     };
+    doFrameRef.current = frameActive;
 
     let raf = 0;
     let frameNo = 0;
@@ -397,6 +486,7 @@ export function StreamViewer({
     return () => {
       disposed = true;
       setActiveRef.current = null;
+      doFrameRef.current = null;
       cancelAnimationFrame(raf);
       unsub();
       ro.disconnect();

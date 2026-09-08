@@ -50,6 +50,9 @@ import {
 import { select, type Selection as D3Sel } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, type ZoomBehavior } from "d3-zoom";
 import { drag as d3drag } from "d3-drag";
+// side-effect import: teaches d3-selection about .transition(), which is how
+// the programmatic frame animates zoom.transform instead of snapping
+import "d3-transition";
 
 /* ------------------------------------------------------------------ */
 /* data in                                                             */
@@ -97,6 +100,12 @@ export type IgPick = {
 const UNPLACED = "UNPLACED";
 /** above this, class nodes are the leaves (no per-product dots) */
 const PRODUCT_CAP = 900;
+
+/** framing padding, in px of the pane — the inset is a thumbnail, not a view */
+const PAD_FOCUSED = 34;
+const PAD_INSET = 10;
+/** the frame gesture is an animation; the automatic fit is not */
+const FRAME_MS = 350;
 
 const C_ACC = "#ff8f3a";
 const C_ACC_DIM = "#b3671f";
@@ -353,6 +362,23 @@ function matches(n: IgNode, hl: Hl): boolean {
   return !!n.types?.has(hl.value);
 }
 
+/** the node the viewport pick resolves to — a pick is never dimmed */
+function isPickNode(n: IgNode, s: IgState): boolean {
+  return (
+    (!!n.guid && n.guid === s.pickedGuid) ||
+    (n.kind === "class" && !!s.pickedEntity && n.entity === s.pickedEntity && n.storeyKey === s.pickedStorey) ||
+    (n.kind === "storey" && !!s.pickedStorey && n.storeyKey === s.pickedStorey)
+  );
+}
+
+/** ACTIVE == what paint() does NOT dim: inside the filter, or the pick.
+ *  This is the single definition the framing action and the .active class
+ *  both read, so "everything the user can see is in the frame" is true by
+ *  construction rather than by two functions agreeing. */
+function isActiveNode(n: IgNode, s: IgState, hl: Hl): boolean {
+  return !hl || matches(n, hl) || isPickNode(n, s);
+}
+
 /* ------------------------------------------------------------------ */
 /* component                                                           */
 /* ------------------------------------------------------------------ */
@@ -361,6 +387,7 @@ export function InstrumentGraph({
   provisional,
   focused,
   state,
+  frameRef,
   onPickProduct,
   onHotEntity,
   onSelectEntity,
@@ -372,6 +399,9 @@ export function InstrumentGraph({
   /** this pane owns the cell (the other one is the inset) */
   focused: boolean;
   state: IgState;
+  /** filled with "frame every active node" so the VIEWPORT head's FRAME
+   *  button and the pane's middle-double-click can drive this pane */
+  frameRef?: React.MutableRefObject<(() => void) | null>;
   onPickProduct: (p: IgPick) => void;
   onHotEntity: (entity: string | null) => void;
   onSelectEntity: (entity: string) => void;
@@ -420,6 +450,7 @@ export function InstrumentGraph({
     draw: () => void;
     paint: () => void;
     fit: () => void;
+    frameActive: () => void;
   };
   const sceneRef = useRef<Scene | null>(null);
 
@@ -562,16 +593,14 @@ export function InstrumentGraph({
     const paint = () => {
       const s = stateRef.current;
       const hl = hlOf(s);
-      const isPick = (n: IgNode) =>
-        (!!n.guid && n.guid === s.pickedGuid) ||
-        (n.kind === "class" && !!s.pickedEntity && n.entity === s.pickedEntity && n.storeyKey === s.pickedStorey) ||
-        (n.kind === "storey" && !!s.pickedStorey && n.storeyKey === s.pickedStorey);
+      const isPick = (n: IgNode) => isPickNode(n, s);
       const isHotClass = (n: IgNode) => n.kind === "class" && !!s.hotEntity && n.entity === s.hotEntity;
       const isPinned = (n: IgNode) =>
         (n.kind === "class" && !!s.entitySel && n.entity === s.entitySel) ||
         (n.kind === "storey" && s.scope !== "ALL" && n.storeyKey === s.scope);
 
       node
+        .attr("class", (n) => `ig-node ${isActiveNode(n, s, hl) ? "active" : "dim"}`)
         .attr("fill", (n) => {
           if (isPick(n)) return C_PICK;
           if (hl && matches(n, hl) && (n.kind === "class" || n.kind === "product")) return C_ACC;
@@ -594,16 +623,29 @@ export function InstrumentGraph({
         .attr("opacity", (n) => (hl && !matches(n, hl) && !isPick(n) ? 0.2 : 1));
     };
 
-    const fit = () => {
-      const s = sizeOf();
-      W = s.w;
-      H = s.h;
+    /* One framing routine, two callers.
+         fitTo(false, false) — the automatic fit: every node, no animation.
+           It runs once after the layout settles and on every resize / focus
+           swap, where an animation would be a jitter, not a gesture.
+         fitTo(true, true)   — the FRAME action: the ACTIVE nodes only (the
+           ones paint() leaves undimmed), animated over FRAME_MS.
+       The padding is the same in both, so a frame with no filter active
+       lands exactly where the automatic fit does. */
+    const fitTo = (activeOnly: boolean, animate: boolean) => {
+      const s0 = sizeOf();
+      W = s0.w;
+      H = s0.h;
       svg.attr("viewBox", `0 0 ${W} ${H}`);
+      const st = stateRef.current;
+      const hl = hlOf(st);
+      const wanted = activeOnly ? nodes.filter((n) => isActiveNode(n, st, hl)) : nodes;
+      // a filter that matches nothing at all still deserves a frame
+      const list = wanted.length ? wanted : nodes;
       let x0 = Infinity,
         y0 = Infinity,
         x1 = -Infinity,
         y1 = -Infinity;
-      for (const n of nodes) {
+      for (const n of list) {
         if (!Number.isFinite(n.x) || !Number.isFinite(n.y)) continue;
         x0 = Math.min(x0, n.x! - n.r);
         y0 = Math.min(y0, n.y! - n.r);
@@ -613,14 +655,17 @@ export function InstrumentGraph({
       if (!Number.isFinite(x0)) return;
       const bw = Math.max(x1 - x0, 1);
       const bh = Math.max(y1 - y0, 1);
-      const margin = focusedRef.current ? 34 : 10;
+      const margin = focusedRef.current ? PAD_FOCUSED : PAD_INSET;
       let k = Math.min((W - 2 * margin) / bw, (H - 2 * margin) / bh);
       k = Math.max(0.15, Math.min(4, k));
-      svg.call(
-        zoom.transform,
-        zoomIdentity.translate(W / 2 - (k * (x0 + x1)) / 2, H / 2 - (k * (y0 + y1)) / 2).scale(k),
-      );
+      const t = zoomIdentity
+        .translate(W / 2 - (k * (x0 + x1)) / 2, H / 2 - (k * (y0 + y1)) / 2)
+        .scale(k);
+      if (animate) svg.transition().duration(FRAME_MS).call(zoom.transform, t);
+      else svg.interrupt().call(zoom.transform, t);
     };
+    const fit = () => fitTo(false, false);
+    const frameActive = () => fitTo(true, true);
 
     /* The layout is a one-shot: settle it synchronously, draw once, stop.
        Nothing ticks afterwards, focused or not — the only restart is a
@@ -646,7 +691,7 @@ export function InstrumentGraph({
     paint();
     fit();
 
-    sceneRef.current = { node, link, label, sim, zoom, svg, nodes, draw, paint, fit };
+    sceneRef.current = { node, link, label, sim, zoom, svg, nodes, draw, paint, fit, frameActive };
 
     const ro = new ResizeObserver(() => fit());
     ro.observe(wrap);
@@ -657,6 +702,17 @@ export function InstrumentGraph({
       sceneRef.current = null;
     };
   }, [built]);
+
+  /* the imperative action the head's FRAME button and the pane's
+     middle-double-click drive. It reads sceneRef at call time, so it stays
+     valid across every rebuild. */
+  useEffect(() => {
+    if (!frameRef) return;
+    frameRef.current = () => sceneRef.current?.frameActive();
+    return () => {
+      frameRef.current = null;
+    };
+  }, [frameRef]);
 
   /* selection channels → restyle only, never a relayout */
   useEffect(() => {
