@@ -116,3 +116,18 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   block; scroll-end still lands exactly (measured grid top 96, bottom
   900 at 1440×900). Film badge retires on the instrument (overlapped
   the storey stack).
+
+## 2026-09-08 morning (Fable coordinating, opus agents coding)
+- Pick cross-highlights the panels (`5c01481`): storey row / treemap
+  cell / register row / material rows get a cream `pick` class; never a
+  filter. Gotcha: `scrollIntoView` walks every scrollable ancestor and
+  moved the film 730 px — panels scroll their own box only.
+- MODEL | GRAPH tabs with a live inset: `components/instrument-graph.tsx`
+  is a props-driven fork of the workbench vector graph (class tier,
+  900-product cap, synchronous layout, simulation stopped); StreamViewer
+  `active` prop (dpr 1, ≤15 fps as inset); QUANTITIES container-query
+  wrap. 60 fps on RIV with both views live. Wart fixed: a pick now
+  clears when another model lands.
+- Unreproduced once: `NotFoundError: removeChild` on a first drop after
+  the agent had injected style on the React-rendered file input; five
+  clean replays after. Watch for it.
