@@ -15,6 +15,38 @@
  *   • Concept B ("The Instrument") — a graphite terminal panel becomes the final
  *     chapter 06 COMMAND you scroll into. The film's last cut "boots" it.
  *
+ * ── THE INSTRUMENT'S CROSS-FILTER (chapter 06) ─────────────────────
+ * There is ONE selection object and one predicate module. `Sel` in
+ * lib/crossfilter.ts is { storey, entity, type, product, hover }; every
+ * consumer — model-viewer, StreamViewer, InstrumentGraph, EntityTreemap,
+ * the storey stack, the TYPE REGISTER and MATERIALS — derives its look
+ * from it through the SAME predicates, so no two of them can disagree
+ * about what is selected. The rules, in full, live in the header of
+ * lib/crossfilter.ts; in short:
+ *
+ *   1. storey / entity / type ISOLATE — matched geometry goes amber,
+ *      the rest dims (ghost ON) or hides (ghost OFF). A storey is a new
+ *      context (it clears entity + type); entity and type are mutually
+ *      exclusive.
+ *   2. A product pick (viewport or graph click) is a MEMBER of that same
+ *      system, not a second selection: it highlights its product and
+ *      cross-highlights its storey / class / type / material rows in the
+ *      same pinned amber, plus a small product marker dot. A pick never
+ *      hides or dims anything — you must be able to click several things
+ *      in a row to find out what they are.
+ *   3. Picking keeps the isolation; ghosted geometry cannot be picked;
+ *      an isolation change that EXCLUDES the pick clears the pick.
+ *      Clicking the picked product unpicks it, another moves the pick,
+ *      empty space clears the pick only.
+ *   4. ONE colour vocabulary: amber = selected / in-filter (isolated set
+ *      AND picked product), `hot` = hover, DIM/HIDE = outside the filter.
+ *      The picked product is separated from the amber set it belongs to
+ *      by intensity, plus a 1 px cream edge ring in the viewers — an
+ *      outline, never a fill. There is no cream selection colour.
+ *   5. Hover is transient and never persists into state on leave.
+ *   6. ONE clear: the title bar's CLEAR (count badge) and Escape. No
+ *      panel carries its own clear affordance.
+ *
  * One background family (near-black → graphite) and ONE accent (amber #ff8f3a)
  * unify both halves. When chapter 06 becomes active, the film's three.js loop
  * pauses so the instrument's own model-viewer is the only live 3D; scrolling
@@ -43,6 +75,25 @@ import { StreamViewer } from "@/components/stream-viewer";
 import EntityTreemap from "@/components/entity-treemap";
 import { InstrumentGraph, type IgState } from "@/components/instrument-graph";
 import { useMiddleDoubleClick } from "@/lib/frame-gesture";
+import {
+  EMPTY_SEL,
+  facetCount,
+  isIsolating,
+  isPickable,
+  isTypeInFilter,
+  isClassHot,
+  lookOf,
+  reconcile,
+  storeyKeyOf,
+  toggleEntity,
+  toggleProduct,
+  toggleStorey,
+  toggleType,
+  UNPLACED,
+  withHover,
+  type PickMeta,
+  type Sel,
+} from "@/lib/crossfilter";
 import type { StreamStore, ProductMeta } from "@/lib/stream-store";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -143,15 +194,10 @@ type Manifest = { generated_with: string; types: MType[] };
 
 /* product-guid → meta lookup value used by the viewport cross-filter */
 type Meta = { entity: string; storey_guid: string | null; type_name: string | null };
-/* viewport highlight descriptor derived from instrument state */
-type Highlight =
-  | { mode: "storey"; value: string }
-  | { mode: "entity"; value: string; storeyScope?: string }
-  | { mode: "type"; value: string; storeyScope?: string }
-  | null;
 
-/** what the viewport shows for a tapped product */
-type Picked = { guid: string; entity: string; type_name: string | null; storey_guid: string | null; m3: number | null; m2: number | null };
+/** the picked product's meta — the companion to `sel.product` (the guid),
+ *  written and cleared in the same commit; never an independent channel */
+type Picked = PickMeta;
 
 /* ------------------------------------------------------------------ */
 /* Chapter rail (labels only — the film's camera choreography now lives */
@@ -169,13 +215,15 @@ const CHAPTERS: { id: string; label: string }[] = [
 const INST_INDEX = 5;
 
 const ACCENT = "#ff8f3a";
-/* viewport material factors (sRGB/255, matching components/viewer.tsx) */
+/* viewport material factors (sRGB/255, matching components/viewer.tsx).
+   ONE colour vocabulary: HL_ACCENT is everything in the filter, HL_AMBER_HOT
+   is the SAME amber lit hotter for the picked product — model-viewer exposes
+   materials and framing but no outline, so intensity is the whole marker
+   there (the StreamViewer adds its cream edge ring on top). */
 const HL_ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
 const HL_DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
-const HL_PICK: [number, number, number, number] = [1.0, 0.92, 0.72, 1.0];
+const HL_AMBER_HOT: [number, number, number, number] = [1.0, 0.745, 0.451, 1.0];
 const HL_HIDE: [number, number, number, number] = [0, 0, 0, 0];
-/* ghost-by-nature entities — translucent volumes that show structure; ghost OFF hides them */
-const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
 
 /* ================================================================== */
 /* FilmScene choreography constants                                    */
@@ -1437,21 +1485,23 @@ function MatRow({
 /* ================================================================== */
 const TypeRegister = memo(function TypeRegister({
   types,
-  hotEntity,
-  typeSel,
+  sel,
   pickEntity = null,
   pickType = null,
+  typeEntity = null,
   inScope,
   onHover,
   onSelect,
 }: {
   types: MType[];
-  hotEntity: string | null;
-  typeSel: string | null;
-  /** entity + type of the product picked in the viewport — highlight only */
+  /** THE selection (lib/crossfilter) */
+  sel: Sel;
+  /** entity + type of the picked product — the cross-highlight (rule 3) */
   pickEntity?: string | null;
   pickType?: string | null;
-  /** entities present in the current scope — null means "no scope filter" */
+  /** class the pinned / hovered TYPE belongs to */
+  typeEntity?: string | null;
+  /** entities present in the current storey scope — null means "no scope" */
   inScope: Set<string> | null;
   onHover: (t: MType | null) => void;
   onSelect: (t: MType) => void;
@@ -1461,6 +1511,18 @@ const TypeRegister = memo(function TypeRegister({
   useEffect(() => {
     scrollIntoScroller(pickRowRef.current);
   }, [pickEntity, pickType]);
+  const ctx = { typeEntity };
+  /* Which register row IS the pick. A type name is the identity; the class is
+     only a tie-breaker, because the two sources disagree on dropped models —
+     graphJson calls a 2x3 wall IfcWall while the type register calls the same
+     type IfcWallStandardCase, and an entity-equality test silently lost the
+     cross-highlight for every wall in the Clinic. */
+  const pickSlug = useMemo(() => {
+    if (!pickType) return null;
+    const same = types.filter((t) => t.type_name === pickType);
+    if (!same.length) return null;
+    return (pickEntity && same.find((t) => t.entity === pickEntity)) ? same.find((t) => t.entity === pickEntity)!.slug : same[0].slug;
+  }, [types, pickType, pickEntity]);
   return (
     <div className="scrolly reg-body" onMouseLeave={() => onHover(null)}>
       <div className="reg-head">
@@ -1471,10 +1533,14 @@ const TypeRegister = memo(function TypeRegister({
         <span className="ra">GLB</span>
       </div>
       {types.map((t) => {
-        const entHot = hotEntity === t.entity;
-        const pinned = typeSel === t.type_name;
-        const isPick = !!pickType && t.type_name === pickType && t.entity === pickEntity;
-        const dim = inScope ? !inScope.has(t.entity) && !isPick : false;
+        const entHot = isClassHot(t.entity, sel, ctx);
+        const pinned = sel.type === t.type_name;
+        const isPick = !!pickSlug && t.slug === pickSlug;
+        // one dim rule: outside the storey scope OR outside the isolation.
+        // The pick is never dimmed and never dims anything (rule 3).
+        const dim =
+          !isPick &&
+          ((inScope ? !inScope.has(t.entity) : false) || !isTypeInFilter(t.entity, t.type_name, sel));
         return (
           <div
             key={t.slug}
@@ -1529,23 +1595,54 @@ function InstrumentChapter({
   stream?: StreamStore | null;
   drop: ReturnType<typeof useIfcDrop>;
 }) {
-  // scope: "ALL" | "UNPLACED" | storey_guid  (drives numeric rescoping)
-  const [scope, setScope] = useState<string>("ALL");
+  /* ── THE SELECTION ─────────────────────────────────────────────────
+     One object, one predicate module (lib/crossfilter.ts). `pickMeta` is
+     the picked product's meta — written in the same commit as
+     `sel.product`, cleared with it, and read only as a cache of the
+     pick's coordinates in the other facets. It is never a channel of its
+     own: nothing in this file sets it without setting `sel.product`. */
+  const [sel, setSel] = useState<Sel>(EMPTY_SEL);
+  const [pickMeta, setPickMeta] = useState<Picked | null>(null);
+  // synchronous mirrors: two commits inside one event (a click that both
+  // isolates and re-frames, say) must compose, not race the next render
+  const selRef = useRef(sel);
+  selRef.current = sel;
+  const pickRef = useRef<Picked | null>(pickMeta);
+  pickRef.current = pickMeta;
   const [dragOver, setDragOver] = useState(false);
-  // cross-highlight entity (hovering a dist bar OR a register row)
-  const [hotEntity, setHotEntity] = useState<string | null>(null);
-  // viewport swap target (register row hover = live mini-glb preview)
+  // viewport SOURCE swap (register row hover = live mini-glb preview). NOT a
+  // selection channel: it changes what the viewport LOADS, not what is
+  // selected inside it — the hover facet does the selecting.
   const [hotType, setHotType] = useState<MType | null>(null);
-  // pinned viewport filters (clicks)
-  const [entitySel, setEntitySel] = useState<string | null>(null);
-  const [typeSel, setTypeSel] = useState<string | null>(null);
-  // tapped product in the viewport (click-to-select) — a highlight, never a filter
-  const [picked, setPicked] = useState<Picked | null>(null);
-  // a pick belongs to one model: drop it when another file lands
+
+  /** THE way the selection changes. Apply the transition, then rule 5:
+   *  an isolation that excludes the picked product drops the pick. */
+  const commit = useCallback((fn: (cur: Sel) => Sel) => {
+    const next = reconcile(fn(selRef.current), pickRef.current);
+    if (next === selRef.current) return; // a no-op transition repaints nothing
+    selRef.current = next;
+    setSel(next);
+    if (!next.product && pickRef.current) {
+      pickRef.current = null;
+      setPickMeta(null);
+    }
+  }, []);
+
+  /** the single CLEAR (rule 7) — the title bar's button and Escape */
+  const clearAll = useCallback(() => {
+    selRef.current = EMPTY_SEL;
+    pickRef.current = null;
+    setSel(EMPTY_SEL);
+    setPickMeta(null);
+    setHotType(null);
+  }, []);
+
+  // a selection belongs to one model: a dropped file resets it whole (the
+  // previous model's storey guids match nothing in this one)
   const modelKey = summary?.path ?? null;
   useEffect(() => {
-    setPicked(null);
-  }, [modelKey]);
+    clearAll();
+  }, [modelKey, clearAll]);
   // which of the viewport cell's two views owns the cell; the other one stays
   // mounted as the inset, so a swap is a layout change, never a reload
   const [view, setView] = useState<"model" | "graph">("model");
@@ -1596,13 +1693,13 @@ function InstrumentChapter({
     [graph],
   );
 
-  /* ── scoped product set (storey-based numeric scope) ── */
+  /* ── scoped product set (the storey facet drives numeric rescoping) ── */
   const scoped = useMemo(() => {
     if (!graph) return [] as Product[];
-    if (scope === "ALL") return graph.products;
-    if (scope === "UNPLACED") return graph.products.filter((p) => !p.storey_guid);
-    return graph.products.filter((p) => p.storey_guid === scope);
-  }, [graph, scope]);
+    if (!sel.storey) return graph.products;
+    if (sel.storey === UNPLACED) return graph.products.filter((p) => !p.storey_guid);
+    return graph.products.filter((p) => p.storey_guid === sel.storey);
+  }, [graph, sel.storey]);
 
   /* ── entity distribution within scope ── */
   const dist = useMemo(() => {
@@ -1672,14 +1769,16 @@ function InstrumentChapter({
   }, [graph]);
   const storeyMax = Math.max(storeyCount.unplaced, ...[...storeyCount.m.values()], 1);
 
-  const scopeLabel =
-    scope === "ALL"
-      ? "WHOLE MODEL"
-      : scope === "UNPLACED"
-        ? "UNPLACED · OPENINGS + FURNISHINGS"
-        : storeys.find((s) => s.guid === scope)?.name ?? scope;
+  const scopeLabel = !sel.storey
+    ? "WHOLE MODEL"
+    : sel.storey === UNPLACED
+      ? "UNPLACED · OPENINGS + FURNISHINGS"
+      : storeys.find((st) => st.guid === sel.storey)?.name ?? sel.storey;
 
-  const filterActive = !!(hotEntity || entitySel || typeSel || scope !== "ALL");
+  /** something ISOLATES (a pick alone does not) */
+  const filterActive = isIsolating(sel);
+  /** how many facets the CLEAR badge reports */
+  const facets = facetCount(sel);
 
   /* the interlude covers the viewport until there is geometry to show. Before
      "indexed" that is the drop state; after it, the provisional graph being
@@ -1709,47 +1808,55 @@ function InstrumentChapter({
       ? `${modelStem} · FILTER · ${scopeLabel}`
       : `${modelStem} · FULL ASSEMBLY`;
 
-  /* ── highlight descriptor (precedence: hover → type click → entity click → storey) ── */
-  const highlight: Highlight = useMemo(() => {
-    if (previewing) return null; // mini-glb preview: no cross-filter
-    const storeyScope = scope === "ALL" ? undefined : scope;
-    const ent = hotEntity ?? entitySel;
-    if (ent) return { mode: "entity", value: ent, storeyScope };
-    if (typeSel) return { mode: "type", value: typeSel, storeyScope };
-    if (scope !== "ALL") return { mode: "storey", value: scope };
-    return null;
-  }, [previewing, hotEntity, entitySel, typeSel, scope]);
+  /* the viewport's selection. A mini-glb type preview shows ONE type's
+     geometry, so there is nothing left to cross-filter inside it. */
+  const viewSel = previewing ? EMPTY_SEL : sel;
 
-  const storeyName = (g: string | null) => (g ? storeys.find((s) => s.guid === g)?.name ?? g : "unplaced");
+  const storeyName = (g: string | null) => (g ? storeys.find((st) => st.guid === g)?.name ?? g : "unplaced");
+
+  /* ── a product pick (viewport or graph). Rule 6: the same product
+     unpicks, another moves the pick, null (empty space) clears the pick
+     and nothing else. Rule 5 is enforced by `reconcile`: a product the
+     pinned isolation excludes never becomes the pick. ── */
   const onPick = useCallback(
     (m: { guid: string; entity: string; type_name?: string | null; storey_guid?: string | null; m3?: number | null; m2?: number | null } | null) => {
       if (!m) {
-        setPicked(null);
+        pickRef.current = null;
+        setPickMeta(null);
+        const cleared = { ...selRef.current, product: null };
+        selRef.current = cleared;
+        setSel(cleared);
         return;
       }
       const p = lookup(m.guid);
-      setPicked({
+      const meta: Picked = {
         guid: m.guid,
         entity: m.entity,
         type_name: m.type_name ?? p?.type_name ?? null,
         storey_guid: m.storey_guid ?? p?.storey_guid ?? null,
         m3: m.m3 ?? p?.m3 ?? null,
         m2: m.m2 ?? p?.m2 ?? null,
-      });
+      };
+      const next = reconcile(toggleProduct(selRef.current, m.guid), meta);
+      selRef.current = next;
+      setSel(next);
+      pickRef.current = next.product ? meta : null;
+      setPickMeta(pickRef.current);
     },
     [lookup],
   );
 
-  /* ── pick cross-highlight. A viewport pick HIGHLIGHTS the panels; it never
-     isolates, so scope / entitySel / typeSel are untouched. Materials come from
-     the graph's per-product assignment list, which the provisional streaming
-     fold does not carry — then we simply do not highlight a material. ── */
-  const pickStorey = picked ? (picked.storey_guid ?? "UNPLACED") : null;
+  /* ── pick cross-highlight. A pick HIGHLIGHTS the panels in the same amber
+     a pinned row carries (plus the product marker); it never isolates, so
+     storey / entity / type are untouched. Materials come from the graph's
+     per-product assignment list, which the provisional streaming fold does
+     not carry — then we simply do not highlight a material. ── */
+  const pickStorey = pickMeta ? storeyKeyOf(pickMeta) : null;
   const pickMaterials = useMemo(() => {
-    if (!picked) return null;
-    const mats = lookup(picked.guid)?.materials;
+    if (!pickMeta) return null;
+    const mats = lookup(pickMeta.guid)?.materials;
     return mats && mats.length ? new Set(mats) : null;
-  }, [picked, lookup]);
+  }, [pickMeta, lookup]);
 
   /* rows for the picked product's materials that rank below MAT_ROW_CAP */
   const pickBelowCap = useMemo(() => {
@@ -1767,62 +1874,73 @@ function InstrumentChapter({
      the whole model, which is what the stream publishes 20 times in a row — a
      stable prop, so the memoized register does not re-render per tick. ── */
   const inScopeEntities = useMemo(() => {
-    if (scope === "ALL") return null;
-    const s = new Set<string>();
-    for (const d of dist) if (d.count > 0) s.add(d.entity);
-    return s;
-  }, [scope, dist]);
-  const onRegisterHover = useCallback((t: MType | null) => {
-    setHotType(t);
-    setHotEntity(t ? t.entity : null);
-  }, []);
-  const onRegisterSelect = useCallback((t: MType) => {
-    // click = filter: return viewport to full glb, highlight this type
-    setHotType(null);
-    setEntitySel(null);
-    setTypeSel((cur) => (cur === t.type_name ? null : t.type_name));
-  }, []);
+    if (!sel.storey) return null;
+    const s2 = new Set<string>();
+    for (const d of dist) if (d.count > 0) s2.add(d.entity);
+    return s2;
+  }, [sel.storey, dist]);
 
-  const clearFilters = () => {
-    setPicked(null);
-    setScope("ALL");
-    setEntitySel(null);
-    setTypeSel(null);
-    setHotType(null);
-    setHotEntity(null);
-  };
+  /* ── the panels' transitions. Every one of them goes through `commit`,
+     so the composition rules are applied in exactly one place. ── */
+  const setHoverEntity = useCallback(
+    (entity: string | null) => commit((c) => withHover(c, entity ? { kind: "entity", value: entity } : null)),
+    [commit],
+  );
+  const onRegisterHover = useCallback(
+    (t: MType | null) => {
+      setHotType(t);
+      setHoverEntity(t ? t.entity : null);
+    },
+    [setHoverEntity],
+  );
+  const onRegisterSelect = useCallback(
+    (t: MType) => {
+      // click = isolate this type: the viewport returns to the full glb
+      setHotType(null);
+      commit((c) => toggleType(c, t.type_name));
+    },
+    [commit],
+  );
+  const onStoreySelect = useCallback((key: string) => commit((c) => toggleStorey(c, key)), [commit]);
+  const onEntitySelect = useCallback((entity: string) => commit((c) => toggleEntity(c, entity)), [commit]);
+  const onClearPick = useCallback(() => onPick(null), [onPick]);
+
+  /** the class the pinned type belongs to — a type isolation must dim the
+   *  classes it excludes, and a class cell cannot work that out alone */
+  const typeEntity = useMemo(() => {
+    if (!sel.type || !manifest) return null;
+    return manifest.types.find((t) => t.type_name === sel.type)?.entity ?? null;
+  }, [sel.type, manifest]);
 
   /* ── GRAPH view wiring. Every callback is stable: the graph's d3 scene is
      built once per graph and must not be re-created because the parent
      re-rendered (the stream re-renders it 4x/s). ── */
-  const onGraphStorey = useCallback((storeyKey: string) => {
-    setEntitySel(null);
-    setTypeSel(null);
-    setScope((cur) => (cur === storeyKey ? "ALL" : storeyKey));
-  }, []);
-  const onGraphEntity = useCallback((entity: string) => {
-    setTypeSel(null);
-    setEntitySel((cur) => (cur === entity ? null : entity));
-  }, []);
-  const onGraphClear = useCallback(() => {
-    setScope("ALL");
-    setEntitySel(null);
-    setTypeSel(null);
-  }, []);
   /* the graph's own state snapshot — memoised so a provisional republish that
      changed nothing does not repaint every node */
-  const igState: IgState = useMemo(
-    () => ({
-      scope,
-      entitySel,
-      typeSel,
-      hotEntity,
-      pickedGuid: picked?.guid ?? null,
-      pickedEntity: picked?.entity ?? null,
-      pickedStorey: pickStorey,
-    }),
-    [scope, entitySel, typeSel, hotEntity, picked, pickStorey],
-  );
+  const igState: IgState = useMemo(() => ({ sel, pick: pickMeta }), [sel, pickMeta]);
+
+  /* Rule 7: Escape is the keyboard half of the ONE clear. It fires while
+     focus is inside the instrument — and while nothing is focused at all
+     (clicking a WebGL canvas leaves focus on <body>), provided the
+     instrument is actually the thing on screen. */
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      const el = rootRef.current;
+      if (!el) return;
+      const a = document.activeElement;
+      if (a && a !== document.body) {
+        if (!el.contains(a)) return; // focus is somewhere else on the page
+      } else {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < 80 || r.top > window.innerHeight - 80) return;
+      }
+      clearAll();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [clearAll]);
 
   const fileName = summary ? summary.path.split("/").pop() ?? summary.path : "—";
   // qto is deliberately NOT required: it only lands at "done", and gating the
@@ -1831,7 +1949,7 @@ function InstrumentChapter({
   const ready = summary && graph && manifest;
 
   return (
-    <div id="inst-b" className="inst-inflow">
+    <div id="inst-b" className="inst-inflow" ref={rootRef}>
       {/* boot veil — fires the first time the chapter enters view */}
       {entered && ready && !booted && <BootVeil ready={!!ready} />}
 
@@ -1857,6 +1975,23 @@ function InstrumentChapter({
               <span className="tb-brand">THE INSTRUMENT</span>
               <span className="tb-sub">COMMAND</span>
               <DropPill state={drop.state} onFile={drop.open} onReset={drop.reset} />
+              {/* the ONE clear (rule 7). Always present, greyed and inert when
+                  nothing is selected, so its position never moves. */}
+              <button
+                type="button"
+                className="tb-clear"
+                onClick={() => {
+                  if (facets) clearAll();
+                }}
+                aria-disabled={facets === 0}
+                aria-label="clear all filters"
+                title="clear all filters · Esc"
+                data-n={facets}
+              >
+                <X size={10} strokeWidth={2} />
+                CLEAR
+                {facets > 0 && <span className="tb-clear-n">{facets}</span>}
+              </button>
               <span className="tb-ver">v{manifest!.generated_with}</span>
             </div>
             <div className="tb-grid">
@@ -1887,7 +2022,7 @@ function InstrumentChapter({
             <InstHead
               label="QUANTITIES"
               meta={provisional ? `${scopeLabel} · STREAMING` : scopeLabel}
-              metaAccent={scope !== "ALL" || provisional}
+              metaAccent={!!sel.storey || provisional}
             />
             <div className="qrow">
               <Readout label="PRODUCTS" value={q.products} d={0} unit="" live={provisional} />
@@ -1914,11 +2049,7 @@ function InstrumentChapter({
               metaAccent={provisional && !storeys.length}
             />
             <div className="stack">
-              {filterActive && (
-                <button className="stk-reset" onClick={clearFilters}>
-                  ◂ CLEAR FILTER
-                </button>
-              )}
+              {/* no per-panel clear: the title bar's CLEAR is the only one (rule 7) */}
               <div className="stk-body">
                 <div className="stk-axis" />
                 {provisional && !storeys.length && (
@@ -1928,19 +2059,15 @@ function InstrumentChapter({
                 )}
                 {storeys.map((s) => {
                   const c = storeyCount.m.get(s.guid) ?? 0;
-                  const sel = scope === s.guid;
+                  const isSel = sel.storey === s.guid;
                   const pick = pickStorey === s.guid;
                   return (
                     <button
                       key={s.guid}
-                      className={`stk-row${sel ? " sel" : ""}${pick ? " pick" : ""}`}
-                      onClick={() => {
-                        setEntitySel(null);
-                        setTypeSel(null);
-                        setScope(sel ? "ALL" : s.guid);
-                      }}
+                      className={`stk-row${isSel ? " sel" : ""}${pick ? " pick" : ""}`}
+                      onClick={() => onStoreySelect(s.guid)}
                     >
-                      {sel && (
+                      {isSel && (
                         <motion.span
                           layoutId="stk-sel"
                           className="stk-sel"
@@ -1963,14 +2090,10 @@ function InstrumentChapter({
                   );
                 })}
                 <button
-                  className={`stk-row unplaced${scope === "UNPLACED" ? " sel" : ""}${pickStorey === "UNPLACED" ? " pick" : ""}`}
-                  onClick={() => {
-                    setEntitySel(null);
-                    setTypeSel(null);
-                    setScope(scope === "UNPLACED" ? "ALL" : "UNPLACED");
-                  }}
+                  className={`stk-row unplaced${sel.storey === UNPLACED ? " sel" : ""}${pickStorey === UNPLACED ? " pick" : ""}`}
+                  onClick={() => onStoreySelect(UNPLACED)}
                 >
-                  {scope === "UNPLACED" && (
+                  {sel.storey === UNPLACED && (
                     <motion.span
                       layoutId="stk-sel"
                       className="stk-sel"
@@ -2000,8 +2123,8 @@ function InstrumentChapter({
           <section className="cell view" style={{ gridArea: "view" }}>
             <InstHead
               label="VIEWPORT"
-              meta={previewing ? "TYPE PREVIEW" : highlight ? "FILTERED" : "GLB"}
-              metaAccent={previewing || !!highlight}
+              meta={previewing ? "TYPE PREVIEW" : filterActive ? "FILTERED" : "GLB"}
+              metaAccent={previewing || filterActive}
               right={
                 <>
                   <ViewTabs value={view} onChange={setView} />
@@ -2024,24 +2147,23 @@ function InstrumentChapter({
                   src={viewSrc}
                   label={viewLabel}
                   guidLookup={lookup}
-                  highlight={highlight}
+                  sel={viewSel}
                   working={workingLabel}
                   workingSince={workingLabel ? workingSince : undefined}
                   stream={stream ?? null}
                   active={view === "model"}
                   frameRef={modelFrame}
                   onPick={onPick}
-                  pickedGuid={picked?.guid ?? null}
                   picked={
-                    picked
+                    pickMeta
                       ? {
-                          title: `${short(picked.entity)}${picked.type_name ? ` · ${picked.type_name}` : ""}`,
-                          sub: `${storeyName(picked.storey_guid)}${picked.m3 != null ? ` · ${picked.m3 < 0.01 ? picked.m3.toFixed(4) : fmt(picked.m3, 2)} m³` : ""}${picked.m2 != null ? ` · ${fmt(picked.m2, 1)} m²` : ""}`,
-                          guid: picked.guid,
+                          title: `${short(pickMeta.entity)}${pickMeta.type_name ? ` · ${pickMeta.type_name}` : ""}`,
+                          sub: `${storeyName(pickMeta.storey_guid)}${pickMeta.m3 != null ? ` · ${pickMeta.m3 < 0.01 ? pickMeta.m3.toFixed(4) : fmt(pickMeta.m3, 2)} m³` : ""}${pickMeta.m2 != null ? ` · ${fmt(pickMeta.m2, 1)} m²` : ""}`,
+                          guid: pickMeta.guid,
                         }
                       : null
                   }
-                  onClearPick={() => setPicked(null)}
+                  onClearPick={onClearPick}
                 />
                 {view !== "model" && (
                   <button
@@ -2062,10 +2184,10 @@ function InstrumentChapter({
                   state={igState}
                   frameRef={graphFrame}
                   onPickProduct={onPick}
-                  onHotEntity={setHotEntity}
-                  onSelectEntity={onGraphEntity}
-                  onSelectStorey={onGraphStorey}
-                  onClear={onGraphClear}
+                  onHotEntity={setHoverEntity}
+                  onSelectEntity={onEntitySelect}
+                  onSelectStorey={onStoreySelect}
+                  onClearPick={onClearPick}
                 />
                 {view !== "graph" && (
                   <button
@@ -2131,14 +2253,11 @@ function InstrumentChapter({
             <InstHead label="ENTITY DISTRIBUTION" meta={`${dist.length} CLASSES`} />
             <EntityTreemap
               data={dist}
-              hot={hotEntity}
-              selected={entitySel}
-              picked={picked?.entity ?? null}
-              onHover={setHotEntity}
-              onSelect={(entity) => {
-                setTypeSel(null);
-                setEntitySel(entitySel === entity ? null : entity);
-              }}
+              sel={sel}
+              pickEntity={pickMeta?.entity ?? null}
+              typeEntity={typeEntity}
+              onHover={setHoverEntity}
+              onSelect={onEntitySelect}
               label={short}
             />
           </section>
@@ -2148,10 +2267,10 @@ function InstrumentChapter({
             <InstHead label="TYPE REGISTER" meta={`${manifest!.types.length} TYPES`} />
             <TypeRegister
               types={manifest!.types}
-              hotEntity={hotEntity}
-              typeSel={typeSel}
-              pickEntity={picked?.entity ?? null}
-              pickType={picked?.type_name ?? null}
+              sel={sel}
+              pickEntity={pickMeta?.entity ?? null}
+              pickType={pickMeta?.type_name ?? null}
+              typeEntity={typeEntity}
               inScope={inScopeEntities}
               onHover={onRegisterHover}
               onSelect={onRegisterSelect}
@@ -2333,14 +2452,13 @@ function InstrumentViewport({
   src,
   label,
   guidLookup,
-  highlight,
+  sel,
   working,
   workingSince,
   stream,
   active = true,
   frameRef,
   onPick,
-  pickedGuid = null,
   picked,
   onClearPick,
 }: {
@@ -2349,7 +2467,8 @@ function InstrumentViewport({
   /** guid → product meta, resolved lazily (the map behind it is built on the
    * first call, not on every graph change) */
   guidLookup: (guid: string) => Meta | undefined;
-  highlight: Highlight;
+  /** THE selection — isolation, pick and hover in one object (lib/crossfilter) */
+  sel: Sel;
   /** non-null while a dropped model is being parsed — shows the interlude */
   working?: string | null;
   workingSince?: number;
@@ -2362,8 +2481,7 @@ function InstrumentViewport({
   /** filled with this view's frame action (see MV_ORBIT below) */
   frameRef?: React.MutableRefObject<(() => void) | null>;
   onPick?: (m: ProductMeta | { guid: string; entity: string; type_name: string | null; storey_guid: string | null } | null) => void;
-  /** guid of the tapped product — drawn on top of the filter, never replacing it */
-  pickedGuid?: string | null;
+  /** the picked product's readout chip (the pick itself lives in `sel`) */
   picked?: { title: string; sub: string; guid: string } | null;
   onClearPick?: () => void;
 }) {
@@ -2393,8 +2511,10 @@ function InstrumentViewport({
     }
     const guidKey = mat.name.includes("#") ? mat.name.slice(0, mat.name.indexOf("#")) : mat.name;
     const meta = guidLookup(guidKey);
-    if (!meta || GHOST_ENTITIES.has(meta.entity.toLowerCase())) {
-      onPick(null); // unknown, or a space / opening (context, never a pick target)
+    // Rule 5: unknown material, a space / opening, or a product the filter
+    // ghosted — none of them take the click; the pick is cleared instead.
+    if (!meta || !isPickable({ guid: guidKey, ...meta }, sel, ghostRef.current)) {
+      onPick(null);
       return;
     }
     onPick({ guid: guidKey, entity: meta.entity, type_name: meta.type_name ?? null, storey_guid: meta.storey_guid });
@@ -2402,6 +2522,10 @@ function InstrumentViewport({
   // ghost ON: non-selected fade to faint context · ghost OFF: non-selected
   // (and spaces / openings) are hidden — the original site's viewer toggle
   const [ghostMode, setGhostMode] = useState(true);
+  // the pointer handler above is declared before this state; read it through
+  // a ref so a click always tests against the CURRENT ghost mode
+  const ghostRef = useRef(ghostMode);
+  ghostRef.current = ghostMode;
   /* ── FRAME ──
      Streamed model: hand it to StreamViewer, which knows every product's
      bbox and the filter, so it frames the FILTERED subset.
@@ -2475,10 +2599,10 @@ function InstrumentViewport({
     };
   };
 
-  const storeyMatch = useCallback((meta: Meta, value: string) => {
-    return value === "UNPLACED" ? meta.storey_guid == null : meta.storey_guid === value;
-  }, []);
-
+  /* the ONE colour decision (lib/crossfilter's `lookOf`), spoken in
+     model-viewer's material API. A guid the graph cannot resolve is treated
+     as a product that matches nothing: authored colour with no filter,
+     ghosted with one — exactly what it did before. */
   const apply = useCallback(() => {
     const mv = ref.current as unknown as { model?: { materials: Mat[] } } | null;
     const mats = mv?.model?.materials;
@@ -2488,49 +2612,30 @@ function InstrumentViewport({
       if (!orig) continue;
       // multi-segment products carry '<guid>#1', '<guid>#2', … — normalize
       const guidKey = m.name.includes("#") ? m.name.slice(0, m.name.indexOf("#")) : m.name;
-      if (pickedGuid && guidKey === pickedGuid) {
-        m.setAlphaMode("OPAQUE");
-        m.pbrMetallicRoughness.setBaseColorFactor(HL_PICK);
-        continue;
-      }
-      const meta = guidLookup(guidKey);
-      const isGhostEntity = !!meta && GHOST_ENTITIES.has(meta.entity.toLowerCase());
-      // ghost OFF + ghost-by-nature entity → hidden regardless of filter
-      if (!ghostMode && isGhostEntity) {
-        m.setAlphaMode("BLEND");
-        m.pbrMetallicRoughness.setBaseColorFactor(HL_HIDE);
-        continue;
-      }
-      // no active filter (or mini-glb preview) → restore original look
-      if (!highlight) {
-        m.setAlphaMode(orig.alphaMode as "OPAQUE" | "BLEND");
-        m.pbrMetallicRoughness.setBaseColorFactor(orig.color);
-        continue;
-      }
-      let match = false;
-      if (meta) {
-        if (highlight.mode === "storey") {
-          match = storeyMatch(meta, highlight.value);
-        } else if (highlight.mode === "entity") {
-          match =
-            meta.entity.toLowerCase() === highlight.value.toLowerCase() &&
-            (highlight.storeyScope ? storeyMatch(meta, highlight.storeyScope) : true);
-        } else if (highlight.mode === "type") {
-          match =
-            (meta.type_name ?? "—") === highlight.value &&
-            (highlight.storeyScope ? storeyMatch(meta, highlight.storeyScope) : true);
-        }
-      }
-      if (match) {
-        m.setAlphaMode("OPAQUE");
-        m.pbrMetallicRoughness.setBaseColorFactor(HL_ACCENT);
-      } else {
-        // filter active: ghost ON dims to faint context, ghost OFF hides
-        m.setAlphaMode("BLEND");
-        m.pbrMetallicRoughness.setBaseColorFactor(ghostMode ? HL_DIM : HL_HIDE);
+      const meta = guidLookup(guidKey) ?? { entity: "", storey_guid: null, type_name: null };
+      switch (lookOf({ guid: guidKey, ...meta }, sel, ghostMode)) {
+        case "pick":
+          m.setAlphaMode("OPAQUE");
+          m.pbrMetallicRoughness.setBaseColorFactor(HL_AMBER_HOT);
+          break;
+        case "accent":
+          m.setAlphaMode("OPAQUE");
+          m.pbrMetallicRoughness.setBaseColorFactor(HL_ACCENT);
+          break;
+        case "natural":
+          m.setAlphaMode(orig.alphaMode as "OPAQUE" | "BLEND");
+          m.pbrMetallicRoughness.setBaseColorFactor(orig.color);
+          break;
+        case "dim":
+          m.setAlphaMode("BLEND");
+          m.pbrMetallicRoughness.setBaseColorFactor(HL_DIM);
+          break;
+        default:
+          m.setAlphaMode("BLEND");
+          m.pbrMetallicRoughness.setBaseColorFactor(HL_HIDE);
       }
     }
-  }, [highlight, guidLookup, storeyMatch, ghostMode, pickedGuid]);
+  }, [sel, guidLookup, ghostMode]);
 
   // snapshot original material state on (re)load, then apply current filter
   useEffect(() => {
@@ -2579,7 +2684,7 @@ function InstrumentViewport({
       <div className="vp-crosshair vp-ch-bl" />
       <div className="vp-crosshair vp-ch-br" />
       {stream ? (
-        <StreamViewer store={stream} highlight={highlight} ghost={ghostMode} picked={pickedGuid} onPick={onPick} active={active} frameRef={svFrame} />
+        <StreamViewer store={stream} sel={sel} ghost={ghostMode} onPick={onPick} active={active} frameRef={svFrame} />
       ) : null}
       {/* @ts-expect-error — model-viewer is a custom element */}
       <model-viewer
@@ -3008,8 +3113,9 @@ function StyleBlock() {
   --ln:#22262c; --ln2:#2c313a;
   --fg:#e9e7e1; --mut:#71767e; --mut2:#565b62;
   --acc:${ACCENT}; --acc-dim:#b3671f; --steel:#454d56; --steel2:#5b636d;
-  /* viewport pick accent — the cream HL_PICK the viewers paint the product in */
-  --pick:#ffeab8;
+  /* ONE colour vocabulary: --acc is EVERYTHING selected — an isolated set and
+     the picked product alike. There is no second selection colour; the pick
+     is marked by intensity in the viewers and by the .pick dot in the panels. */
   --mono:var(--font-mono),"JetBrains Mono",ui-monospace,monospace;
   position:fixed; inset:0; z-index:40;
   background:
@@ -3133,6 +3239,25 @@ function StyleBlock() {
 #inst-b .ls-timer{ font-variant-numeric:tabular-nums; }
 #inst-b .tb-drop-x{ display:inline-flex; align-items:center; margin-left:4px; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
 #inst-b .tb-drop-x:hover{ color:var(--fg); }
+/* ── the ONE clear (rule 7) ──
+   Always present so its position never moves; greyed and inert when nothing
+   is selected; a badge counting the active facets when something is. */
+#inst-b .tb-clear{
+  display:inline-flex; align-items:center; gap:5px; flex:0 0 auto;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--mut2); background:transparent; border:1px solid var(--ln2); padding:3px 7px;
+  cursor:pointer; transition:color .18s ease, border-color .18s ease, background-color .18s ease;
+}
+#inst-b .tb-clear[aria-disabled="true"]{ color:var(--mut2); opacity:.45; cursor:default; }
+#inst-b .tb-clear:not([aria-disabled="true"]){ color:var(--acc); border-color:var(--acc); }
+#inst-b .tb-clear:not([aria-disabled="true"]):hover{ background:rgba(255,143,58,.13); color:var(--fg); }
+#inst-b .tb-clear:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
+#inst-b .tb-clear-n{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:13px; height:13px; padding:0 3px; border-radius:7px;
+  background:var(--acc); color:#0b0c0e; font-size:8px; font-weight:700;
+  font-variant-numeric:tabular-nums; letter-spacing:0;
+}
 #inst-b .grid.drag-over{ outline:2px dashed var(--acc); outline-offset:-2px; }
 #inst-b .sv-host{ position:absolute; inset:0; z-index:1; background:radial-gradient(ellipse 120% 90% at 50% 8%, #202429 0%, #14171b 45%, #0c0e11 100%); }
 #inst-b .sv-host canvas{ display:block; width:100%; height:100%; cursor:crosshair; }
@@ -3228,12 +3353,6 @@ function StyleBlock() {
 
 /* ── storey stack ── */
 #inst-b .stack{ flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
-#inst-b .stk-reset{
-  font:inherit; text-align:left; cursor:pointer; color:var(--acc);
-  background:rgba(255,143,58,.06); border:0; border-bottom:1px solid var(--ln);
-  font-size:8.5px; letter-spacing:.13em; padding:6px 10px;
-}
-#inst-b .stk-reset:hover{ background:rgba(255,143,58,.13); }
 #inst-b .stk-body{ position:relative; flex:1 1 auto; display:flex; flex-direction:column; }
 #inst-b .stk-axis{
   position:absolute; left:56px; top:0; bottom:0; width:1px;
@@ -3249,9 +3368,17 @@ function StyleBlock() {
 }
 #inst-b .stk-row:hover{ background:rgba(255,255,255,.025); }
 #inst-b .stk-row.sel{ background:rgba(255,143,58,.07); }
-#inst-b .stk-row.pick{ background:rgba(255,143,58,.10); box-shadow:inset -3px 0 0 var(--pick); }
-#inst-b .stk-row.pick .stk-name{ color:var(--pick); }
-#inst-b .stk-row.pick .stk-fill{ background:linear-gradient(90deg,var(--acc),var(--pick)); }
+/* the picked product's rows (stack · materials · register): the SAME amber a
+   pinned row carries, plus the product marker dot — a pick is a member of the
+   filter system, not a second colour (rules 3 + 4) */
+#inst-b .stk-row.pick{ background:rgba(255,143,58,.07); }
+#inst-b .stk-row.pick .stk-name{ color:var(--acc); }
+#inst-b .stk-row.pick .stk-fill{ background:linear-gradient(90deg,var(--acc-dim),var(--acc)); }
+#inst-b .stk-row.pick::after,#inst-b .reg-row.pick::after,#inst-b .bar-row.pick::after{
+  content:""; position:absolute; right:3.5px; top:50%; transform:translateY(-50%);
+  width:5px; height:5px; border-radius:50%; background:var(--acc);
+  box-shadow:0 0 5px rgba(255,143,58,.85);
+}
 #inst-b .stk-sel{ position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--acc); box-shadow:0 0 8px var(--acc); }
 #inst-b .stk-elev{
   grid-row:1/3; align-self:center; text-align:right; padding-left:10px;
@@ -3342,9 +3469,9 @@ function StyleBlock() {
 #inst-b .mat-row{ grid-template-columns:1fr 70px 32px; cursor:default; }
 #inst-b .bar-row.hot{ background:rgba(255,143,58,.09); }
 #inst-b .bar-row.pin{ box-shadow:inset 3px 0 0 var(--acc); }
-#inst-b .bar-row.pick{ background:rgba(255,143,58,.13); box-shadow:inset 3px 0 0 var(--pick); }
-#inst-b .bar-row.pick .mat-name{ color:var(--pick); }
-#inst-b .bar-row.pick .mat-fill{ background:linear-gradient(90deg,var(--acc),var(--pick)); }
+#inst-b .bar-row.pick{ position:relative; background:rgba(255,143,58,.13); box-shadow:inset 3px 0 0 var(--acc); }
+#inst-b .bar-row.pick .mat-name{ color:var(--acc); }
+#inst-b .bar-row.pick .mat-fill{ background:linear-gradient(90deg,var(--acc-dim),var(--acc)); }
 #inst-b .bar-name{ font-size:9.5px; letter-spacing:.06em; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px; }
 #inst-b .mat-name{ color:var(--mut); letter-spacing:.02em; }
 #inst-b .bar-flag{ font-size:7px; letter-spacing:.08em; color:#0b0c0e; background:var(--acc); padding:1px 3px; }
@@ -3370,9 +3497,9 @@ function StyleBlock() {
 #inst-b .reg-row{ border-bottom:1px solid rgba(34,38,44,.45); cursor:pointer; }
 #inst-b .reg-row:hover,#inst-b .reg-row.hot{ background:rgba(255,143,58,.10); }
 #inst-b .reg-row.pin{ background:rgba(255,143,58,.14); box-shadow:inset 3px 0 0 var(--acc); }
-#inst-b .reg-row.pick{ background:rgba(255,143,58,.16); box-shadow:inset 3px 0 0 var(--pick); }
-#inst-b .reg-row.pick .reg-name{ color:var(--pick); }
-#inst-b .reg-row.pick .reg-sparkfill{ background:var(--pick); }
+#inst-b .reg-row.pick{ position:relative; background:rgba(255,143,58,.14); box-shadow:inset 3px 0 0 var(--acc); }
+#inst-b .reg-row.pick .reg-name{ color:var(--acc); }
+#inst-b .reg-row.pick .reg-sparkfill{ background:var(--acc); }
 #inst-b .reg-row.dim{ opacity:.32; }
 #inst-b .reg-ent{ font-size:8px; letter-spacing:.03em; color:var(--acc); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 #inst-b .reg-name{ font-size:9px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:.01em; }

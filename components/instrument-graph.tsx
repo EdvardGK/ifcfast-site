@@ -4,10 +4,14 @@
  * ----------------------------------------------------------------------
  * A props-driven descendant of components/vector-graph.tsx (the original
  * site's d3 projection). The workbench copy is untouched: it is bound to
- * SelectionProvider's single-`Selection` model, while the instrument holds
- * FIVE independent channels (scope · entitySel · typeSel · hotEntity ·
- * picked) and a dark palette. Forking was cheaper than an adapter that had
- * to satisfy both.
+ * SelectionProvider's `Selection` model, while the instrument is driven by
+ * lib/crossfilter's `Sel` and a dark palette. Forking was cheaper than an
+ * adapter that had to satisfy both.
+ *
+ * The graph reads the SAME filter as every other consumer (`activeFilter`
+ * from lib/crossfilter); only the adaptation from a product-shaped
+ * predicate to a NODE-shaped one (a class node matches when any of its
+ * products would) lives here.
  *
  * Differences from the original, all deliberate:
  *
@@ -50,6 +54,13 @@ import {
 import { select, type Selection as D3Sel } from "d3-selection";
 import { zoom as d3zoom, zoomIdentity, type ZoomBehavior } from "d3-zoom";
 import { drag as d3drag } from "d3-drag";
+import {
+  activeFilter,
+  storeyKeyOf,
+  type Filter,
+  type PickMeta,
+  type Sel,
+} from "@/lib/crossfilter";
 // side-effect import: teaches d3-selection about .transition(), which is how
 // the programmatic frame animates zoom.transform instead of snapping
 import "d3-transition";
@@ -75,18 +86,9 @@ export type IgGraph = {
   storey_building?: { storey_guid: string; building_guid: string }[];
 };
 
-/** the instrument's five selection channels, verbatim */
-export type IgState = {
-  /** "ALL" | "UNPLACED" | storey guid */
-  scope: string;
-  entitySel: string | null;
-  typeSel: string | null;
-  hotEntity: string | null;
-  pickedGuid: string | null;
-  pickedEntity: string | null;
-  /** storey guid of the picked product, or "UNPLACED" */
-  pickedStorey: string | null;
-};
+/** the instrument's ONE selection, plus the picked product's meta (the
+ *  cache that lets the graph cross-highlight the pick's class + storey) */
+export type IgState = { sel: Sel; pick: PickMeta | null };
 
 export type IgPick = {
   guid: string;
@@ -109,7 +111,10 @@ const FRAME_MS = 350;
 
 const C_ACC = "#ff8f3a";
 const C_ACC_DIM = "#b3671f";
-const C_PICK = "#ffeab8";
+/** the picked product: the same amber, lit hotter (rule 4) */
+const C_ACC_HOT = "#ffbe73";
+/** the pick's 1 px edge ring — an outline, never a fill */
+const C_RING = "#ffeab8";
 const C_LN2 = "#2c313a";
 const BASE_FILL: Record<NodeKind, string> = {
   root: "#6b7480",
@@ -325,32 +330,22 @@ function buildSpatial(g: IgGraph): Built {
 }
 
 /* ------------------------------------------------------------------ */
-/* highlight resolution — mirrors InstrumentChapter's `highlight` memo  */
+/* the filter, adapted from products to NODES                          */
 /* ------------------------------------------------------------------ */
-type Hl =
-  | { mode: "storey"; value: string }
-  | { mode: "entity"; value: string; storeyScope?: string }
-  | { mode: "type"; value: string; storeyScope?: string }
-  | null;
 
-function hlOf(s: IgState): Hl {
-  const storeyScope = s.scope === "ALL" ? undefined : s.scope;
-  const ent = s.hotEntity ?? s.entitySel;
-  if (ent) return { mode: "entity", value: ent, storeyScope };
-  if (s.typeSel) return { mode: "type", value: s.typeSel, storeyScope };
-  if (s.scope !== "ALL") return { mode: "storey", value: s.scope };
-  return null;
-}
+/** the spine above the storeys: structure, never filtered away — and, with
+ *  an isolation active, never part of the FRAME either (it would drag the
+ *  frame back out to the whole model) */
+const isSpine = (n: IgNode) => n.kind === "root" || n.kind === "site" || n.kind === "building";
 
 function inScope(n: IgNode, scope?: string) {
   if (!scope) return true;
   return n.storeyKey === scope;
 }
 
-function matches(n: IgNode, hl: Hl): boolean {
+function matches(n: IgNode, hl: Filter): boolean {
   if (!hl) return true;
-  // the spine above the storeys is structure, never filtered away
-  if (n.kind === "root" || n.kind === "site" || n.kind === "building") return true;
+  if (isSpine(n)) return true;
   if (hl.mode === "storey") return n.storeyKey === hl.value;
   if (n.kind === "storey") return inScope(n, hl.storeyScope);
   if (hl.mode === "entity") {
@@ -362,21 +357,28 @@ function matches(n: IgNode, hl: Hl): boolean {
   return !!n.types?.has(hl.value);
 }
 
-/** the node the viewport pick resolves to — a pick is never dimmed */
-function isPickNode(n: IgNode, s: IgState): boolean {
-  return (
-    (!!n.guid && n.guid === s.pickedGuid) ||
-    (n.kind === "class" && !!s.pickedEntity && n.entity === s.pickedEntity && n.storeyKey === s.pickedStorey) ||
-    (n.kind === "storey" && !!s.pickedStorey && n.storeyKey === s.pickedStorey)
-  );
+/** the picked product itself */
+function isPickProduct(n: IgNode, s: IgState): boolean {
+  return !!n.guid && !!s.sel.product && n.guid === s.sel.product;
+}
+
+/** the pick's class / storey rows — cross-highlighted in the pinned amber,
+ *  exactly like the panels' rows (rule 3) */
+function isPickAncestor(n: IgNode, s: IgState): boolean {
+  const p = s.pick;
+  if (!p || isPickProduct(n, s)) return false;
+  const sk = storeyKeyOf(p);
+  if (n.kind === "class") return n.entity === p.entity && n.storeyKey === sk;
+  if (n.kind === "storey") return n.storeyKey === sk;
+  return false;
 }
 
 /** ACTIVE == what paint() does NOT dim: inside the filter, or the pick.
  *  This is the single definition the framing action and the .active class
  *  both read, so "everything the user can see is in the frame" is true by
  *  construction rather than by two functions agreeing. */
-function isActiveNode(n: IgNode, s: IgState, hl: Hl): boolean {
-  return !hl || matches(n, hl) || isPickNode(n, s);
+function isActiveNode(n: IgNode, s: IgState, hl: Filter): boolean {
+  return !hl || matches(n, hl) || isPickProduct(n, s) || isPickAncestor(n, s);
 }
 
 /* ------------------------------------------------------------------ */
@@ -392,7 +394,7 @@ export function InstrumentGraph({
   onHotEntity,
   onSelectEntity,
   onSelectStorey,
-  onClear,
+  onClearPick,
 }: {
   graph: IgGraph | null;
   provisional: boolean;
@@ -407,14 +409,16 @@ export function InstrumentGraph({
   onSelectEntity: (entity: string) => void;
   /** storey guid or "UNPLACED" */
   onSelectStorey: (storeyKey: string) => void;
-  onClear: () => void;
+  /** background / spine click — rule 6: it clears the PICK, nothing else.
+   *  The instrument has exactly one control that clears everything. */
+  onClearPick: () => void;
 }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   // live props inside d3 callbacks without re-binding the scene
-  const cbRef = useRef({ onPickProduct, onHotEntity, onSelectEntity, onSelectStorey, onClear });
-  cbRef.current = { onPickProduct, onHotEntity, onSelectEntity, onSelectStorey, onClear };
+  const cbRef = useRef({ onPickProduct, onHotEntity, onSelectEntity, onSelectStorey, onClearPick });
+  cbRef.current = { onPickProduct, onHotEntity, onSelectEntity, onSelectStorey, onClearPick };
   const stateRef = useRef(state);
   stateRef.current = state;
   const focusedRef = useRef(focused);
@@ -509,6 +513,8 @@ export function InstrumentGraph({
       .data(nodes)
       .join("circle")
       .attr("class", "ig-node")
+      // debug surface for automation (and for reading the tier at a glance)
+      .attr("data-kind", (d) => d.kind)
       .attr("r", (d) => d.r)
       .attr("stroke-width", 0.8)
       .on("mouseenter", (e, d) => {
@@ -556,11 +562,12 @@ export function InstrumentGraph({
         } else if (d.kind === "class" && d.entity) {
           cb.onSelectEntity(d.entity);
         } else {
-          cb.onClear();
+          cb.onClearPick();
         }
       });
 
-    svg.on("click", () => cbRef.current.onClear());
+    // empty space: clears the pick only (rule 6)
+    svg.on("click", () => cbRef.current.onClearPick());
 
     node.call(
       d3drag<SVGCircleElement, IgNode>()
@@ -590,37 +597,50 @@ export function InstrumentGraph({
       label.attr("x", (d) => d.x ?? 0).attr("y", (d) => d.y ?? 0);
     };
 
+    /* ONE colour vocabulary (lib/crossfilter rule 4): amber for everything
+       selected — the isolated set AND the pick. The picked product is the
+       same amber lit hotter, ringed with a 1 px cream outline so it reads as
+       "the one" without owning a colour of its own; its class + storey rows
+       carry the pinned amber, like the panels. */
     const paint = () => {
       const s = stateRef.current;
-      const hl = hlOf(s);
-      const isPick = (n: IgNode) => isPickNode(n, s);
-      const isHotClass = (n: IgNode) => n.kind === "class" && !!s.hotEntity && n.entity === s.hotEntity;
+      const sel = s.sel;
+      const hl = activeFilter(sel);
+      const isPickP = (n: IgNode) => isPickProduct(n, s);
+      const isPickA = (n: IgNode) => isPickAncestor(n, s);
+      const hover = sel.hover;
+      const isHotClass = (n: IgNode) =>
+        n.kind === "class" && hover?.kind === "entity" && n.entity === hover.value;
       const isPinned = (n: IgNode) =>
-        (n.kind === "class" && !!s.entitySel && n.entity === s.entitySel) ||
-        (n.kind === "storey" && s.scope !== "ALL" && n.storeyKey === s.scope);
+        (n.kind === "class" && !!sel.entity && n.entity === sel.entity) ||
+        (n.kind === "storey" && !!sel.storey && n.storeyKey === sel.storey);
+      const marked = (n: IgNode) => isPickP(n) || isPickA(n);
 
       node
         .attr("class", (n) => `ig-node ${isActiveNode(n, s, hl) ? "active" : "dim"}`)
         .attr("fill", (n) => {
-          if (isPick(n)) return C_PICK;
+          if (isPickP(n)) return C_ACC_HOT;
+          if (isPickA(n)) return n.kind === "storey" ? C_ACC_DIM : C_ACC;
           if (hl && matches(n, hl) && (n.kind === "class" || n.kind === "product")) return C_ACC;
           if (hl && matches(n, hl) && n.kind === "storey") return C_ACC_DIM;
           return BASE_FILL[n.kind];
         })
-        .attr("opacity", (n) => (hl && !matches(n, hl) && !isPick(n) ? 0.16 : 1))
+        .attr("opacity", (n) => (hl && !matches(n, hl) && !marked(n) ? 0.16 : 1))
         .attr("stroke", (n) =>
-          isPick(n) ? C_PICK : isHotClass(n) || isPinned(n) ? C_ACC : "rgba(11,12,14,.65)",
+          isPickP(n) ? C_RING : isPickA(n) || isHotClass(n) || isPinned(n) ? C_ACC : "rgba(11,12,14,.65)",
         )
-        .attr("stroke-width", (n) => (isPick(n) ? 2.2 : isHotClass(n) || isPinned(n) ? 1.8 : 0.8))
-        .attr("r", (n) => (isPick(n) ? n.r * 1.7 : n.r));
+        .attr("stroke-width", (n) =>
+          isPickP(n) ? 1 : isPickA(n) || isHotClass(n) || isPinned(n) ? 1.8 : 0.8,
+        )
+        .attr("r", (n) => (isPickP(n) ? n.r * 1.7 : n.r));
       link.attr("opacity", (l) => {
         const a = l.source as IgNode;
         const b = l.target as IgNode;
         return !hl || (matches(a, hl) && matches(b, hl)) ? 0.6 : 0.06;
       });
       label
-        .attr("fill", (n) => (isPick(n) ? C_PICK : isHotClass(n) || isPinned(n) ? C_ACC : "#8b9199"))
-        .attr("opacity", (n) => (hl && !matches(n, hl) && !isPick(n) ? 0.2 : 1));
+        .attr("fill", (n) => (marked(n) || isHotClass(n) || isPinned(n) ? C_ACC : "#8b9199"))
+        .attr("opacity", (n) => (hl && !matches(n, hl) && !marked(n) ? 0.2 : 1));
     };
 
     /* One framing routine, two callers.
@@ -637,8 +657,14 @@ export function InstrumentGraph({
       H = s0.h;
       svg.attr("viewBox", `0 0 ${W} ${H}`);
       const st = stateRef.current;
-      const hl = hlOf(st);
-      const wanted = activeOnly ? nodes.filter((n) => isActiveNode(n, st, hl)) : nodes;
+      const hl = activeFilter(st.sel);
+      /* The spine (PROJECT / SITE / BUILDING) is framing-transparent while an
+         isolation is active: it is never dimmed (it is the structure the
+         active nodes hang from), but counting it would drag the frame back
+         out to the whole model — the opposite of "frame what is active". */
+      const wanted = activeOnly
+        ? nodes.filter((n) => isActiveNode(n, st, hl) && !(hl && isSpine(n)))
+        : nodes;
       // a filter that matches nothing at all still deserves a frame
       const list = wanted.length ? wanted : nodes;
       let x0 = Infinity,
@@ -663,6 +689,11 @@ export function InstrumentGraph({
         .scale(k);
       if (animate) svg.transition().duration(FRAME_MS).call(zoom.transform, t);
       else svg.interrupt().call(zoom.transform, t);
+      // debug surface for automation: what the frame actually enclosed
+      if (activeOnly) {
+        wrap.dataset.framebox = [x0, y0, x1, y1].map((v) => v.toFixed(1)).join(",");
+        wrap.dataset.framen = String(list.length);
+      }
     };
     const fit = () => fitTo(false, false);
     const frameActive = () => fitTo(true, true);

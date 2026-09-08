@@ -12,19 +12,18 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Batch, ProductMeta, StreamStore } from "@/lib/stream-store";
+import { isPickable, lookOf, type Sel } from "@/lib/crossfilter";
 
-export type StreamHighlight =
-  | { mode: "storey"; value: string }
-  | { mode: "entity"; value: string; storeyScope?: string }
-  | { mode: "type"; value: string; storeyScope?: string }
-  | null;
-
-const ACCENT: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
-/** the tapped product — brighter than the filter accent, on top of whatever filter is active */
-const PICK: [number, number, number, number] = [1.0, 0.92, 0.72, 1.0];
+/* ONE colour vocabulary (lib/crossfilter.ts rule 4): amber for everything
+   selected — an isolated set AND the picked product. The pick is separated
+   from the set it belongs to by INTENSITY (AMBER_HOT is the same hue lit
+   hotter) plus a 1 px cream edge ring around its bounds — an outline, never
+   a fill, and the only cream left in the instrument. */
+const AMBER: [number, number, number, number] = [1.0, 0.561, 0.227, 1.0];
+const AMBER_HOT: [number, number, number, number] = [1.0, 0.745, 0.451, 1.0];
+const RING = 0xffeab8;
 const DIM: [number, number, number, number] = [0.3, 0.32, 0.36, 0.06];
 const HIDE: [number, number, number, number] = [0, 0, 0, 0];
-const GHOST_ENTITIES = new Set(["ifcspace", "ifcopeningelement"]);
 
 // No normal attribute: the face normal is recovered per-fragment from the
 // screen-space derivatives of the view-space position (WebGL2 core). That
@@ -69,42 +68,34 @@ type BatchGpu = {
   pbox: Float32Array | null;
 };
 
-function storeyMatch(m: ProductMeta, value: string) {
-  return value === "UNPLACED" ? m.storey_guid == null : m.storey_guid === value;
-}
-
-/** true when the product is inside the active filter (or there is no filter) */
-function inFilter(m: ProductMeta, hl: StreamHighlight): boolean {
-  if (!hl) return true;
-  if (hl.mode === "storey") return storeyMatch(m, hl.value);
-  if (hl.mode === "entity")
-    return m.entity.toLowerCase() === hl.value.toLowerCase() && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
-  return (m.type_name ?? "—") === hl.value && (hl.storeyScope ? storeyMatch(m, hl.storeyScope) : true);
-}
-
-function targetColor(m: ProductMeta, hl: StreamHighlight, ghost: boolean, picked: string | null): [number, number, number, number] {
-  const isGhostEntity = GHOST_ENTITIES.has(m.entity.toLowerCase());
-  if (!ghost && isGhostEntity) return HIDE;
-  if (picked && m.guid === picked) return PICK; // a pick sits on top of the filter, never replaces it
-  if (!hl) return m.rgba;
-  if (inFilter(m, hl)) return ACCENT;
-  return ghost ? DIM : HIDE;
+/** the ONE colour decision, taken by lib/crossfilter's `lookOf` */
+function targetColor(m: ProductMeta, sel: Sel, ghost: boolean): [number, number, number, number] {
+  switch (lookOf(m, sel, ghost)) {
+    case "pick":
+      return AMBER_HOT;
+    case "accent":
+      return AMBER;
+    case "natural":
+      return m.rgba;
+    case "dim":
+      return DIM;
+    default:
+      return HIDE;
+  }
 }
 
 export function StreamViewer({
   store,
-  highlight,
+  sel,
   ghost,
-  picked = null,
   active = true,
   frameRef,
   onPick,
 }: {
   store: StreamStore;
-  highlight: StreamHighlight;
+  /** THE selection — isolation, pick and hover in one object (lib/crossfilter) */
+  sel: Sel;
   ghost: boolean;
-  /** guid of the tapped product (selection within the filter) */
-  picked?: string | null;
   /** false while this viewer is the instrument's inset: pixel ratio drops to
    * 1 and the loop renders at <=15 fps, so two live views cost ~1.15 frames,
    * not 2. Batches, repaints and camera fits still land immediately — only
@@ -116,11 +107,13 @@ export function StreamViewer({
 }) {
   const host = useRef<HTMLDivElement | null>(null);
   const gpuRef = useRef<BatchGpu[]>([]);
-  const hlRef = useRef<{ hl: StreamHighlight; ghost: boolean; picked: string | null }>({ hl: highlight, ghost, picked });
+  const hlRef = useRef<{ sel: Sel; ghost: boolean }>({ sel, ghost });
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
   const activeRef = useRef(active);
   const setActiveRef = useRef<((a: boolean) => void) | null>(null);
   const doFrameRef = useRef<(() => void) | null>(null);
+  /** "put the cream edge ring around this product" (null = no ring) */
+  const setRingRef = useRef<((guid: string | null) => void) | null>(null);
 
   useEffect(() => {
     if (!frameRef) return;
@@ -135,11 +128,13 @@ export function StreamViewer({
     setActiveRef.current?.(active);
   }, [active]);
 
-  // restyle on highlight / ghost / pick change — rewrite the RGBA attribute per product range
+  // restyle on any selection / ghost change — rewrite the RGBA attribute per
+  // product range, then move the pick's edge ring
   useEffect(() => {
-    hlRef.current = { hl: highlight, ghost, picked };
-    for (const b of gpuRef.current) paint(b, highlight, ghost, picked);
-  }, [highlight, ghost, picked]);
+    hlRef.current = { sel, ghost };
+    for (const b of gpuRef.current) paint(b, sel, ghost);
+    setRingRef.current?.(sel.product);
+  }, [sel, ghost]);
 
   useEffect(() => {
     const el = host.current;
@@ -204,7 +199,7 @@ export function StreamViewer({
 
     /* ── FRAME: fit the camera to what is actually on screen ──────────
        The filtered bbox is the union of the per-product AABBs of the
-       products the current filter leaves solid (ACCENT / PICK / their own
+       products the current filter leaves solid (amber, hot amber or their own
        colour). DIM (alpha .06) and HIDE (alpha 0) are excluded, so framing
        follows the eye rather than the model: with a storey filter the
        camera lands on that storey, with no filter on the whole model.
@@ -237,14 +232,14 @@ export function StreamViewer({
 
     const frameBox = new THREE.Box3();
     const frameActive = () => {
-      const { hl, ghost: gh, picked: pk } = hlRef.current;
+      const { sel: s0, ghost: gh } = hlRef.current;
       frameBox.makeEmpty();
       let n = 0;
       for (const gpu of gpuRef.current) {
         const boxes = ensureBoxes(gpu);
         for (let p = 0; p < gpu.meta.length; p++) {
           // solid == what the shader draws at full strength; DIM/HIDE are out
-          if (targetColor(gpu.meta[p], hl, gh, pk)[3] <= 0.5) continue;
+          if (targetColor(gpu.meta[p], s0, gh)[3] <= 0.5) continue;
           const o = p * 6;
           if (!Number.isFinite(boxes[o])) continue;
           // scalar min/max: a Vector3 per product would be 2 allocations x 17 000
@@ -269,6 +264,46 @@ export function StreamViewer({
       dirty = true;
     };
 
+    /* ── the pick's edge ring ────────────────────────────────────────
+       The picked product is drawn in the SAME amber as an isolated set
+       (rule 4), so it needs a marker that is not a colour to read as "the
+       one": a 1 px cream wireframe around its bounds, drawn with the depth
+       test off so it stays findable inside a solid model. This is the only
+       cream left in the instrument, and it is an outline, never a fill. */
+    const ringBox = new THREE.Box3();
+    const ringTmp = new THREE.Vector3();
+    const ring = new THREE.Box3Helper(ringBox, new THREE.Color(RING));
+    const ringMat = ring.material as THREE.LineBasicMaterial;
+    ringMat.depthTest = false;
+    ringMat.transparent = true;
+    ring.renderOrder = 999;
+    ring.visible = false;
+    root.add(ring);
+    const setRing = (guid: string | null) => {
+      ring.visible = false;
+      if (guid) {
+        for (const gpu of gpuRef.current) {
+          const m = gpu.meta.find((x) => x.guid === guid);
+          if (!m) continue;
+          const arr = (gpu.geom.getAttribute("position") as THREE.BufferAttribute).array as Float32Array;
+          ringBox.makeEmpty();
+          const end = (m.v0 + m.vn) * 3;
+          for (let i = m.v0 * 3; i < end; i += 3) ringBox.expandByPoint(ringTmp.set(arr[i], arr[i + 1], arr[i + 2]));
+          if (!ringBox.isEmpty()) {
+            // a hair of padding so the ring never z-fights the surface it wraps
+            ringBox.expandByScalar(Math.max(ringBox.getSize(ringTmp).length() * 0.02, 0.01));
+            ring.visible = true;
+          }
+          break;
+        }
+      }
+      el.dataset.ring = ring.visible
+        ? [ringBox.min.x, ringBox.min.y, ringBox.min.z, ringBox.max.x, ringBox.max.y, ringBox.max.z].map((v) => v.toFixed(2)).join(",")
+        : "";
+      dirty = true;
+    };
+    setRingRef.current = setRing;
+
     const addBatch = (b: Batch) => {
       const a0 = performance.now();
       const geom = new THREE.BufferGeometry();
@@ -292,7 +327,7 @@ export function StreamViewer({
       const gpu: BatchGpu = { mesh, geom, color, meta: b.meta, i0s: b.meta.map((m) => m.i0), pbox: null };
       gpuRef.current.push(gpu);
       const a1 = performance.now();
-      paint(gpu, hlRef.current.hl, hlRef.current.ghost, hlRef.current.picked);
+      paint(gpu, hlRef.current.sel, hlRef.current.ghost);
       const a2 = performance.now();
       refit();
       const a3 = performance.now();
@@ -326,8 +361,7 @@ export function StreamViewer({
       ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
       const hits = ray.intersectObjects(gpuRef.current.map((g) => g.mesh), false); // nearest first
-      const { hl, ghost: gh } = hlRef.current;
-      let fallback: ProductMeta | null = null;
+      const { sel: s0, ghost: gh } = hlRef.current;
       for (const h of hits) {
         const gpu = gpuRef.current.find((g) => g.mesh === h.object);
         if (!gpu || h.faceIndex == null) continue;
@@ -340,19 +374,15 @@ export function StreamViewer({
           else hi = mid - 1;
         }
         const m = gpu.meta[lo];
-        // spaces / openings are context, never a pick target — the translucent room
-        // volume around everything would otherwise win every click
-        if (GHOST_ENTITIES.has(m.entity.toLowerCase())) continue;
-        // With a filter active, the first product INSIDE the filter along the
-        // ray wins — ghosted ones in front are see-through and must not steal
-        // the click. Without a filter, the nearest product wins.
-        if (inFilter(m, hl)) {
-          onPick(m);
-          return;
-        }
-        if (!fallback && gh) fallback = m; // a ghosted product, only if nothing in-filter is behind it
+        // Rule 5: you cannot pick what the filter ghosted — a dimmed product in
+        // front is see-through and must not steal the click, and spaces /
+        // openings are context, never a target. The first pickable product
+        // along the ray wins, or nothing does.
+        if (!isPickable(m, s0, gh)) continue;
+        onPick(m);
+        return;
       }
-      onPick(fallback);
+      onPick(null); // empty space (or only ghosted geometry) — clears the pick only
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
@@ -482,11 +512,18 @@ export function StreamViewer({
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
+    // the restyle effect runs before this one on mount, so its setRing call
+    // found no scene — apply the pick the selection already holds. (It must
+    // come after `dirty` exists: setRing marks the scene dirty.)
+    setRing(hlRef.current.sel.product);
 
     return () => {
       disposed = true;
       setActiveRef.current = null;
       doFrameRef.current = null;
+      setRingRef.current = null;
+      ring.geometry.dispose();
+      ringMat.dispose();
       cancelAnimationFrame(raf);
       unsub();
       ro.disconnect();
@@ -505,10 +542,10 @@ export function StreamViewer({
   return <div className="sv-host" ref={host} />;
 }
 
-function paint(b: BatchGpu, hl: StreamHighlight, ghost: boolean, picked: string | null) {
+function paint(b: BatchGpu, sel: Sel, ghost: boolean) {
   const arr = b.color.array as Uint8Array;
   for (const m of b.meta) {
-    const c = targetColor(m, hl, ghost, picked);
+    const c = targetColor(m, sel, ghost);
     const r = (c[0] * 255) | 0, g = (c[1] * 255) | 0, bl = (c[2] * 255) | 0, a = (c[3] * 255) | 0;
     const end = (m.v0 + m.vn) * 4;
     for (let i = m.v0 * 4; i < end; i += 4) {

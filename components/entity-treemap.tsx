@@ -12,13 +12,16 @@
  *   click  → onSelect(entity)  (the caller toggles its own selection)
  * plus keyboard focus (Enter / Space) with the class name as aria-label.
  *
- * `picked` is the third channel: the class of the product tapped in the
- * VIEWPORT. It highlights (cream ring on the amber cell) and never
- * isolates — a pick never dims the rest and never pins a filter.
+ * Every look comes from ONE selection (`Sel`) through lib/crossfilter's
+ * predicates, so the treemap can never disagree with the viewport, the
+ * graph or the register about what is selected. `pickEntity` is the class
+ * of the product picked in a viewport: its cell carries the SAME amber as
+ * an isolated class plus a product marker (the small dot), and a pick
+ * never dims anything (rule 3).
  *
  * Palette is the instrument's graphite ramp (darker = fewer products),
- * amber for the hovered / selected class, and the register's `.dim`
- * opacity for everything else while a selection is pinned.
+ * amber for the hovered / selected / picked class, and the register's
+ * `.dim` opacity for everything the isolation leaves out.
  *
  * Layout is recomputed on container resize (ResizeObserver) and on data
  * change only — no per-frame work, and geometry is not transitioned so a
@@ -27,6 +30,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { hierarchy, treemap, treemapSquarify } from "d3-hierarchy";
+import { activeFilter, isClassHot, isClassInFilter, type Sel } from "@/lib/crossfilter";
 
 export type EntityTreemapDatum = {
   entity: string;
@@ -65,20 +69,22 @@ const COUNT_MIN_H = 30;
 
 export default function EntityTreemap({
   data,
-  hot,
-  selected,
-  picked = null,
+  sel,
+  pickEntity = null,
+  typeEntity = null,
   onHover,
   onSelect,
   label = shortName,
 }: {
   data: EntityTreemapDatum[];
-  /** cross-highlighted entity (hover from anywhere in the instrument) */
-  hot: string | null;
-  /** pinned entity filter */
-  selected: string | null;
-  /** entity of the product picked in the viewport — highlight only */
-  picked?: string | null;
+  /** THE selection (lib/crossfilter) */
+  sel: Sel;
+  /** class of the product picked in a viewport — highlight only */
+  pickEntity?: string | null;
+  /** class the pinned / hovered TYPE belongs to, so a type isolation dims
+   *  the classes it excludes (a type row knows its class; a class cell
+   *  cannot work it out on its own) */
+  typeEntity?: string | null;
   onHover: (entity: string | null) => void;
   onSelect: (entity: string) => void;
   label?: (entity: string) => string;
@@ -135,6 +141,11 @@ export default function EntityTreemap({
     });
   }, [data, size]);
 
+  const ctx = useMemo(() => ({ typeEntity }), [typeEntity]);
+  /* a class-shaped isolation (entity or type) is what paints cells amber;
+     a storey isolation has already rescoped `data` instead */
+  const classIsolation = (activeFilter(sel)?.mode ?? "storey") !== "storey";
+
   return (
     <div className="tm-host" ref={hostRef} onMouseLeave={() => onHover(null)}>
       <style>{TM_CSS}</style>
@@ -142,10 +153,14 @@ export default function EntityTreemap({
         <div className="tm-empty">NO PRODUCTS IN SCOPE</div>
       )}
       {cells.map((c) => {
-        const isPick = !!picked && picked === c.entity;
-        const isHot = hot === c.entity || selected === c.entity;
-        // a pick never dims its neighbours, and is never itself dimmed
-        const isDim = !!selected && selected !== c.entity && !isPick;
+        const isPick = !!pickEntity && pickEntity === c.entity;
+        const isPin = sel.entity === c.entity;
+        const inFilter = isClassInFilter(c.entity, sel, ctx);
+        // amber == selected or in an entity / type isolation; a storey
+        // isolation rescopes the DATA instead, so it colours nothing
+        const isHot = isClassHot(c.entity, sel, ctx) || isPin || isPick || (classIsolation && inFilter);
+        // a pick never dims its neighbours, and is never itself dimmed (rule 3)
+        const isDim = !inFilter && !isPick;
         const name = label(c.entity);
         const room = Math.max(0, Math.floor((c.w - 9) / CHAR_W));
         const showName = c.w >= NAME_MIN_W && c.h >= NAME_MIN_H && room >= 3;
@@ -156,9 +171,9 @@ export default function EntityTreemap({
             role="button"
             tabIndex={0}
             aria-label={`${c.entity}, ${c.count} products`}
-            aria-pressed={selected === c.entity}
+            aria-pressed={isPin}
             title={`${c.entity} · ${c.count} · ${c.m3.toFixed(1)} m³${c.noMesh ? " · NO MESH" : ""}`}
-            className={`tm-cell${isHot ? " hot" : ""}${isPick ? " pick" : ""}${selected === c.entity ? " pin" : ""}${isDim ? " dim" : ""}`}
+            className={`tm-cell${isHot ? " hot" : ""}${isPick ? " pick" : ""}${isPin ? " pin" : ""}${isDim ? " dim" : ""}`}
             style={{
               left: c.x,
               top: c.y,
@@ -178,6 +193,7 @@ export default function EntityTreemap({
             }}
           >
             {c.noMesh && c.w >= 18 && c.h >= 13 && <span className="tm-nm" />}
+            {isPick && c.w >= 14 && c.h >= 12 && <span className="tm-pk" title="the picked product's class" />}
             {showName && (
               <span className="tm-name">
                 {name.length > room
@@ -203,9 +219,15 @@ const TM_CSS = `
   transition:background-color .16s linear, opacity .16s linear;
 }
 #inst-b .tm-cell.hot{ background:linear-gradient(150deg,var(--acc-dim),var(--acc)); border-color:var(--acc); }
+/* the picked product's class: the SAME amber as any selected class — the
+   product marker (.tm-pk), not a colour, is what says "the one is in here" */
 #inst-b .tm-cell.pick{
-  background:linear-gradient(150deg,var(--acc),var(--pick));
-  border-color:var(--pick); box-shadow:inset 0 0 0 2px var(--pick);
+  background:linear-gradient(150deg,var(--acc-dim),var(--acc));
+  border-color:var(--acc);
+}
+#inst-b .tm-pk{
+  position:absolute; left:4px; bottom:4px; width:5px; height:5px; border-radius:50%;
+  background:#0b0c0e;
 }
 #inst-b .tm-cell.pin{ box-shadow:inset 0 0 0 1px var(--acc), inset 3px 0 0 var(--acc); }
 #inst-b .tm-cell.dim{ opacity:.32; }
@@ -228,5 +250,6 @@ const TM_CSS = `
 #inst-b .tm-cell.pick .tm-name{ color:#0b0c0e; }
 #inst-b .tm-cell.pick .tm-n{ color:#0b0c0e; opacity:.85; }
 #inst-b .tm-cell.pick .tm-nm{ background:#0b0c0e; }
+#inst-b .tm-cell.dim .tm-pk{ opacity:.5; }
 #inst-b .tm-empty{ padding:14px 12px; font-size:9px; letter-spacing:.1em; color:var(--mut2); }
 `;
