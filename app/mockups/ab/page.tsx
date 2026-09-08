@@ -69,7 +69,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback, memo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Code, Copy, Check, Ghost, Upload, X, Scan } from "lucide-react";
-import { useIfcDrop, MAX_BYTES, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
+import { useIfcDrop, LIMIT_OPTIONS, type DropState, type DroppedModel } from "@/lib/use-ifc-drop";
 import { LoadingShapes, LiveTimer } from "@/components/loading-shapes";
 import { StreamViewer } from "@/components/stream-viewer";
 import EntityTreemap from "@/components/entity-treemap";
@@ -1247,16 +1247,27 @@ function Terminal({ show }: { show: boolean }) {
 /* ================================================================== */
 /** Progress while geometry streams — polls the store 5×/s so the rest of
  * the instrument never re-renders per batch. */
-function StreamingPill({ name, store, since }: { name: string; store: StreamStore | null; since: number }) {
+function StreamingPill({
+  name,
+  store,
+  since,
+  largeForDevice,
+}: {
+  name: string;
+  store: StreamStore | null;
+  since: number;
+  largeForDevice?: boolean;
+}) {
   const [p, setP] = useState(store?.progress ?? { seen: 0, meshed: 0, total: 0 });
   useEffect(() => {
     const iv = setInterval(() => store && setP({ ...store.progress }), 200);
     return () => clearInterval(iv);
   }, [store]);
   return (
-    <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded">
+    <span className="tb-drop tb-drop-busy" title="geometry is streaming in — nothing is uploaded, stored or shared">
       <span className="tb-live" /> streaming {p.total ? `${nfInt.format(p.meshed)} / ${nfInt.format(p.total)}` : "…"} · {name} ·{" "}
       <LiveTimer since={since} />
+      {largeForDevice ? <span className="tb-drop-warn">large for this device</span> : null}
     </span>
   );
 }
@@ -1286,38 +1297,84 @@ function dropBreakdown(m: DroppedModel, unhandled: number): string {
 }
 
 /* ================================================================== */
+/* DropLimitControl — the size budget the hard refusal used to hard-code */
+/* (GH #172 follow-up, Ed: "it doesn't hurt us if they have the RAM").  */
+/* Persists to localStorage key ifcfast.dropLimit via the hook.         */
+/* ================================================================== */
+function DropLimitControl({
+  limitMB,
+  onChange,
+}: {
+  limitMB: number | null;
+  onChange: (mb: number | null) => void;
+}) {
+  return (
+    <select
+      className="tb-limit"
+      value={limitMB === null ? "unlimited" : String(limitMB)}
+      onChange={(e) => onChange(e.target.value === "unlimited" ? null : Number(e.target.value))}
+      title="browser-tab memory budget for a dropped IFC — raise it if the device has the RAM. Saved on this device."
+      aria-label="drop size limit"
+    >
+      {LIMIT_OPTIONS.map((o) => (
+        <option key={o.label} value={o.mb === null ? "unlimited" : String(o.mb)}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+/* ================================================================== */
 /* DropPill — "drop your IFC, it stays in this tab" (GH #172)          */
 /* ================================================================== */
+const PRIVACY_LINE = "Parsed in this tab by the ifcfast wasm core. The file is never uploaded, stored or shared.";
+
 function DropPill({
   state,
   onFile,
   onReset,
+  limitMB,
+  onLimitChange,
 }: {
   state: DropState;
   onFile: (f: File) => void;
   onReset: () => void;
+  limitMB: number | null;
+  onLimitChange: (mb: number | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const budget = `${MAX_BYTES / 1024 / 1024} MB`;
+  const budget = limitMB === null ? "no limit" : `${limitMB} MB`;
   if (state.status === "working") {
     return (
-      <span className="tb-drop tb-drop-busy" title="parsing in a Web Worker — nothing is uploaded">
+      <span className="tb-drop tb-drop-busy" title={`${PRIVACY_LINE} (parsing in a Web Worker)`}>
         <span className="tb-live" /> {state.step} {state.name} · <LiveTimer since={state.startedAt} />
+        {state.largeForDevice ? <span className="tb-drop-warn">large for this device</span> : null}
       </span>
     );
   }
   if (state.status === "error") {
     return (
-      <span className="tb-drop tb-drop-err" title={state.error}>
-        {state.name}: {state.error}
-        <button type="button" className="tb-drop-x" onClick={onReset} aria-label="dismiss">
-          <X size={10} />
-        </button>
-      </span>
+      <>
+        <span className="tb-drop tb-drop-err" title={state.error}>
+          {state.name}: {state.error}
+          <button type="button" className="tb-drop-x" onClick={onReset} aria-label="dismiss">
+            <X size={10} />
+          </button>
+        </span>
+        <DropLimitControl limitMB={limitMB} onChange={onLimitChange} />
+      </>
     );
   }
   if (state.status === "ready" && state.model.streaming) {
-    return <StreamingPill name={state.model.name} store={state.model.store} since={state.model.startedAt} />;
+    return (
+      <StreamingPill
+        name={state.model.name}
+        store={state.model.store}
+        since={state.model.startedAt}
+        largeForDevice={state.model.largeForDevice}
+      />
+    );
   }
   if (state.status === "ready") {
     const m = state.model;
@@ -1327,7 +1384,7 @@ function DropPill({
     return (
       <span
         className="tb-drop tb-drop-ok"
-        title={dropBreakdown(m, unhandled)}
+        title={`${PRIVACY_LINE}\n${dropBreakdown(m, unhandled)}`}
       >
         your model · {m.name} · <LiveTimer since={m.startedAt} done={m.finishedAt ?? m.startedAt} />
         {unhandled ? <span className="tb-drop-warn">{unhandled} unhandled</span> : null}
@@ -1341,12 +1398,13 @@ function DropPill({
     <>
       <button
         type="button"
-        className="tb-drop"
+        className="tb-drop tb-drop-idle"
         onClick={() => inputRef.current?.click()}
-        title={`Drop an .ifc / .ifczip here (up to ${budget}). It is parsed in this tab by the ifcfast wasm core — nothing is uploaded.`}
+        title={`${PRIVACY_LINE} Up to ${budget} — raise the limit in the control to the right.`}
       >
         <Upload size={10} /> drop your IFC · stays in this tab
       </button>
+      <DropLimitControl limitMB={limitMB} onChange={onLimitChange} />
       <input
         ref={inputRef}
         type="file"
@@ -1974,7 +2032,13 @@ function InstrumentChapter({
               <span className="tb-live" />
               <span className="tb-brand">THE INSTRUMENT</span>
               <span className="tb-sub">COMMAND</span>
-              <DropPill state={drop.state} onFile={drop.open} onReset={drop.reset} />
+              <DropPill
+                state={drop.state}
+                onFile={drop.open}
+                onReset={drop.reset}
+                limitMB={drop.limitMB}
+                onLimitChange={drop.setLimitMB}
+              />
               {/* the ONE clear (rule 7). Always present, greyed and inert when
                   nothing is selected, so its position never moves. */}
               <button
@@ -3239,6 +3303,22 @@ function StyleBlock() {
 #inst-b .ls-timer{ font-variant-numeric:tabular-nums; }
 #inst-b .tb-drop-x{ display:inline-flex; align-items:center; margin-left:4px; background:none; border:0; color:var(--mut); cursor:pointer; padding:0; }
 #inst-b .tb-drop-x:hover{ color:var(--fg); }
+/* idle upload CTA — accent at rest (not the dim/dashed default), brighter
+   filled state on hover; busy/streaming/ready/error keep their own looks. */
+#inst-b .tb-drop-idle{
+  color:var(--acc); border-style:solid; border-color:var(--acc);
+  background:rgba(255,143,58,.07);
+}
+#inst-b .tb-drop-idle:hover{ color:var(--fg); border-color:var(--acc); background:rgba(255,143,58,.2); }
+/* drop size-limit control (GH #172 follow-up) — visible next to the pill
+   in idle/error states only, so the busy/ready pill's own info stays tidy. */
+#inst-b .tb-limit{
+  margin-left:6px; flex:0 0 auto; font-family:var(--mono); font-size:8px; letter-spacing:.08em;
+  color:var(--mut); background:rgba(255,255,255,.03); border:1px solid var(--ln2);
+  padding:2px 4px; cursor:pointer;
+}
+#inst-b .tb-limit:hover{ color:var(--fg); border-color:var(--acc); }
+#inst-b .tb-limit:focus-visible{ outline:1px solid var(--acc); outline-offset:1px; }
 /* ── the ONE clear (rule 7) ──
    Always present so its position never moves; greyed and inert when nothing
    is selected; a badge counting the active facets when something is. */

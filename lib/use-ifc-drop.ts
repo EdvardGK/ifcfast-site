@@ -13,11 +13,52 @@
  * strip, the entity treemap and a viewport pick. It is NOT the real graph:
  * materials and the storey list only exist once graphJson() has run, and only
  * meshed products appear in it. `provisional` says which one you are holding.
+ *
+ * The MAX_BYTES refusal is user-configurable (Ed: "it doesn't hurt us anyway
+ * if they have the RAM"): a visible drop-limit control persisted in
+ * localStorage (key `ifcfast.dropLimit`) replaces the hard-coded ceiling.
+ * `null` means "no limit" (localStorage value `"unlimited"`; `Infinity`
+ * doesn't survive JSON so it is never stored directly). Independently, a
+ * SOFT `navigator.deviceMemory`-based warning (never a stop) flags a file
+ * that is large relative to the device's RAM.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { StreamStore, type Progress, type StreamStats } from "./stream-store";
 
-export const MAX_BYTES = 300 * 1024 * 1024; // browser-tab memory ceiling, stated up front
+export const MAX_BYTES = 300 * 1024 * 1024; // default browser-tab memory ceiling, stated up front
+
+/** Selectable drop-size budgets. `mb: null` = no limit. */
+export const LIMIT_OPTIONS: { mb: number | null; label: string }[] = [
+  { mb: 300, label: "300 MB" },
+  { mb: 600, label: "600 MB" },
+  { mb: 1024, label: "1 GB" },
+  { mb: null, label: "no limit" },
+];
+export const DEFAULT_LIMIT_MB = 300;
+const LIMIT_KEY = "ifcfast.dropLimit";
+
+function loadLimitMB(): number | null {
+  if (typeof window === "undefined") return DEFAULT_LIMIT_MB;
+  try {
+    const raw = window.localStorage.getItem(LIMIT_KEY);
+    if (raw === null) return DEFAULT_LIMIT_MB;
+    if (raw === "unlimited") return null;
+    const n = Number(raw);
+    return LIMIT_OPTIONS.some((o) => o.mb === n) ? n : DEFAULT_LIMIT_MB;
+  } catch {
+    return DEFAULT_LIMIT_MB; // private mode / storage blocked
+  }
+}
+
+/** Rough "this needs about that much tab memory" estimate: parsed IFC data
+ * structures + mesh buffers commonly run ~6-10x the source file's bytes.
+ * `deviceMemory` (GiB, quantized) isn't available everywhere — the check is
+ * skipped, not failed, when it's absent. */
+function estimateLargeForDevice(file: File): boolean {
+  const dm = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+  if (!dm) return false;
+  return file.size * 8 > dm * 1024 ** 3;
+}
 
 /** provisional-graph republish rate while geometry streams. Every tick is a
  * full instrument re-render, so this is a direct trade against the 60 fps the
@@ -56,16 +97,20 @@ export type DroppedModel = {
   startedAt: number;
   /** performance.now() when everything had landed (set at "done" / "glb") */
   finishedAt?: number;
+  /** soft navigator.deviceMemory heuristic (file.size × 8 > deviceMemory) —
+   * never blocks, just labels the pill while parsing continues */
+  largeForDevice: boolean;
 };
 
 export type DropState =
   | { status: "idle" }
-  | { status: "working"; name: string; step: string; startedAt: number }
+  | { status: "working"; name: string; step: string; startedAt: number; largeForDevice: boolean }
   | { status: "ready"; model: DroppedModel; progress: Progress }
   | { status: "error"; name: string; error: string };
 
 export function useIfcDrop() {
   const [state, setState] = useState<DropState>({ status: "idle" });
+  const [limitMB, setLimitMBState] = useState<number | null>(() => loadLimitMB());
   const workerRef = useRef<Worker | null>(null);
   const urlRef = useRef<string | null>(null);
   const provRef = useRef<number | null>(null);
@@ -73,6 +118,15 @@ export function useIfcDrop() {
     if (provRef.current !== null) {
       clearInterval(provRef.current);
       provRef.current = null;
+    }
+  }, []);
+
+  const setLimitMB = useCallback((mb: number | null) => {
+    setLimitMBState(mb);
+    try {
+      window.localStorage.setItem(LIMIT_KEY, mb === null ? "unlimited" : String(mb));
+    } catch {
+      // private mode / storage blocked — the in-memory value still applies this session
     }
   }, []);
 
@@ -89,14 +143,16 @@ export function useIfcDrop() {
       setState({ status: "error", name: file.name, error: "not an IFC file (.ifc / .ifczip)" });
       return;
     }
-    if (file.size > MAX_BYTES) {
+    const limitBytes = limitMB === null ? Infinity : limitMB * 1024 * 1024;
+    if (file.size > limitBytes) {
       setState({
         status: "error",
         name: file.name,
-        error: `${(file.size / 1e6).toFixed(0)} MB is over the ${MAX_BYTES / 1024 / 1024} MB browser budget — run ifcfast locally for this one`,
+        error: `${(file.size / 1e6).toFixed(0)} MB is over the ${limitMB} MB limit — raise it in the size control next to the pill`,
       });
       return;
     }
+    const largeForDevice = estimateLargeForDevice(file);
     workerRef.current?.terminate();
     stopProvisional();
     if (urlRef.current) URL.revokeObjectURL(urlRef.current);
@@ -106,7 +162,7 @@ export function useIfcDrop() {
     const worker = new Worker(new URL("./ifc-worker.ts", import.meta.url), { type: "module" });
     workerRef.current = worker;
     const spawnMs = performance.now() - s0;
-    setState({ status: "working", name: file.name, step: "reading", startedAt });
+    setState({ status: "working", name: file.name, step: "reading", startedAt, largeForDevice });
     // the read is awaited HERE, not in the worker: it is async (it never blocks
     // this thread) and it runs while the worker module is still compiling, so
     // moving it across the boundary only serialises the two.
@@ -123,7 +179,7 @@ export function useIfcDrop() {
       // bare progress strings ("parsing", …) come before any phase; batch
       // messages also carry a `progress` field (JSON) — never confuse the two
       if (!d.phase && typeof d.progress === "string" && d.ok === undefined) {
-        setState({ status: "working", name: file.name, step: d.progress, startedAt });
+        setState({ status: "working", name: file.name, step: d.progress, startedAt, largeForDevice });
         return;
       }
       if (d.ok === false) {
@@ -155,6 +211,7 @@ export function useIfcDrop() {
             ms: d.ms,
             streaming: true,
             startedAt,
+            largeForDevice,
           };
           setState({ status: "ready", model, progress: store.progress });
           let published = -1;
@@ -234,6 +291,7 @@ export function useIfcDrop() {
             streaming: false,
             startedAt,
             finishedAt: performance.now(),
+            largeForDevice,
           };
           setState({ status: "ready", model, progress: { seen: 0, meshed: 0, total: 0 } });
           return;
@@ -246,7 +304,7 @@ export function useIfcDrop() {
     };
     const postedAt = performance.timeOrigin + performance.now();
     worker.postMessage({ bytes, name: file.name, batch: 200 }, [bytes]);
-  }, [stopProvisional]);
+  }, [stopProvisional, limitMB]);
 
   const reset = useCallback(() => {
     workerRef.current?.terminate();
@@ -256,5 +314,5 @@ export function useIfcDrop() {
     setState({ status: "idle" });
   }, [stopProvisional]);
 
-  return { state, open, reset };
+  return { state, open, reset, limitMB, setLimitMB };
 }
