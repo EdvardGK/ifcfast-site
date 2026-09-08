@@ -169,3 +169,14 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   stream viewer), pull the blobs out as base64, `ffmpeg` concat → GIF.
   `toDataURL` on the WebGL canvases is black (buffer not preserved);
   captureStream is not.
+- REPORT (`191c34a`, opus agent coded, Fable verified on the production
+  build after the agent died on its session limit): title-bar control
+  next to CLEAR; one `ReportSnapshot` (`lib/report.ts`) from the panels'
+  own derived data, pinned selection only. CSV per table / four-file
+  burst / one combined file (UTF-8 BOM, CRLF, RFC 4180, raw numbers,
+  `# ifcfast report …` comment line). PDF (`lib/report-pdf.ts`, jspdf +
+  autotable, lazy chunk): A4 graphite on white with a still of the live
+  viewport — StreamViewer renders + reads its buffer in the same task
+  (`captureRef`), model-viewer `toDataURL` composited on the dark
+  ground, graph pane serialised from SVG. Verified: 6 CSV downloads +
+  98 KB PDF on the Duplex sample, `next build` clean.
