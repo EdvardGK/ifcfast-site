@@ -131,3 +131,24 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
 - Unreproduced once: `NotFoundError: removeChild` on a first drop after
   the agent had injected style on the React-rendered file input; five
   clean replays after. Watch for it.
+
+## 2026-09-08 afternoon (Fable coordinating; opus/sonnet coding)
+- FRAME (`2a712fa`): graph frames the non-dimmed nodes (34 vb padding,
+  350 ms), StreamViewer frames the products the eye sees (per-product
+  AABBs, lazy), model-viewer whole model (pose → updateFraming → pose);
+  button + middle-button double-click counted from two pointerdowns
+  (Chrome emits no dblclick for the wheel button).
+- ONE cross-filter (`7433214`): `lib/crossfilter.ts` — one `Sel`
+  {storey, entity, type, product, hover}, `lookOf` decides every colour
+  for both viewers, graph, treemap, stack, register, materials. Pick =
+  product facet: highlights + cross-highlights, never dims, auto-clears
+  when an isolation excludes it. One amber (cream fill gone; the picked
+  product is amber lit hotter + 1 px cream edge ring). One CLEAR in the
+  title bar (badge, Esc); `.stk-reset` removed. Bugs found: a TDZ crash
+  unmounting the instrument on every drop; register pick highlight
+  failing on 2x3 walls (IfcWall vs IfcWallStandardCase naming).
+- Security (`7a1d641` headers, parser `23fde2d`, site `cbebd3d`): CSP
+  proven against the worker+wasm path (browser contacts no third-party
+  host); bounded .ifczip decompression on Rust, wasm AND the wheel's
+  Python inflate (4 GiB / 1 GiB wasm, 200× ratio, 8 MiB floor, 4096
+  members). Posture recorded in memory `site-security-posture`.
