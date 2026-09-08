@@ -152,3 +152,20 @@ with `scripts/sync-wasm.sh` after every parser wasm rebuild.
   host); bounded .ifczip decompression on Rust, wasm AND the wheel's
   Python inflate (4 GiB / 1 GiB wasm, 200× ratio, 8 MiB floor, 4096
   members). Posture recorded in memory `site-security-posture`.
+- Drop pill polish (`dc99bd9`): amber upload CTA; the file-size limit is a
+  visible control (300 MB · 600 MB · 1 GB · no limit, remembered in
+  localStorage `ifcfast.dropLimit`); soft "large for this device" warning
+  from `navigator.deviceMemory`; privacy line under the pill.
+- MEP demo for Ed (Ifc4_Revit_MEP.ifc, 29 MB, IFC4, Revit 2021): on live
+  ifcfast.com the interlude runs 2.8 s (sphere → cloud → pyramid → cloud),
+  first geometry at 2.9 s, done at 4.4 s. Capture lesson: DevTools
+  screenshot bursts (≈1.5 s each, and `upload_file` itself blocks ~25 s
+  on a throttled page) always land after the parse — even CPU throttle
+  6–8× barely slows the wasm worker. What works: hold the file input's
+  `change` in a capture-phase listener, re-fire it from `evaluate_script`,
+  and record each viewport canvas from inside the page with
+  `canvas.captureStream(30)` + `MediaRecorder` (a MutationObserver on
+  `#inst-b` starts one per canvas: `.ls-host` interlude, `.sv-host`
+  stream viewer), pull the blobs out as base64, `ffmpeg` concat → GIF.
+  `toDataURL` on the WebGL canvases is black (buffer not preserved);
+  captureStream is not.
