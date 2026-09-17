@@ -1,0 +1,2712 @@
+[
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNld",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNld",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNld",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNau",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNau",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNau",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
+    "role": "layer",
+    "layer_index": 6,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
+    "role": "layer",
+    "layer_index": 6,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
+    "role": "layer",
+    "layer_index": 6,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKST",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKST",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKST",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK80",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 417.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK9N",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 417.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKEr",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 417.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKE5",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 417.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK3E",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 435.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK04",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 435.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK1b",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 435.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FK4F",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete",
+    "layer_thickness_mm": 127.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKcz",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete",
+    "layer_thickness_mm": 127.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FKau",
+    "role": "layer",
+    "layer_index": 6,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 152.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL96",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL96",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FL96",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 152.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1hOSvn6df7F8_7GcBWlRqU",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Sheathing - plywood",
+    "layer_thickness_mm": 19.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1hOSvn6df7F8_7GcBWlRqU",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Wood - Dimensional Lumber",
+    "layer_thickness_mm": 286.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1hOSvn6df7F8_7GcBWlRrM",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Sheathing - plywood",
+    "layer_thickness_mm": 19.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1hOSvn6df7F8_7GcBWlRrM",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Wood - Dimensional Lumber",
+    "layer_thickness_mm": 286.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtC0",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtC0",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtDX",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtDX",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtBP",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtBP",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt8F",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt8F",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt8s",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt8s",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt5W",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt5W",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt2f",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt2f",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt0F",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUt0F",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtxr",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtxr",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtoa",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtoa",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtjR",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtjR",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtju",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtju",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtgP",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Wood - Flooring",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUtgP",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Insulation / Thermal Barriers - Semi-rigid insulation",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUten",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Ceramic Tile",
+    "layer_thickness_mm": 10.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OBrcmyk58NupXoVOHUten",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Masonry - Grout",
+    "layer_thickness_mm": 3.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Site - Grass",
+    "layer_thickness_mm": 64.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Roofing - Barrier",
+    "layer_thickness_mm": 6.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Roofing - EPDM Membrane",
+    "layer_thickness_mm": 6.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 76.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Wood - Sheathing - plywood",
+    "layer_thickness_mm": 19.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmxl",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Wood - Dimensional Lumber",
+    "layer_thickness_mm": 286.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmmy",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmpw",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmoa",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Masonry - Brick",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Misc. Air Layers - Air Space",
+    "layer_thickness_mm": 25.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Insulation / Thermal Barriers - Rigid insulation",
+    "layer_thickness_mm": 50.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 3,
+    "material_name": "Masonry - Concrete Block",
+    "layer_thickness_mm": 193.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 4,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 41.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0jf0rYHfX3RAB3bSIRjmr1",
+    "role": "layer",
+    "layer_index": 5,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc5T8",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc5T8",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc503",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc503",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50B",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50B",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50U",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50U",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50n",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc50n",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc52o",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc52o",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc554",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc554",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55E",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55E",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55M",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55M",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55U",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55U",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55c",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55c",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55k",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55k",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55m",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 45.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3bXiCStxP6Fgxdej$yc55m",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 12.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jZ1",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jZ1",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4j_U",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4j_U",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jpl",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jpl",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jpl",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jDb",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jDb",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jE6",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0iEHWY1$XA8eQeeULq4jE6",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0dxE1Sy6nDqfpDb5vIMNiA",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0dxE1Sy6nDqfpDb5vIMNiA",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0dxE1Sy6nDqfpDb5vIMN_Z",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 136.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "0dxE1Sy6nDqfpDb5vIMN_Z",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpvt",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpvt",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpvt",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpZw",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpZw",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpZw",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpee",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpee",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKpee",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKphf",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKphf",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 92.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1aj$VJZFn2TxepZUBcKphf",
+    "role": "layer",
+    "layer_index": 2,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1CZILmCaHETO8tf3SgGEWh",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 150.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "1CZILmCaHETO8tf3SgGEXu",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Concrete - Cast In Situ",
+    "layer_thickness_mm": 150.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVS",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVS",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVT",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVT",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVI",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVI",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVJ",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5IVJ",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITp",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITp",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITm",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITm",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITn",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITn",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITs",
+    "role": "layer",
+    "layer_index": 0,
+    "material_name": "Metal - Stud Layer",
+    "layer_thickness_mm": 38.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "3Y4YRln2r91vflHcHE5ITs",
+    "role": "layer",
+    "layer_index": 1,
+    "material_name": "Plasterboard",
+    "layer_thickness_mm": 16.0,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK_l8",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$8W",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$Bq",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$CR",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$Dv",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$Du",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$Dx",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  },
+  {
+    "guid": "2OrWItJ6zAwBNp0OUxK$Dw",
+    "role": "direct",
+    "layer_index": -1,
+    "material_name": "Metal - Steel - 345 MPa",
+    "layer_thickness_mm": null,
+    "category": null,
+    "fraction": null,
+    "source": "instance"
+  }
+]

@@ -6,7 +6,7 @@
       "entity": "IfcFurnishingElement",
       "count": 61,
       "storeys": [],
-      "area_m2": 463.48038685330005,
+      "area_m2": 463.29215061650007,
       "volume_m3": 21.11318618799999,
       "triangles": 14068,
       "products_with_mesh": 61,
@@ -78,7 +78,7 @@
         "Level 2",
         "Roof"
       ],
-      "area_m2": 1718.0577192307003,
+      "area_m2": 1711.0076398849,
       "volume_m3": 1025.9380438925998,
       "triangles": 568,
       "products_with_mesh": 21,
@@ -106,7 +106,7 @@
         "Level 1",
         "Level 2"
       ],
-      "area_m2": 511.7067594528,
+      "area_m2": 501.0315275191999,
       "volume_m3": 5.7482726498,
       "triangles": 308,
       "products_with_mesh": 13,
@@ -211,7 +211,7 @@
       "storeys": [
         "Level 2"
       ],
-      "area_m2": 176.9546508789,
+      "area_m2": 120.8470687866,
       "volume_m3": 10.2830629349,
       "triangles": 76,
       "products_with_mesh": 1,

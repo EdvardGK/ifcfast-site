@@ -1,0 +1,191 @@
+[
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "30.14164524999992",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "13.89750099999989",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXru",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "3.997752000000053",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "17.93623674999977",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXri",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "7.799954699999879",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXre",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "5.415819401311199",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "26.17799424999996",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "26.11931424999996",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "30.14164524999997",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "13.89750099999979",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "3.997752000000072",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3Q",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "17.93623674999994",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "7.799954699999977",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "5.441473058684557",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_39",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "26.17799424999995",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "26.11931424999977",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "1.754048598688885",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "1.72839494131539",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "10mjSDZJj9gPS2PrQaxa3z",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "4.922172500000023",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "10mjSDZJj9gPS2PrQaxa4o",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "4.92217250000005",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  },
+  {
+    "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+    "qto_name": "GSA Space Areas",
+    "quantity_name": "GSA BIM Area",
+    "value": "145.7216889999995",
+    "quantity_type": "Area",
+    "unit_step_id": 16,
+    "source": "instance"
+  }
+]

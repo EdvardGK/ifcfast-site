@@ -7,7 +7,7 @@
   "unit_scale": 1.0,
   "unit_resolved": true,
   "length_unit": "m",
-  "cache_key": "24b944672a5c9a37",
+  "cache_key": "79209fd6c5397419",
   "products": 289,
   "storeys": 4,
   "type_counts_total": 16,
@@ -16,8 +16,8 @@
     "IfcWallStandardCase": 56,
     "IfcOpeningElement": 50,
     "IfcWindow": 24,
-    "IfcSlab": 21,
     "IfcSpace": 21,
+    "IfcSlab": 21,
     "IfcDoor": 14,
     "IfcCovering": 13,
     "IfcBeam": 8,
@@ -56,7 +56,8 @@
         "guid",
         "name",
         "elevation",
-        "building_guid"
+        "building_guid",
+        "elevation_m"
       ],
       "loaded": true
     },
@@ -205,7 +206,8 @@
       "loaded": true
     }
   },
-  "parse_seconds": 0.03688764572143555,
+  "parse_seconds": 0.016147136688232422,
   "duplicate_step_ids": 0,
+  "skipped_product_types": {},
   "warnings": []
 }

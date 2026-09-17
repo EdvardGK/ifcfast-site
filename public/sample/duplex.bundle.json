@@ -8,7 +8,7 @@
     "unit_scale": 1.0,
     "unit_resolved": true,
     "length_unit": "m",
-    "cache_key": "24b944672a5c9a37",
+    "cache_key": "79209fd6c5397419",
     "products": 289,
     "storeys": 4,
     "type_counts_total": 16,
@@ -17,8 +17,8 @@
       "IfcWallStandardCase": 56,
       "IfcOpeningElement": 50,
       "IfcWindow": 24,
-      "IfcSlab": 21,
       "IfcSpace": 21,
+      "IfcSlab": 21,
       "IfcDoor": 14,
       "IfcCovering": 13,
       "IfcBeam": 8,
@@ -57,7 +57,8 @@
           "guid",
           "name",
           "elevation",
-          "building_guid"
+          "building_guid",
+          "elevation_m"
         ],
         "loaded": true
       },
@@ -206,8 +207,9 @@
         "loaded": true
       }
     },
-    "parse_seconds": 0.03688764572143555,
+    "parse_seconds": 0.016147136688232422,
     "duplicate_step_ids": 0,
+    "skipped_product_types": {},
     "warnings": []
   },
   "products": [
@@ -265,7 +267,7 @@
         "entity": "IfcSpace",
         "source": "faceset_fbsm",
         "triangle_count": 60,
-        "surface_area_m2": 56.0720100403,
+        "surface_area_m2": 52.5469703674,
         "volume_abs_m3": 0.7213566899,
         "aabb_volume_m3": 30.0041790009,
         "placement_x_m": 6.4180002213,
@@ -370,7 +372,7 @@
         "entity": "IfcSpace",
         "source": "faceset_fbsm",
         "triangle_count": 60,
-        "surface_area_m2": 56.0720024109,
+        "surface_area_m2": 52.546962738,
         "volume_abs_m3": 12.129108429,
         "aabb_volume_m3": 30.0041694641,
         "placement_x_m": 0.4169999957,
@@ -1105,7 +1107,7 @@
         "entity": "IfcWall",
         "source": "faceset_fbsm",
         "triangle_count": 76,
-        "surface_area_m2": 176.9546508789,
+        "surface_area_m2": 120.8470687866,
         "volume_abs_m3": 10.2830629349,
         "aabb_volume_m3": 27.0607776642,
         "placement_x_m": 4.4000000954,
@@ -3082,7 +3084,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976259232,
+        "surface_area_m2": 11.8924713135,
         "volume_abs_m3": 0.4919252396,
         "aabb_volume_m3": 0.8726394176,
         "placement_x_m": 2.513999939,
@@ -3152,7 +3154,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976259232,
+        "surface_area_m2": 11.8924713135,
         "volume_abs_m3": 0.0597568341,
         "aabb_volume_m3": 0.8726394176,
         "placement_x_m": 4.1139998436,
@@ -3222,7 +3224,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976278305,
+        "surface_area_m2": 11.8924732208,
         "volume_abs_m3": 0.491925329,
         "aabb_volume_m3": 0.8726396561,
         "placement_x_m": 4.6830000877,
@@ -3292,7 +3294,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976278305,
+        "surface_area_m2": 11.8924732208,
         "volume_abs_m3": 0.0597568788,
         "aabb_volume_m3": 0.8726396561,
         "placement_x_m": 6.2829999924,
@@ -3362,7 +3364,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976364136,
+        "surface_area_m2": 11.8924818039,
         "volume_abs_m3": 0.6423826814,
         "aabb_volume_m3": 0.8726396561,
         "placement_x_m": 6.2859997749,
@@ -3432,7 +3434,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976364136,
+        "surface_area_m2": 11.8924818039,
         "volume_abs_m3": 0.6236717105,
         "aabb_volume_m3": 0.8726396561,
         "placement_x_m": 4.6859998703,
@@ -3502,7 +3504,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976354599,
+        "surface_area_m2": 11.8924808502,
         "volume_abs_m3": 0.642382443,
         "aabb_volume_m3": 0.8726396561,
         "placement_x_m": 4.117000103,
@@ -3572,7 +3574,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 164,
-        "surface_area_m2": 11.8976345062,
+        "surface_area_m2": 11.8924798965,
         "volume_abs_m3": 0.6236714125,
         "aabb_volume_m3": 0.8726394176,
         "placement_x_m": 2.5169999599,
@@ -3642,7 +3644,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074331284,
+        "surface_area_m2": 8.8004331589,
         "volume_abs_m3": 0.3664765358,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 6.3340001106,
@@ -3677,7 +3679,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807431221,
+        "surface_area_m2": 8.8004312515,
         "volume_abs_m3": 0.3585897088,
         "aabb_volume_m3": 0.5378436446,
         "placement_x_m": 6.3340001106,
@@ -4132,7 +4134,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074331284,
+        "surface_area_m2": 8.8004331589,
         "volume_abs_m3": 0.3664765358,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 5.3340001106,
@@ -4167,7 +4169,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807434082,
+        "surface_area_m2": 8.8004341125,
         "volume_abs_m3": 0.3664765954,
         "aabb_volume_m3": 0.537843883,
         "placement_x_m": 3.5739998817,
@@ -4307,7 +4309,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807434082,
+        "surface_area_m2": 8.8004341125,
         "volume_abs_m3": 0.5908551812,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 2.5739998817,
@@ -4377,7 +4379,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807434082,
+        "surface_area_m2": 8.8004341125,
         "volume_abs_m3": 0.5908551812,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 3.5739998817,
@@ -4412,7 +4414,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074350357,
+        "surface_area_m2": 8.8004350662,
         "volume_abs_m3": 0.5908552408,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 4.5739998817,
@@ -4447,7 +4449,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074350357,
+        "surface_area_m2": 8.8004350662,
         "volume_abs_m3": 0.5908552408,
         "aabb_volume_m3": 0.5378440619,
         "placement_x_m": 5.5739998817,
@@ -4482,7 +4484,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074302673,
+        "surface_area_m2": 8.8004302979,
         "volume_abs_m3": 0.5908553004,
         "aabb_volume_m3": 0.5378435254,
         "placement_x_m": 2.4660000801,
@@ -4517,7 +4519,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807431221,
+        "surface_area_m2": 8.8004312515,
         "volume_abs_m3": 0.241302669,
         "aabb_volume_m3": 0.5378437042,
         "placement_x_m": 2.4660000801,
@@ -4552,7 +4554,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807431221,
+        "surface_area_m2": 8.8004312515,
         "volume_abs_m3": 0.59085536,
         "aabb_volume_m3": 0.5378436446,
         "placement_x_m": 3.4660000801,
@@ -4587,7 +4589,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074302673,
+        "surface_area_m2": 8.8004302979,
         "volume_abs_m3": 0.5908552408,
         "aabb_volume_m3": 0.5378436446,
         "placement_x_m": 5.2259998322,
@@ -4727,7 +4729,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074321747,
+        "surface_area_m2": 8.8004322052,
         "volume_abs_m3": 0.3664757609,
         "aabb_volume_m3": 0.5378436446,
         "placement_x_m": 6.2259998322,
@@ -4797,7 +4799,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074321747,
+        "surface_area_m2": 8.8004322052,
         "volume_abs_m3": 0.3664757609,
         "aabb_volume_m3": 0.5378436446,
         "placement_x_m": 5.2259998322,
@@ -4832,7 +4834,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.807431221,
+        "surface_area_m2": 8.8004312515,
         "volume_abs_m3": 0.3664757907,
         "aabb_volume_m3": 0.5378435254,
         "placement_x_m": 4.2259998322,
@@ -4867,7 +4869,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 152,
-        "surface_area_m2": 8.8074302673,
+        "surface_area_m2": 8.8004302979,
         "volume_abs_m3": 0.3664757311,
         "aabb_volume_m3": 0.5378435254,
         "placement_x_m": 3.2260000706,
@@ -7579,7 +7581,7 @@
         "entity": "IfcCovering",
         "source": "faceset_fbsm",
         "triangle_count": 52,
-        "surface_area_m2": 118.5569610596,
+        "surface_area_m2": 116.5153503418,
         "volume_abs_m3": 0.9316153526,
         "aabb_volume_m3": 4.2264032364,
         "placement_x_m": 0.0,
@@ -7719,7 +7721,7 @@
         "entity": "IfcCovering",
         "source": "faceset_fbsm",
         "triangle_count": 52,
-        "surface_area_m2": 119.4630889893,
+        "surface_area_m2": 115.3417053223,
         "volume_abs_m3": 2.4744296074,
         "aabb_volume_m3": 4.2264027596,
         "placement_x_m": 0.0,
@@ -7789,7 +7791,7 @@
         "entity": "IfcCovering",
         "source": "faceset_fbsm",
         "triangle_count": 20,
-        "surface_area_m2": 47.4776878357,
+        "surface_area_m2": 45.2215690613,
         "volume_abs_m3": 0.4616890252,
         "aabb_volume_m3": 1.3207674026,
         "placement_x_m": 0.0,
@@ -7964,7 +7966,7 @@
         "entity": "IfcCovering",
         "source": "faceset_fbsm",
         "triangle_count": 20,
-        "surface_area_m2": 47.4776802063,
+        "surface_area_m2": 45.2215614319,
         "volume_abs_m3": 0.3759561479,
         "aabb_volume_m3": 1.3207671642,
         "placement_x_m": 0.0,
@@ -9101,7 +9103,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 116,
-        "surface_area_m2": 5.2516651154,
+        "surface_area_m2": 5.2446651459,
         "volume_abs_m3": 0.2670343518,
         "aabb_volume_m3": 0.2533881664,
         "placement_x_m": 3.5546000004,
@@ -9171,7 +9173,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 116,
-        "surface_area_m2": 5.2516651154,
+        "surface_area_m2": 5.2446651459,
         "volume_abs_m3": 0.2670343518,
         "aabb_volume_m3": 0.2533881664,
         "placement_x_m": 3.5546000004,
@@ -9206,7 +9208,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 116,
-        "surface_area_m2": 5.2516665459,
+        "surface_area_m2": 5.2446665764,
         "volume_abs_m3": 0.3297629952,
         "aabb_volume_m3": 0.2533880174,
         "placement_x_m": 4.7699999809,
@@ -9276,7 +9278,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 116,
-        "surface_area_m2": 5.2516646385,
+        "surface_area_m2": 5.244664669,
         "volume_abs_m3": 0.3297629058,
         "aabb_volume_m3": 0.2533880174,
         "placement_x_m": 4.7699999809,
@@ -9346,7 +9348,7 @@
         "entity": "IfcFurnishingElement",
         "source": "faceset_fbsm",
         "triangle_count": 116,
-        "surface_area_m2": 4.0143642426,
+        "surface_area_m2": 4.0073642731,
         "volume_abs_m3": 0.1131445244,
         "aabb_volume_m3": 0.1754225045,
         "placement_x_m": 5.2453999519,
@@ -120653,8 +120655,33 @@
   "classifications": [],
   "spaces": [
     {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 819,
       "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3707,
+      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
       "entity": "IfcSpace"
     },
     {
@@ -120663,13 +120690,28 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 212,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
       "entity": "IfcSpace"
     },
     {
       "step_id": 1928,
       "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3456,
+      "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
       "entity": "IfcSpace"
     },
     {
@@ -120683,18 +120725,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3456,
-      "guid": "10mjSDZJj9gPS2PrQaxa3z",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3707,
-      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
       "entity": "IfcSpace"
     },
     {
@@ -120703,8 +120735,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
       "entity": "IfcSpace"
     },
     {
@@ -120713,38 +120745,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 212,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
@@ -120753,8 +120755,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
       "entity": "IfcSpace"
     }
   ],
