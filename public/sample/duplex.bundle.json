@@ -8,7 +8,7 @@
     "unit_scale": 1.0,
     "unit_resolved": true,
     "length_unit": "m",
-    "cache_key": "f59841d8891683d2",
+    "cache_key": "bd6c1f401e242eaf",
     "products": 289,
     "storeys": 4,
     "type_counts_total": 16,
@@ -23,10 +23,10 @@
       "IfcCovering": 13,
       "IfcBeam": 8,
       "IfcFooting": 7,
-      "IfcRailing": 4,
       "IfcMember": 4,
-      "IfcStairFlight": 2,
+      "IfcRailing": 4,
       "IfcStair": 2,
+      "IfcStairFlight": 2,
       "IfcRoof": 1,
       "IfcWall": 1
     },
@@ -207,7 +207,7 @@
         "loaded": true
       }
     },
-    "parse_seconds": 0.017041921615600586,
+    "parse_seconds": 0.09779715538024902,
     "duplicate_step_ids": 0,
     "skipped_product_types": {},
     "warnings": []
@@ -4239,9 +4239,9 @@
         "entity": "IfcOpeningElement",
         "source": "extrusion",
         "triangle_count": 140,
-        "surface_area_m2": 0.3847011328,
+        "surface_area_m2": 0.3847011626,
         "volume_abs_m3": 0.0064658374,
-        "aabb_volume_m3": 0.0065733492,
+        "aabb_volume_m3": 0.0065733502,
         "placement_x_m": 6.1334377049,
         "placement_y_m": -7.43,
         "placement_z_m": 0.0,
@@ -4249,8 +4249,8 @@
         "centroid_y_m": -7.7190000045,
         "centroid_z_m": 0.8799999952,
         "drift_distance_m": 0.9734700322,
-        "max_extent_m": 0.406783253,
-        "drift_ratio": 2.3930926323,
+        "max_extent_m": 0.4067833424,
+        "drift_ratio": 2.3930921555,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -4659,9 +4659,9 @@
         "entity": "IfcOpeningElement",
         "source": "extrusion",
         "triangle_count": 140,
-        "surface_area_m2": 0.3847011328,
+        "surface_area_m2": 0.3847011626,
         "volume_abs_m3": 0.0064658374,
-        "aabb_volume_m3": 0.0065733492,
+        "aabb_volume_m3": 0.0065733502,
         "placement_x_m": 2.6665622951,
         "placement_y_m": -10.37,
         "placement_z_m": 0.0,
@@ -4669,8 +4669,8 @@
         "centroid_y_m": -10.6590000045,
         "centroid_z_m": 0.8799999952,
         "drift_distance_m": 0.9734700322,
-        "max_extent_m": 0.406783253,
-        "drift_ratio": 2.3930926323,
+        "max_extent_m": 0.4067833424,
+        "drift_ratio": 2.3930921555,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -120655,63 +120655,8 @@
   "classifications": [],
   "spaces": [
     {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1928,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 212,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2108,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3Q",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
       "entity": "IfcSpace"
     },
     {
@@ -120730,6 +120675,71 @@
       "entity": "IfcSpace"
     },
     {
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1928,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 212,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr$",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3707,
+      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1442,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3456,
+      "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 355,
       "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
@@ -120740,23 +120750,13 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3456,
-      "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1442,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3707,
-      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "step_id": 2108,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3Q",
       "entity": "IfcSpace"
     }
   ],
