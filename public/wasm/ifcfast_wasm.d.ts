@@ -90,6 +90,12 @@ export class IfcModel {
      */
     quantitiesJson(): string;
     /**
+     * Frame-neutral alias for [`IfcModel::stream_shift_json`] — the
+     * same three metres, for callers that never streamed (`toGlb` /
+     * `qtoJson` pin it just as well). Both names stay.
+     */
+    shiftJson(): string;
+    /**
      * Engine counters for the UI: products seen / meshed / deferred,
      * triangles, mesh milliseconds.
      */
@@ -105,7 +111,9 @@ export class IfcModel {
      * builds instead of waiting for one baked GLB.
      *
      *   * `positions` — `Float32Array`, world METRES minus
-     *     [`IfcModel::stream_shift_json`]. A **copy** into JS memory,
+     *     [`IfcModel::stream_shift_json`], repositioned from the Local
+     *     bake in f64 so a georeferenced millimetre model keeps its
+     *     round MEP round (GH #188). A **copy** into JS memory,
      *     not a view: a view into the wasm heap would be detached by the
      *     next allocation the pass makes, and the callback is free to
      *     keep (or transfer) what it is handed.
@@ -135,11 +143,20 @@ export class IfcModel {
      */
     streamMeshes(products_per_batch: number, cb: Function): void;
     /**
-     * `[sx, sy, sz]` in METRES — the model-wide global shift the
-     * streamed positions were reduced by. Add it back for absolute world
-     * coordinates. `[0, 0, 0]` before the stream starts and for every
-     * model within 10 km of the origin; same rule (and same value) as
-     * `_core.extract_meshes`' `global_shift`.
+     * `[sx, sy, sz]` in METRES — the model-wide global shift every
+     * position handed out was reduced by. Add it back for absolute world
+     * coordinates.
+     *
+     * Valid after **either** mesh pass: `streamMeshes()` positions and
+     * the `toGlb()` GLB share one value, and any surface that triggers
+     * the batch pass (`graphJson` / `qtoJson` / `statsJson` / `toGlb`)
+     * pins it too. `[0, 0, 0]` before any mesh pass has run and for
+     * every model within 10 km of the origin; same rule (and same
+     * value) as `_core.extract_meshes`' `global_shift` and
+     * `m.to_gltf()`'s `global_shift` stat.
+     *
+     * A near-origin model cannot exercise this — there the shift is
+     * zero and every frame agrees (GH #188).
      */
     streamShiftJson(): string;
     /**
@@ -197,6 +214,7 @@ export interface InitOutput {
     readonly ifcmodel_psetsJson: (a: number) => [number, number];
     readonly ifcmodel_qtoJson: (a: number) => [number, number];
     readonly ifcmodel_quantitiesJson: (a: number) => [number, number];
+    readonly ifcmodel_shiftJson: (a: number) => [number, number];
     readonly ifcmodel_statsJson: (a: number) => [number, number];
     readonly ifcmodel_streamMeshes: (a: number, b: number, c: any) => [number, number];
     readonly ifcmodel_streamShiftJson: (a: number) => [number, number];

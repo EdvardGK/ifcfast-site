@@ -199,6 +199,24 @@ export class IfcModel {
         }
     }
     /**
+     * Frame-neutral alias for [`IfcModel::stream_shift_json`] — the
+     * same three metres, for callers that never streamed (`toGlb` /
+     * `qtoJson` pin it just as well). Both names stay.
+     * @returns {string}
+     */
+    shiftJson() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.ifcmodel_shiftJson(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
      * Engine counters for the UI: products seen / meshed / deferred,
      * triangles, mesh milliseconds.
      * @returns {string}
@@ -226,7 +244,9 @@ export class IfcModel {
      * builds instead of waiting for one baked GLB.
      *
      *   * `positions` — `Float32Array`, world METRES minus
-     *     [`IfcModel::stream_shift_json`]. A **copy** into JS memory,
+     *     [`IfcModel::stream_shift_json`], repositioned from the Local
+     *     bake in f64 so a georeferenced millimetre model keeps its
+     *     round MEP round (GH #188). A **copy** into JS memory,
      *     not a view: a view into the wasm heap would be detached by the
      *     next allocation the pass makes, and the callback is free to
      *     keep (or transfer) what it is handed.
@@ -263,11 +283,20 @@ export class IfcModel {
         }
     }
     /**
-     * `[sx, sy, sz]` in METRES — the model-wide global shift the
-     * streamed positions were reduced by. Add it back for absolute world
-     * coordinates. `[0, 0, 0]` before the stream starts and for every
-     * model within 10 km of the origin; same rule (and same value) as
-     * `_core.extract_meshes`' `global_shift`.
+     * `[sx, sy, sz]` in METRES — the model-wide global shift every
+     * position handed out was reduced by. Add it back for absolute world
+     * coordinates.
+     *
+     * Valid after **either** mesh pass: `streamMeshes()` positions and
+     * the `toGlb()` GLB share one value, and any surface that triggers
+     * the batch pass (`graphJson` / `qtoJson` / `statsJson` / `toGlb`)
+     * pins it too. `[0, 0, 0]` before any mesh pass has run and for
+     * every model within 10 km of the origin; same rule (and same
+     * value) as `_core.extract_meshes`' `global_shift` and
+     * `m.to_gltf()`'s `global_shift` stat.
+     *
+     * A near-origin model cannot exercise this — there the shift is
+     * zero and every frame agrees (GH #188).
      * @returns {string}
      */
     streamShiftJson() {

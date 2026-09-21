@@ -7,7 +7,7 @@
   "unit_scale": 1.0,
   "unit_resolved": true,
   "length_unit": "m",
-  "cache_key": "79209fd6c5397419",
+  "cache_key": "f59841d8891683d2",
   "products": 289,
   "storeys": 4,
   "type_counts_total": 16,
@@ -16,8 +16,8 @@
     "IfcWallStandardCase": 56,
     "IfcOpeningElement": 50,
     "IfcWindow": 24,
-    "IfcSpace": 21,
     "IfcSlab": 21,
+    "IfcSpace": 21,
     "IfcDoor": 14,
     "IfcCovering": 13,
     "IfcBeam": 8,
@@ -206,7 +206,7 @@
       "loaded": true
     }
   },
-  "parse_seconds": 0.016147136688232422,
+  "parse_seconds": 0.017041921615600586,
   "duplicate_step_ids": 0,
   "skipped_product_types": {},
   "warnings": []
