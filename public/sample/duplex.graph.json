@@ -8160,28 +8160,48 @@
   ],
   "spaces": [
     {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3707,
-      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "step_id": 2108,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3Q",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
       "entity": "IfcSpace"
     },
     {
@@ -8195,48 +8215,18 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3456,
-      "guid": "10mjSDZJj9gPS2PrQaxa3z",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1928,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
-      "entity": "IfcSpace"
-    },
-    {
       "step_id": 212,
       "guid": "0BTBFw6f90Nfh9rP1dlXr$",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2108,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3Q",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
       "entity": "IfcSpace"
     },
     {
@@ -8245,23 +8235,33 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "step_id": 3456,
+      "guid": "10mjSDZJj9gPS2PrQaxa3z",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "step_id": 1928,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3707,
+      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
       "entity": "IfcSpace"
     }
   ],
