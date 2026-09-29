@@ -323,12 +323,12 @@
         "Misc. Air Layers - Air Space"
       ],
       "layer_set": null,
-      "m3": 6.4579877853,
-      "m2": 31.1791915894,
+      "m3": 5.7887034416,
+      "m2": 30.3816452026,
       "lm": 4.2010002136,
       "m_source": "direct",
-      "m3_direct": 6.4579877853,
-      "m2_direct": 31.1791915894,
+      "m3_direct": 5.7887034416,
+      "m2_direct": 30.3816452026,
       "lm_direct": 4.2010002136,
       "is_external": true,
       "load_bearing": false,
@@ -355,12 +355,12 @@
         "Misc. Air Layers - Air Space"
       ],
       "layer_set": null,
-      "m3": 6.4579877853,
-      "m2": 31.1791915894,
+      "m3": 5.7887034416,
+      "m2": 30.3816452026,
       "lm": 4.2010002136,
       "m_source": "direct",
-      "m3_direct": 6.4579877853,
-      "m2_direct": 31.1791915894,
+      "m3_direct": 5.7887034416,
+      "m2_direct": 30.3816452026,
       "lm_direct": 4.2010002136,
       "is_external": true,
       "load_bearing": false,
@@ -387,12 +387,12 @@
         "Misc. Air Layers - Air Space"
       ],
       "layer_set": null,
-      "m3": 3.38195014,
-      "m2": 17.7925014496,
+      "m3": 2.8562099934,
+      "m2": 18.0535621643,
       "lm": 2.7950000763,
       "m_source": "direct",
-      "m3_direct": 3.38195014,
-      "m2_direct": 17.7925014496,
+      "m3_direct": 2.8562099934,
+      "m2_direct": 18.0535621643,
       "lm_direct": 2.7950000763,
       "is_external": true,
       "load_bearing": false,
@@ -8160,23 +8160,13 @@
   ],
   "spaces": [
     {
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 514,
       "guid": "0BTBFw6f90Nfh9rP1dlXrr",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
       "entity": "IfcSpace"
     },
     {
@@ -8185,68 +8175,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1442,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
-      "entity": "IfcSpace"
-    },
-    {
       "step_id": 212,
       "guid": "0BTBFw6f90Nfh9rP1dlXr$",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3456,
-      "guid": "10mjSDZJj9gPS2PrQaxa3z",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1928,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
       "entity": "IfcSpace"
     },
     {
@@ -8255,13 +8185,83 @@
       "entity": "IfcSpace"
     },
     {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 3707,
       "guid": "0pNy6pOyf7JPmXRLgxs3sW",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "step_id": 1442,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1928,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3456,
+      "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
       "entity": "IfcSpace"
     }
   ],

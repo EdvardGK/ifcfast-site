@@ -1,6 +1,6 @@
 {
  "source": "Duplex_A_20110907.ifc",
- "generated_with": "0.6.0",
+ "generated_with": "0.6.1",
  "types": [
   {
    "slug": "openingelement-opening",
@@ -135,7 +135,7 @@
    "count": 6,
    "guid": "0iEHWY1$XA8eQeeULq4jZ1",
    "glb": "/sample/types/wallstandardcase-basic-wall-interior-furring-152.glb",
-   "bytes": 1360
+   "bytes": 1396
   },
   {
    "slug": "slab-floor-finish-floor-ceramic-tile",
@@ -216,7 +216,7 @@
    "count": 4,
    "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
    "glb": "/sample/types/wallstandardcase-basic-wall-party-wall-cmu-resid.glb",
-   "bytes": 1408
+   "bytes": 1492
   },
   {
    "slug": "stairflight-stair-residential-200mm-max-riser-25",

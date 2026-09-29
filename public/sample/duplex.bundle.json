@@ -8,7 +8,7 @@
     "unit_scale": 1.0,
     "unit_resolved": true,
     "length_unit": "m",
-    "cache_key": "7586194495a7c6b0",
+    "cache_key": "d76fb97a4e24d4f4",
     "products": 289,
     "storeys": 4,
     "type_counts_total": 16,
@@ -25,10 +25,10 @@
       "IfcFooting": 7,
       "IfcMember": 4,
       "IfcRailing": 4,
-      "IfcStairFlight": 2,
       "IfcStair": 2,
-      "IfcWall": 1,
-      "IfcRoof": 1
+      "IfcStairFlight": 2,
+      "IfcRoof": 1,
+      "IfcWall": 1
     },
     "tables": {
       "products": {
@@ -241,7 +241,7 @@
         "loaded": true
       }
     },
-    "parse_seconds": 0.07665252685546875,
+    "parse_seconds": 0.05554509162902832,
     "duplicate_step_ids": 0,
     "skipped_product_types": {},
     "warnings": []
@@ -674,19 +674,19 @@
       "mesh_stats": {
         "entity": "IfcWallStandardCase",
         "source": "extrusion",
-        "triangle_count": 12,
-        "surface_area_m2": 31.1791915894,
-        "volume_abs_m3": 6.4579877853,
-        "aabb_volume_m3": 6.4579877853,
+        "triangle_count": 20,
+        "surface_area_m2": 30.3816452026,
+        "volume_abs_m3": 5.7887034416,
+        "aabb_volume_m3": 5.788705349,
         "placement_x_m": 8.383,
         "placement_y_m": -7.8,
         "placement_z_m": 0.0,
         "centroid_x_m": 6.2824998932,
-        "centroid_y_m": -7.8,
+        "centroid_y_m": -7.8285000056,
         "centroid_z_m": 1.3975000381,
-        "drift_distance_m": 2.522916317,
+        "drift_distance_m": 2.5230772495,
         "max_extent_m": 4.2010002136,
-        "drift_ratio": 0.6005513668,
+        "drift_ratio": 0.600589633,
         "drift_severity": "ok",
         "mesh_quality": "closed"
       }
@@ -711,19 +711,19 @@
       "mesh_stats": {
         "entity": "IfcWallStandardCase",
         "source": "extrusion",
-        "triangle_count": 12,
-        "surface_area_m2": 31.1791915894,
-        "volume_abs_m3": 6.4579877853,
-        "aabb_volume_m3": 6.4579877853,
+        "triangle_count": 20,
+        "surface_area_m2": 30.3816452026,
+        "volume_abs_m3": 5.7887034416,
+        "aabb_volume_m3": 5.788705349,
         "placement_x_m": 0.417,
         "placement_y_m": -10.0,
         "placement_z_m": 0.0,
         "centroid_x_m": 2.5175001068,
-        "centroid_y_m": -10.0,
+        "centroid_y_m": -9.9714999944,
         "centroid_z_m": 1.3975000381,
-        "drift_distance_m": 2.522916317,
+        "drift_distance_m": 2.5230772495,
         "max_extent_m": 4.2010002136,
-        "drift_ratio": 0.6005513668,
+        "drift_ratio": 0.600589633,
         "drift_severity": "ok",
         "mesh_quality": "closed"
       }
@@ -748,9 +748,9 @@
       "mesh_stats": {
         "entity": "IfcWallStandardCase",
         "source": "extrusion",
-        "triangle_count": 12,
-        "surface_area_m2": 17.7925014496,
-        "volume_abs_m3": 3.38195014,
+        "triangle_count": 140,
+        "surface_area_m2": 18.0535621643,
+        "volume_abs_m3": 2.8562099934,
         "aabb_volume_m3": 3.38195014,
         "placement_x_m": 4.4,
         "placement_y_m": -10.0,
@@ -121267,23 +121267,13 @@
   "classifications": [],
   "spaces": [
     {
+      "step_id": 2789,
+      "guid": "0BTBFw6f90Nfh9rP1dl_39",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 514,
       "guid": "0BTBFw6f90Nfh9rP1dlXrr",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
       "entity": "IfcSpace"
     },
     {
@@ -121292,68 +121282,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1442,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
-      "entity": "IfcSpace"
-    },
-    {
       "step_id": 212,
       "guid": "0BTBFw6f90Nfh9rP1dlXr$",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2789,
-      "guid": "0BTBFw6f90Nfh9rP1dl_39",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3456,
-      "guid": "10mjSDZJj9gPS2PrQaxa3z",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1928,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
       "entity": "IfcSpace"
     },
     {
@@ -121362,13 +121292,83 @@
       "entity": "IfcSpace"
     },
     {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 3707,
       "guid": "0pNy6pOyf7JPmXRLgxs3sW",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "step_id": 1442,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrc",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1928,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3P",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3456,
+      "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
       "entity": "IfcSpace"
     }
   ],
@@ -122615,7 +122615,7 @@
     }
   ],
   "provenance": {
-    "ifcfast_version": "0.6.0",
+    "ifcfast_version": "0.6.1",
     "typedness_source": "ifcfast"
   }
 }

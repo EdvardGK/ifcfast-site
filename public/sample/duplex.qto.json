@@ -22,9 +22,9 @@
         "Roof",
         "T/FDN"
       ],
-      "area_m2": 1556.3276655668,
-      "volume_m3": 216.64266289780008,
-      "triangles": 704,
+      "area_m2": 1554.9936335079,
+      "volume_m3": 214.7783540638001,
+      "triangles": 848,
       "products_with_mesh": 56,
       "products_without_mesh": 0,
       "source": "mesh"
