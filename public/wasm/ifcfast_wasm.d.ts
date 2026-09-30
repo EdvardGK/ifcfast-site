@@ -76,7 +76,11 @@ export class IfcModel {
     psetsJson(): string;
     /**
      * `<prefix>.qto.json` — per-entity-class aggregates over the same
-     * per-product mesh stats.
+     * per-product mesh stats. `volume_m3` is the total;
+     * `volume_reliable_m3` + `volume_unreliable_m3` split it, the latter
+     * being products whose half-space clip could not be applied (their
+     * volume is the unclipped operand's, an upper bound; GH #194/#211),
+     * counted in `products_clip_unapplied`.
      */
     qtoJson(): string;
     /**
@@ -97,7 +101,8 @@ export class IfcModel {
     shiftJson(): string;
     /**
      * Engine counters for the UI: products seen / meshed / deferred,
-     * triangles, mesh milliseconds.
+     * triangles, mesh milliseconds, and the two half-space clip counters
+     * (`halfspace_clip_unapplied`, `halfspace_clip_manifold`; GH #211).
      */
     statsJson(): string;
     /**
