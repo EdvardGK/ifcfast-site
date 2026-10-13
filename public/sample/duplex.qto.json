@@ -39,12 +39,12 @@
       "entity": "IfcOpeningElement",
       "count": 50,
       "storeys": [],
-      "area_m2": 335.0453956729001,
+      "area_m2": 335.0452119117001,
       "volume_m3": 45.99635902070002,
       "volume_reliable_m3": 45.99635902070002,
       "volume_unreliable_m3": 0.0,
       "products_clip_unapplied": 0,
-      "triangles": 856,
+      "triangles": 792,
       "products_with_mesh": 50,
       "products_without_mesh": 0,
       "source": "mesh"
@@ -144,12 +144,12 @@
         "Level 1",
         "Level 2"
       ],
-      "area_m2": 63.2197875977,
-      "volume_m3": 0.337978676,
-      "volume_reliable_m3": 0.337978676,
+      "area_m2": 63.139899253799996,
+      "volume_m3": 0.33797868340000004,
+      "volume_reliable_m3": 0.33797868340000004,
       "volume_unreliable_m3": 0.0,
       "products_clip_unapplied": 0,
-      "triangles": 1120,
+      "triangles": 864,
       "products_with_mesh": 8,
       "products_without_mesh": 0,
       "source": "mesh"
@@ -224,12 +224,12 @@
       "storeys": [
         "Level 1"
       ],
-      "area_m2": 29.6047401428,
-      "volume_m3": 0.416934684,
-      "volume_reliable_m3": 0.416934684,
+      "area_m2": 29.5868644715,
+      "volume_m3": 0.4169345796,
+      "volume_reliable_m3": 0.4169345796,
       "volume_unreliable_m3": 0.0,
       "products_clip_unapplied": 0,
-      "triangles": 1584,
+      "triangles": 1344,
       "products_with_mesh": 2,
       "products_without_mesh": 0,
       "source": "mesh"

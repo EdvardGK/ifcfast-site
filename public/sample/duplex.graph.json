@@ -290,7 +290,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.2417961359,
       "m2": 21.6107139587,
       "lm": 3.5829999447,
@@ -322,7 +322,7 @@
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall",
       "m3": 5.7887034416,
       "m2": 30.3816452026,
       "lm": 4.2010002136,
@@ -354,7 +354,7 @@
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall",
       "m3": 5.7887034416,
       "m2": 30.3816452026,
       "lm": 4.2010002136,
@@ -386,7 +386,7 @@
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall",
       "m3": 2.8562099934,
       "m2": 18.0535621643,
       "lm": 2.7950000763,
@@ -416,7 +416,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.5046204925,
       "m2": 9.1932878494,
       "lm": 2.7950000763,
@@ -446,7 +446,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.2417961359,
       "m2": 21.6107139587,
       "lm": 3.5829999447,
@@ -475,7 +475,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)",
       "m3": 4.5869998932,
       "m2": 30.3817005157,
       "lm": 8.8000001907,
@@ -504,7 +504,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)",
       "m3": 9.0608882904,
       "m2": 58.9974212646,
       "lm": 17.3829994202,
@@ -533,7 +533,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)",
       "m3": 4.3696389198,
       "m2": 28.9914226532,
       "lm": 8.3830003738,
@@ -562,7 +562,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (417mm)",
       "m3": 8.8435268402,
       "m2": 57.6071434021,
       "lm": 16.9659996033,
@@ -591,7 +591,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)",
       "m3": 2.2840218544,
       "m2": 15.2431850433,
       "lm": 4.2005000114,
@@ -620,7 +620,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)",
       "m3": 2.2840218544,
       "m2": 15.2431850433,
       "lm": 4.2005000114,
@@ -649,7 +649,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Foundation - Concrete (435mm)",
       "m3": 0.8622113466,
       "m2": 6.476749897,
       "lm": 1.7649999857,
@@ -678,7 +678,7 @@
       "materials": [
         "Concrete"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:127mm Slab on Grade",
       "m3": 8.2270507812,
       "m2": 133.9474487305,
       "lm": 9.3079996109,
@@ -707,7 +707,7 @@
       "materials": [
         "Concrete"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:127mm Slab on Grade",
       "m3": 8.2431163788,
       "m2": 134.2004547119,
       "lm": 9.3079996109,
@@ -739,7 +739,7 @@
         "Masonry - Concrete Block",
         "Misc. Air Layers - Air Space"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall",
       "m3": 10.2830562592,
       "m2": 120.8470611572,
       "lm": 16.9659996033,
@@ -769,7 +769,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Plumbing (152mm Stud)",
       "m3": 0.8638983965,
       "m2": 11.0531921387,
       "lm": 2.9000000954,
@@ -799,7 +799,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.582192421,
       "m2": 10.5109119415,
       "lm": 2.9000000954,
@@ -829,7 +829,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.582192421,
       "m2": 10.5109119415,
       "lm": 2.9000000954,
@@ -859,7 +859,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Plumbing (152mm Stud)",
       "m3": 0.8638983965,
       "m2": 11.0531921387,
       "lm": 2.9000000954,
@@ -889,7 +889,7 @@
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Residential - Wood Joist with Subflooring",
       "m3": 18.0648498535,
       "m2": 131.7123565674,
       "lm": 16.9659996033,
@@ -919,7 +919,7 @@
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Residential - Wood Joist with Subflooring",
       "m3": 18.0967922211,
       "m2": 131.9035186768,
       "lm": 16.9659996033,
@@ -1169,7 +1169,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 22.4710025787,
       "m2": 124.8574142456,
       "lm": 17.3829994202,
@@ -1257,7 +1257,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 21.9319477081,
       "m2": 121.9242401123,
       "lm": 16.9659996033,
@@ -1507,7 +1507,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 10.1375627518,
       "m2": 59.033241272,
       "lm": 8.8000001907,
@@ -1757,7 +1757,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 10.1375627518,
       "m2": 59.033241272,
       "lm": 8.8000001907,
@@ -1841,7 +1841,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.0120136738,
       "m2": 17.7401199341,
       "lm": 2.9200000763,
@@ -1925,7 +1925,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.0120136738,
       "m2": 17.7401199341,
       "lm": 2.9200000763,
@@ -2009,7 +2009,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.8776139617,
       "m2": 15.5133600235,
       "lm": 3.3880000114,
@@ -2093,7 +2093,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.8776139617,
       "m2": 15.5133600235,
       "lm": 3.3880000114,
@@ -2175,13 +2175,13 @@
       "body_rep_type": "SweptSolid",
       "materials": [],
       "layer_set": null,
-      "m3": 0.2084680498,
-      "m2": 14.8023748398,
-      "lm": 3.7723331451,
+      "m3": 0.2084680051,
+      "m2": 14.7934379578,
+      "lm": 3.7724142075,
       "m_source": "direct",
-      "m3_direct": 0.2084680498,
-      "m2_direct": 14.8023748398,
-      "lm_direct": 3.7723331451,
+      "m3_direct": 0.2084680051,
+      "m2_direct": 14.7934379578,
+      "lm_direct": 3.7724142075,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -2256,9 +2256,9 @@
       "body_rep_type": null,
       "materials": [],
       "layer_set": null,
-      "m3": 2.6823199196999994,
-      "m2": 31.2348774671,
-      "lm": 18.973879814100002,
+      "m3": 2.6823198749999992,
+      "m2": 31.2259405851,
+      "lm": 18.9739608765,
       "m_source": "aggregate-rollup",
       "m3_direct": null,
       "m2_direct": null,
@@ -2825,7 +2825,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.7066140175,
       "m2": 12.6035203934,
       "lm": 2.9000000954,
@@ -2909,7 +2909,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.7066140175,
       "m2": 12.6035203934,
       "lm": 2.9000000954,
@@ -2993,7 +2993,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.9504703283,
       "m2": 33.5235519409,
       "lm": 5.4239997864,
@@ -3077,7 +3077,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 1.9504703283,
       "m2": 33.5235519409,
       "lm": 5.4239997864,
@@ -3241,12 +3241,12 @@
       "materials": [],
       "layer_set": null,
       "m3": 0.0064658374,
-      "m2": 0.3847011626,
-      "lm": 0.4067833424,
+      "m2": 0.384609282,
+      "lm": 0.4062000215,
       "m_source": "direct",
       "m3_direct": 0.0064658374,
-      "m2_direct": 0.3847011626,
-      "lm_direct": 0.4067833424,
+      "m2_direct": 0.384609282,
+      "lm_direct": 0.4062000215,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -3565,12 +3565,12 @@
       "materials": [],
       "layer_set": null,
       "m3": 0.0064658374,
-      "m2": 0.3847011626,
-      "lm": 0.4067833424,
+      "m2": 0.384609282,
+      "lm": 0.4062000215,
       "m_source": "direct",
       "m3_direct": 0.0064658374,
-      "m2_direct": 0.3847011626,
-      "lm_direct": 0.4067833424,
+      "m2_direct": 0.384609282,
+      "lm_direct": 0.4062000215,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -4187,7 +4187,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.4188213944,
       "m2": 44.4648284912,
       "lm": 6.2490000725,
@@ -4217,7 +4217,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.4188213944,
       "m2": 44.4648284912,
       "lm": 6.2490000725,
@@ -4247,7 +4247,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.41931355,
       "m2": 44.5172424316,
       "lm": 6.2649998665,
@@ -4277,7 +4277,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.4188213944,
       "m2": 44.4648284912,
       "lm": 6.2490000725,
@@ -4307,7 +4307,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.1370064765,
       "m2": 14.7119407654,
       "lm": 5.5479998589,
@@ -4337,7 +4337,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.1370064765,
       "m2": 14.7119407654,
       "lm": 5.5479998589,
@@ -4367,7 +4367,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.0824179202,
       "m2": 12.8274641037,
       "lm": 4.1599998474,
@@ -4397,7 +4397,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.0824179202,
       "m2": 12.8274641037,
       "lm": 4.1599998474,
@@ -4427,7 +4427,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.8958483934,
       "m2": 95.097114563,
       "lm": 9.3079996109,
@@ -4457,7 +4457,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.1684029102,
       "m2": 26.1171550751,
       "lm": 5.8090000153,
@@ -4487,7 +4487,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.0410926864,
       "m2": 6.4162540436,
       "lm": 2.1710000038,
@@ -4517,7 +4517,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.0410926864,
       "m2": 6.4162540436,
       "lm": 2.1710000038,
@@ -4547,7 +4547,7 @@
         "Wood - Flooring",
         "Insulation / Thermal Barriers - Semi-rigid insulation"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Wood",
       "m3": 0.895852387,
       "m2": 95.0975341797,
       "lm": 9.3079996109,
@@ -4577,7 +4577,7 @@
         "Ceramic Tile",
         "Masonry - Grout"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:Finish Floor - Ceramic Tile",
       "m3": 0.1684029102,
       "m2": 26.1171550751,
       "lm": 5.8090000153,
@@ -4611,7 +4611,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 11.3757600784,
       "m2": 64.4845962524,
       "lm": 8.8000001907,
@@ -4699,7 +4699,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 10.8367042542,
       "m2": 61.5514221191,
       "lm": 8.3830003738,
@@ -5219,7 +5219,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 21.0212612152,
       "m2": 118.7392349243,
       "lm": 17.7999992371,
@@ -5307,7 +5307,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 21.0212612152,
       "m2": 118.7392349243,
       "lm": 17.7999992371,
@@ -5395,7 +5395,7 @@
         "Wood - Sheathing - plywood",
         "Wood - Dimensional Lumber"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Roof:Live Roof over Wood Joist Flat Roof",
       "m3": 61.7640762329,
       "m2": 293.0901489258,
       "lm": 16.9659996033,
@@ -5510,7 +5510,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 2.2347865105,
       "m2": 18.5655059814,
       "lm": 8.8000001907,
@@ -5544,7 +5544,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 4.4144649506,
       "m2": 36.177822113,
       "lm": 17.3829994202,
@@ -5578,7 +5578,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 2.1288881302,
       "m2": 17.7098236084,
       "lm": 8.3830003738,
@@ -5612,7 +5612,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Exterior - Brick on Block",
       "m3": 4.3085665703,
       "m2": 35.32213974,
       "lm": 16.9659996033,
@@ -5939,7 +5939,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.9316166639,
       "m2": 116.5153579712,
       "lm": 9.3079996109,
@@ -5969,7 +5969,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.0603525154,
       "m2": 6.7631821632,
       "lm": 2.0480000973,
@@ -5999,7 +5999,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.0603525154,
       "m2": 6.7631821632,
       "lm": 2.0480000973,
@@ -6029,7 +6029,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.0639771968,
       "m2": 7.1587500572,
       "lm": 2.1710000038,
@@ -6059,7 +6059,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 2.4744331837,
       "m2": 115.3417205811,
       "lm": 9.3080005646,
@@ -6089,7 +6089,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.4188213944,
       "m2": 45.2215614319,
       "lm": 6.2490000725,
@@ -6119,7 +6119,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.4616876841,
       "m2": 45.2215614319,
       "lm": 6.2490000725,
@@ -6149,7 +6149,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.1279657483,
       "m2": 14.1288852692,
       "lm": 4.1599998474,
@@ -6179,7 +6179,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.0447968319,
       "m2": 19.6726531982,
       "lm": 5.3000001907,
@@ -6209,7 +6209,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.1279657483,
       "m2": 14.1288852692,
       "lm": 4.1599998474,
@@ -6239,7 +6239,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.1815256774,
       "m2": 19.6726531982,
       "lm": 5.3000001907,
@@ -6269,7 +6269,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.3759551346,
       "m2": 45.2215614319,
       "lm": 6.2490000725,
@@ -6299,7 +6299,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Compound Ceiling:Gypsum Board",
       "m3": 0.4188213944,
       "m2": 45.2215614319,
       "lm": 6.2490000725,
@@ -6329,7 +6329,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 1.8493286371,
       "m2": 26.5062637329,
       "lm": 4.353000164,
@@ -6359,7 +6359,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 1.0097814798,
       "m2": 14.8804712296,
       "lm": 3.0999999046,
@@ -6389,7 +6389,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.5046204925,
       "m2": 9.1932878494,
       "lm": 2.7950000763,
@@ -6419,7 +6419,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 0.9750078321,
       "m2": 14.3764104843,
       "lm": 2.7950000763,
@@ -6449,7 +6449,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 1.784752965,
       "m2": 25.610376358,
       "lm": 4.2010002136,
@@ -6749,7 +6749,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 1.6408703327,
       "m2": 23.6439189911,
       "lm": 4.1599998474,
@@ -6779,7 +6779,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (152 mm Stud)",
       "m3": 1.6408703327,
       "m2": 23.6439189911,
       "lm": 4.1599998474,
@@ -6807,13 +6807,13 @@
       "body_rep_type": "SweptSolid",
       "materials": [],
       "layer_set": null,
-      "m3": 0.2084666342,
-      "m2": 14.802365303,
-      "lm": 3.772333622,
+      "m3": 0.2084665745,
+      "m2": 14.7934265137,
+      "lm": 3.7724142075,
       "m_source": "direct",
-      "m3_direct": 0.2084666342,
-      "m2_direct": 14.802365303,
-      "lm_direct": 3.772333622,
+      "m3_direct": 0.2084665745,
+      "m2_direct": 14.7934265137,
+      "lm_direct": 3.7724142075,
       "is_external": null,
       "load_bearing": null,
       "fire_rating": null
@@ -6888,9 +6888,9 @@
       "body_rep_type": null,
       "materials": [],
       "layer_set": null,
-      "m3": 2.7623513398,
-      "m2": 31.234869599299998,
-      "lm": 18.9738812446,
+      "m3": 2.7623512801,
+      "m2": 31.22593081,
+      "lm": 18.973961830100002,
       "m_source": "aggregate-rollup",
       "m3_direct": null,
       "m2_direct": null,
@@ -6971,7 +6971,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.548030436,
       "m2": 9.9363527298,
       "lm": 2.9000000954,
@@ -7055,7 +7055,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.548030436,
       "m2": 9.9363527298,
       "lm": 2.9000000954,
@@ -7139,7 +7139,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.2102791965,
       "m2": 4.3744239807,
       "lm": 3.4749999046,
@@ -7169,7 +7169,7 @@
         "Plasterboard",
         "Metal - Stud Layer"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Partition (92mm Stud)",
       "m3": 0.2102791965,
       "m2": 4.3744239807,
       "lm": 3.4749999046,
@@ -7632,11 +7632,11 @@
       ],
       "layer_set": null,
       "m3": 0.0574003197,
-      "m2": 10.1954040527,
+      "m2": 10.1804857254,
       "lm": 7.4212999344,
       "m_source": "direct",
       "m3_direct": 0.0574003197,
-      "m2_direct": 10.1954040527,
+      "m2_direct": 10.1804857254,
       "lm_direct": 7.4212999344,
       "is_external": false,
       "load_bearing": true,
@@ -7660,12 +7660,12 @@
         "Metal - Steel - 345 MPa"
       ],
       "layer_set": null,
-      "m3": 0.0478943773,
-      "m2": 9.1867141724,
+      "m3": 0.047894381,
+      "m2": 9.1759729385,
       "lm": 6.1818871498,
       "m_source": "direct",
-      "m3_direct": 0.0478943773,
-      "m2_direct": 9.1867141724,
+      "m3_direct": 0.047894381,
+      "m2_direct": 9.1759729385,
       "lm_direct": 6.1818871498,
       "is_external": false,
       "load_bearing": true,
@@ -7690,11 +7690,11 @@
       ],
       "layer_set": null,
       "m3": 0.0319297537,
-      "m2": 6.1296730042,
+      "m2": 6.1225118637,
       "lm": 4.1212797165,
       "m_source": "direct",
       "m3_direct": 0.0319297537,
-      "m2_direct": 6.1296730042,
+      "m2_direct": 6.1225118637,
       "lm_direct": 4.1212797165,
       "is_external": false,
       "load_bearing": true,
@@ -7719,11 +7719,11 @@
       ],
       "layer_set": null,
       "m3": 0.0317648873,
-      "m2": 6.0981030464,
+      "m2": 6.0909790993,
       "lm": 4.0999999046,
       "m_source": "direct",
       "m3_direct": 0.0317648873,
-      "m2_direct": 6.0981030464,
+      "m2_direct": 6.0909790993,
       "lm_direct": 4.0999999046,
       "is_external": false,
       "load_bearing": true,
@@ -7748,11 +7748,11 @@
       ],
       "layer_set": null,
       "m3": 0.0574003197,
-      "m2": 10.1954040527,
+      "m2": 10.1804857254,
       "lm": 7.4212999344,
       "m_source": "direct",
       "m3_direct": 0.0574003197,
-      "m2_direct": 10.1954040527,
+      "m2_direct": 10.1804857254,
       "lm_direct": 7.4212999344,
       "is_external": false,
       "load_bearing": true,
@@ -7776,12 +7776,12 @@
         "Metal - Steel - 345 MPa"
       ],
       "layer_set": null,
-      "m3": 0.0478943773,
-      "m2": 9.1867132187,
+      "m3": 0.047894381,
+      "m2": 9.1759729385,
       "lm": 6.1818871498,
       "m_source": "direct",
-      "m3_direct": 0.0478943773,
-      "m2_direct": 9.1867132187,
+      "m3_direct": 0.047894381,
+      "m2_direct": 9.1759729385,
       "lm_direct": 6.1818871498,
       "is_external": false,
       "load_bearing": true,
@@ -7806,11 +7806,11 @@
       ],
       "layer_set": null,
       "m3": 0.0319297537,
-      "m2": 6.1296730042,
+      "m2": 6.1225118637,
       "lm": 4.1212797165,
       "m_source": "direct",
       "m3_direct": 0.0319297537,
-      "m2_direct": 6.1296730042,
+      "m2_direct": 6.1225118637,
       "lm_direct": 4.1212797165,
       "is_external": false,
       "load_bearing": true,
@@ -7835,11 +7835,11 @@
       ],
       "layer_set": null,
       "m3": 0.0317648873,
-      "m2": 6.0981030464,
+      "m2": 6.0909790993,
       "lm": 4.0999999046,
       "m_source": "direct",
       "m3_direct": 0.0317648873,
-      "m2_direct": 6.0981030464,
+      "m2_direct": 6.0909790993,
       "lm_direct": 4.0999999046,
       "is_external": false,
       "load_bearing": true,
@@ -7862,7 +7862,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:150mm Exterior Slab on Grade",
       "m3": 3.8129787445,
       "m2": 53.8945350647,
       "lm": 5.8000001907,
@@ -7891,7 +7891,7 @@
       "materials": [
         "Concrete - Cast In Situ"
       ],
-      "layer_set": null,
+      "layer_set": "Floor:150mm Exterior Slab on Grade",
       "m3": 3.8129787445,
       "m2": 53.8945350647,
       "lm": 5.8000001907,
@@ -7921,7 +7921,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0168443695,
       "m2": 0.771944344,
       "lm": 1.0830999613,
@@ -7951,7 +7951,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0176530741,
       "m2": 0.8075124025,
       "lm": 1.1351000071,
@@ -7981,7 +7981,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0168443695,
       "m2": 0.771944344,
       "lm": 1.0830999613,
@@ -8011,7 +8011,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0176530741,
       "m2": 0.8075124025,
       "lm": 1.1351000071,
@@ -8041,7 +8041,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0168443695,
       "m2": 0.771944344,
       "lm": 1.0830999613,
@@ -8071,7 +8071,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0176530741,
       "m2": 0.8075124025,
       "lm": 1.1351000071,
@@ -8101,7 +8101,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0168443695,
       "m2": 0.771944344,
       "lm": 1.0830999613,
@@ -8131,7 +8131,7 @@
         "Metal - Stud Layer",
         "Plasterboard"
       ],
-      "layer_set": null,
+      "layer_set": "Basic Wall:Interior - Furring (38 mm Stud)",
       "m3": 0.0176530741,
       "m2": 0.8075124025,
       "lm": 1.1351000071,
@@ -8181,48 +8181,13 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "step_id": 3707,
+      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
       "entity": "IfcSpace"
     },
     {
@@ -8231,8 +8196,58 @@
       "entity": "IfcSpace"
     },
     {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 3456,
       "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
@@ -8246,28 +8261,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3707,
-      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
       "entity": "IfcSpace"
     },
     {
@@ -8276,8 +8271,13 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
       "entity": "IfcSpace"
     }
   ],
@@ -9297,5 +9297,245 @@
       "host_guid": "1aj$VJZFn2TxepZUBcKpZw"
     }
   ],
-  "material_layer_sets": {}
+  "material_layer_sets": {
+    "Basic Wall:Exterior - Brick on Block": {
+      "layers": [
+        {
+          "material": "Masonry - Brick",
+          "thickness_mm": 92.0
+        },
+        {
+          "material": "Misc. Air Layers - Air Space",
+          "thickness_mm": 25.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Rigid insulation",
+          "thickness_mm": 50.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 417.0
+    },
+    "Basic Wall:Interior - Partition (92mm Stud)": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 92.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 124.0
+    },
+    "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Misc. Air Layers - Air Space",
+          "thickness_mm": 50.0
+        },
+        {
+          "material": "Masonry - Concrete Block",
+          "thickness_mm": 193.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 41.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 550.0
+    },
+    "Basic Wall:Foundation - Concrete (417mm)": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 417.0
+        }
+      ],
+      "total_thickness_mm": 417.0
+    },
+    "Basic Wall:Foundation - Concrete (435mm)": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 435.0
+        }
+      ],
+      "total_thickness_mm": 435.0
+    },
+    "Floor:127mm Slab on Grade": {
+      "layers": [
+        {
+          "material": "Concrete",
+          "thickness_mm": 127.0
+        }
+      ],
+      "total_thickness_mm": 127.0
+    },
+    "Basic Wall:Interior - Plumbing (152mm Stud)": {
+      "layers": [
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 152.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 184.0
+    },
+    "Floor:Residential - Wood Joist with Subflooring": {
+      "layers": [
+        {
+          "material": "Wood - Sheathing - plywood",
+          "thickness_mm": 19.0
+        },
+        {
+          "material": "Wood - Dimensional Lumber",
+          "thickness_mm": 286.0
+        }
+      ],
+      "total_thickness_mm": 305.0
+    },
+    "Floor:Finish Floor - Wood": {
+      "layers": [
+        {
+          "material": "Wood - Flooring",
+          "thickness_mm": 16.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Semi-rigid insulation",
+          "thickness_mm": 3.0
+        }
+      ],
+      "total_thickness_mm": 19.0
+    },
+    "Floor:Finish Floor - Ceramic Tile": {
+      "layers": [
+        {
+          "material": "Ceramic Tile",
+          "thickness_mm": 10.0
+        },
+        {
+          "material": "Masonry - Grout",
+          "thickness_mm": 3.0
+        }
+      ],
+      "total_thickness_mm": 13.0
+    },
+    "Basic Roof:Live Roof over Wood Joist Flat Roof": {
+      "layers": [
+        {
+          "material": "Site - Grass",
+          "thickness_mm": 64.0
+        },
+        {
+          "material": "Roofing - Barrier",
+          "thickness_mm": 6.0
+        },
+        {
+          "material": "Roofing - EPDM Membrane",
+          "thickness_mm": 6.0
+        },
+        {
+          "material": "Insulation / Thermal Barriers - Rigid insulation",
+          "thickness_mm": 76.0
+        },
+        {
+          "material": "Wood - Sheathing - plywood",
+          "thickness_mm": 19.0
+        },
+        {
+          "material": "Wood - Dimensional Lumber",
+          "thickness_mm": 286.0
+        }
+      ],
+      "total_thickness_mm": 457.0
+    },
+    "Compound Ceiling:Gypsum Board": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 45.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 12.0
+        }
+      ],
+      "total_thickness_mm": 57.0
+    },
+    "Basic Wall:Interior - Furring (152 mm Stud)": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 136.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 152.0
+    },
+    "Floor:150mm Exterior Slab on Grade": {
+      "layers": [
+        {
+          "material": "Concrete - Cast In Situ",
+          "thickness_mm": 150.0
+        }
+      ],
+      "total_thickness_mm": 150.0
+    },
+    "Basic Wall:Interior - Furring (38 mm Stud)": {
+      "layers": [
+        {
+          "material": "Metal - Stud Layer",
+          "thickness_mm": 38.0
+        },
+        {
+          "material": "Plasterboard",
+          "thickness_mm": 16.0
+        }
+      ],
+      "total_thickness_mm": 54.0
+    }
+  }
 }

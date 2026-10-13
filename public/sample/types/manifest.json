@@ -1,6 +1,6 @@
 {
  "source": "Duplex_A_20110907.ifc",
- "generated_with": "0.6.2",
+ "generated_with": "0.4.39",
  "types": [
   {
    "slug": "openingelement-opening",
@@ -153,7 +153,7 @@
    "count": 6,
    "guid": "2OrWItJ6zAwBNp0OUxK$8W",
    "glb": "/sample/types/beam-m-w-wide-flange-w410x60-208814.glb",
-   "bytes": 2528
+   "bytes": 2240
   },
   {
    "slug": "door-0762-x-2032mm",
@@ -225,7 +225,7 @@
    "count": 4,
    "guid": "1oKjKg9PD3fP1iIwXLh3lK",
    "glb": "/sample/types/stairflight-stair-residential-200mm-max-riser-25.glb",
-   "bytes": 19944
+   "bytes": 18828
   },
   {
    "slug": "member-stringer",
@@ -360,7 +360,7 @@
    "count": 2,
    "guid": "2OrWItJ6zAwBNp0OUxK_l8",
    "glb": "/sample/types/beam-m-w-wide-flange-w310x60-208816.glb",
-   "bytes": 2528
+   "bytes": 2240
   },
   {
    "slug": "railing-railing-1100mm-guard-rail",

@@ -7,7 +7,7 @@
   "unit_scale": 1.0,
   "unit_resolved": true,
   "length_unit": "m",
-  "cache_key": "2f4499795792211e",
+  "cache_key": "7cbd67d86b304cba",
   "products": 289,
   "storeys": 4,
   "type_counts_total": 16,
@@ -22,12 +22,12 @@
     "IfcCovering": 13,
     "IfcBeam": 8,
     "IfcFooting": 7,
-    "IfcMember": 4,
     "IfcRailing": 4,
+    "IfcMember": 4,
     "IfcStairFlight": 2,
     "IfcStair": 2,
-    "IfcRoof": 1,
-    "IfcWall": 1
+    "IfcWall": 1,
+    "IfcRoof": 1
   },
   "tables": {
     "products": {
@@ -185,7 +185,9 @@
         "layer_thickness_mm",
         "category",
         "fraction",
-        "source"
+        "source",
+        "item_name",
+        "set_name"
       ],
       "loaded": true
     },
@@ -240,7 +242,7 @@
       "loaded": true
     }
   },
-  "parse_seconds": 0.014650821685791016,
+  "parse_seconds": 0.02151179313659668,
   "duplicate_step_ids": 0,
   "skipped_product_types": {},
   "warnings": []

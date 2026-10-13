@@ -8,7 +8,7 @@
     "unit_scale": 1.0,
     "unit_resolved": true,
     "length_unit": "m",
-    "cache_key": "2f4499795792211e",
+    "cache_key": "7cbd67d86b304cba",
     "products": 289,
     "storeys": 4,
     "type_counts_total": 16,
@@ -23,12 +23,12 @@
       "IfcCovering": 13,
       "IfcBeam": 8,
       "IfcFooting": 7,
-      "IfcMember": 4,
       "IfcRailing": 4,
+      "IfcMember": 4,
       "IfcStairFlight": 2,
       "IfcStair": 2,
-      "IfcRoof": 1,
-      "IfcWall": 1
+      "IfcWall": 1,
+      "IfcRoof": 1
     },
     "tables": {
       "products": {
@@ -186,7 +186,9 @@
           "layer_thickness_mm",
           "category",
           "fraction",
-          "source"
+          "source",
+          "item_name",
+          "set_name"
         ],
         "loaded": true
       },
@@ -241,7 +243,7 @@
         "loaded": true
       }
     },
-    "parse_seconds": 0.014650821685791016,
+    "parse_seconds": 0.02151179313659668,
     "duplicate_step_ids": 0,
     "skipped_product_types": {},
     "warnings": []
@@ -3079,19 +3081,19 @@
       "mesh_stats": {
         "entity": "IfcStairFlight",
         "source": "extrusion",
-        "triangle_count": 792,
-        "surface_area_m2": 14.8023748398,
-        "volume_abs_m3": 0.2084680498,
-        "aabb_volume_m3": 10.5207366943,
+        "triangle_count": 672,
+        "surface_area_m2": 14.7934379578,
+        "volume_abs_m3": 0.2084680051,
+        "aabb_volume_m3": 10.5209627151,
         "placement_x_m": 0.0,
         "placement_y_m": 0.0,
         "placement_z_m": 0.0,
         "centroid_x_m": 7.8758001328,
-        "centroid_y_m": -9.9386663437,
+        "centroid_y_m": -9.9387073517,
         "centroid_z_m": 1.5249999762,
-        "drift_distance_m": 12.7722730637,
-        "max_extent_m": 3.7723331451,
-        "drift_ratio": 3.3857755661,
+        "drift_distance_m": 12.7723035812,
+        "max_extent_m": 3.7724142075,
+        "drift_ratio": 3.3857107162,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -4504,10 +4506,10 @@
       "mesh_stats": {
         "entity": "IfcOpeningElement",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 0.3847011626,
+        "triangle_count": 108,
+        "surface_area_m2": 0.384609282,
         "volume_abs_m3": 0.0064658374,
-        "aabb_volume_m3": 0.0065733502,
+        "aabb_volume_m3": 0.0065544476,
         "placement_x_m": 6.1334377049,
         "placement_y_m": -7.43,
         "placement_z_m": 0.0,
@@ -4515,8 +4517,8 @@
         "centroid_y_m": -7.7190000045,
         "centroid_z_m": 0.8799999952,
         "drift_distance_m": 0.9734700322,
-        "max_extent_m": 0.4067833424,
-        "drift_ratio": 2.3930921555,
+        "max_extent_m": 0.4062000215,
+        "drift_ratio": 2.3965287209,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -4948,10 +4950,10 @@
       "mesh_stats": {
         "entity": "IfcOpeningElement",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 0.3847011626,
+        "triangle_count": 108,
+        "surface_area_m2": 0.384609282,
         "volume_abs_m3": 0.0064658374,
-        "aabb_volume_m3": 0.0065733502,
+        "aabb_volume_m3": 0.0065544476,
         "placement_x_m": 2.6665622951,
         "placement_y_m": -10.37,
         "placement_z_m": 0.0,
@@ -4959,8 +4961,8 @@
         "centroid_y_m": -10.6590000045,
         "centroid_z_m": 0.8799999952,
         "drift_distance_m": 0.9734700322,
-        "max_extent_m": 0.4067833424,
-        "drift_ratio": 2.3930921555,
+        "max_extent_m": 0.4062000215,
+        "drift_ratio": 2.3965287209,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -9148,19 +9150,19 @@
       "mesh_stats": {
         "entity": "IfcStairFlight",
         "source": "extrusion",
-        "triangle_count": 792,
-        "surface_area_m2": 14.802365303,
-        "volume_abs_m3": 0.2084666342,
-        "aabb_volume_m3": 10.5207366943,
+        "triangle_count": 672,
+        "surface_area_m2": 14.7934265137,
+        "volume_abs_m3": 0.2084665745,
+        "aabb_volume_m3": 10.5209608078,
         "placement_x_m": 0.0,
         "placement_y_m": 0.0,
         "placement_z_m": 0.0,
         "centroid_x_m": 0.9241999984,
-        "centroid_y_m": -7.861333847,
+        "centroid_y_m": -7.8612933159,
         "centroid_z_m": 1.5249999762,
-        "drift_distance_m": 8.0610380173,
-        "max_extent_m": 3.772333622,
-        "drift_ratio": 2.1368837357,
+        "drift_distance_m": 8.0609989166,
+        "max_extent_m": 3.7724142075,
+        "drift_ratio": 2.1368277073,
         "drift_severity": "warn",
         "mesh_quality": "closed"
       }
@@ -10240,8 +10242,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 10.1954040527,
+        "triangle_count": 108,
+        "surface_area_m2": 10.1804857254,
         "volume_abs_m3": 0.0574003197,
         "aabb_volume_m3": 0.4564767182,
         "placement_x_m": 4.4,
@@ -10277,9 +10279,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 9.1867141724,
-        "volume_abs_m3": 0.0478943773,
+        "triangle_count": 108,
+        "surface_area_m2": 9.1759729385,
+        "volume_abs_m3": 0.047894381,
         "aabb_volume_m3": 0.447852999,
         "placement_x_m": 0.2085,
         "placement_y_m": -17.523,
@@ -10314,8 +10316,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 6.1296730042,
+        "triangle_count": 108,
+        "surface_area_m2": 6.1225118637,
         "volume_abs_m3": 0.0319297537,
         "aabb_volume_m3": 0.2985702455,
         "placement_x_m": 0.2666128796,
@@ -10351,8 +10353,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 6.0981030464,
+        "triangle_count": 108,
+        "surface_area_m2": 6.0909790993,
         "volume_abs_m3": 0.0317648873,
         "aabb_volume_m3": 0.2970286012,
         "placement_x_m": 4.4289543287,
@@ -10388,8 +10390,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 10.1954040527,
+        "triangle_count": 108,
+        "surface_area_m2": 10.1804857254,
         "volume_abs_m3": 0.0574003197,
         "aabb_volume_m3": 0.4564767182,
         "placement_x_m": 4.4,
@@ -10425,9 +10427,9 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 9.1867132187,
-        "volume_abs_m3": 0.0478943773,
+        "triangle_count": 108,
+        "surface_area_m2": 9.1759729385,
+        "volume_abs_m3": 0.047894381,
         "aabb_volume_m3": 0.447852999,
         "placement_x_m": 8.5915,
         "placement_y_m": -0.277,
@@ -10462,8 +10464,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 6.1296730042,
+        "triangle_count": 108,
+        "surface_area_m2": 6.1225118637,
         "volume_abs_m3": 0.0319297537,
         "aabb_volume_m3": 0.2985702455,
         "placement_x_m": 8.5333871204,
@@ -10499,8 +10501,8 @@
       "mesh_stats": {
         "entity": "IfcBeam",
         "source": "extrusion",
-        "triangle_count": 140,
-        "surface_area_m2": 6.0981030464,
+        "triangle_count": 108,
+        "surface_area_m2": 6.0909790993,
         "volume_abs_m3": 0.0317648873,
         "aabb_volume_m3": 0.2970286012,
         "placement_x_m": 4.3710456713,
@@ -118561,7 +118563,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -118571,7 +118575,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -118581,7 +118587,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -118591,7 +118599,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -118601,7 +118611,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNtn",
@@ -118611,7 +118623,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118621,7 +118635,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118631,7 +118647,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118641,7 +118659,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118651,7 +118671,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118661,7 +118683,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNqI",
@@ -118671,7 +118695,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118681,7 +118707,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118691,7 +118719,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118701,7 +118731,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118711,7 +118743,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118721,7 +118755,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNr2",
@@ -118731,7 +118767,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118741,7 +118779,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118751,7 +118791,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118761,7 +118803,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118771,7 +118815,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118781,7 +118827,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNhv",
@@ -118791,7 +118839,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNld",
@@ -118801,7 +118851,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNld",
@@ -118811,7 +118863,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNld",
@@ -118821,7 +118875,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNau",
@@ -118831,7 +118887,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNau",
@@ -118841,7 +118899,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNau",
@@ -118851,7 +118911,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118861,7 +118923,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118871,7 +118935,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118881,7 +118947,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118891,7 +118959,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118901,7 +118971,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118911,7 +118983,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FNbT",
@@ -118921,7 +118995,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118931,7 +119007,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118941,7 +119019,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118951,7 +119031,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118961,7 +119043,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118971,7 +119055,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118981,7 +119067,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRi",
@@ -118991,7 +119079,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119001,7 +119091,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119011,7 +119103,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119021,7 +119115,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119031,7 +119127,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119041,7 +119139,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119051,7 +119151,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKRH",
@@ -119061,7 +119163,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKST",
@@ -119071,7 +119175,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKST",
@@ -119081,7 +119187,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKST",
@@ -119091,7 +119199,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
@@ -119101,7 +119211,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
@@ -119111,7 +119223,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKIu",
@@ -119121,7 +119235,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
@@ -119131,7 +119247,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
@@ -119141,7 +119259,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKGS",
@@ -119151,7 +119271,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK80",
@@ -119161,7 +119283,9 @@
       "layer_thickness_mm": 417.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK9N",
@@ -119171,7 +119295,9 @@
       "layer_thickness_mm": 417.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKEr",
@@ -119181,7 +119307,9 @@
       "layer_thickness_mm": 417.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKE5",
@@ -119191,7 +119319,9 @@
       "layer_thickness_mm": 417.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (417mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK3E",
@@ -119201,7 +119331,9 @@
       "layer_thickness_mm": 435.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK04",
@@ -119211,7 +119343,9 @@
       "layer_thickness_mm": 435.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK1b",
@@ -119221,7 +119355,9 @@
       "layer_thickness_mm": 435.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Foundation - Concrete (435mm)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FK4F",
@@ -119231,7 +119367,9 @@
       "layer_thickness_mm": 127.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:127mm Slab on Grade"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKcz",
@@ -119241,7 +119379,9 @@
       "layer_thickness_mm": 127.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:127mm Slab on Grade"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119251,7 +119391,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119261,7 +119403,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119271,7 +119415,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119281,7 +119427,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119291,7 +119439,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119301,7 +119451,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FKau",
@@ -119311,7 +119463,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Party Wall - CMU Residential Unit Dimising Wall"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119321,7 +119475,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119331,7 +119487,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119341,7 +119499,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119351,7 +119511,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119361,7 +119523,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLQD",
@@ -119371,7 +119535,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119381,7 +119547,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119391,7 +119559,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119401,7 +119571,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119411,7 +119583,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119421,7 +119595,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLR9",
@@ -119431,7 +119607,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119441,7 +119619,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119451,7 +119631,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119461,7 +119643,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119471,7 +119655,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119481,7 +119667,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLOH",
@@ -119491,7 +119679,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119501,7 +119691,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119511,7 +119703,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119521,7 +119715,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119531,7 +119727,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119541,7 +119739,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLPP",
@@ -119551,7 +119751,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
@@ -119561,7 +119763,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
@@ -119571,7 +119775,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLTF",
@@ -119581,7 +119787,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
@@ -119591,7 +119799,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
@@ -119601,7 +119811,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLIE",
@@ -119611,7 +119823,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
@@ -119621,7 +119835,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
@@ -119631,7 +119847,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLJd",
@@ -119641,7 +119859,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
@@ -119651,7 +119871,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
@@ -119661,7 +119883,9 @@
       "layer_thickness_mm": 152.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLMr",
@@ -119671,7 +119895,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
@@ -119681,7 +119907,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
@@ -119691,7 +119919,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLKI",
@@ -119701,7 +119931,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
@@ -119711,7 +119943,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
@@ -119721,7 +119955,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL8v",
@@ -119731,7 +119967,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
@@ -119741,7 +119979,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
@@ -119751,7 +119991,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL9r",
@@ -119761,7 +120003,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL96",
@@ -119771,7 +120015,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL96",
@@ -119781,7 +120027,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FL96",
@@ -119791,7 +120039,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
@@ -119801,7 +120051,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
@@ -119811,7 +120063,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLEJ",
@@ -119821,7 +120075,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
@@ -119831,7 +120087,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
@@ -119841,7 +120099,9 @@
       "layer_thickness_mm": 152.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "2O2Fr$t4X7Zf8NOew3FLCm",
@@ -119851,7 +120111,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Plumbing (152mm Stud)"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRqU",
@@ -119861,7 +120123,9 @@
       "layer_thickness_mm": 19.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRqU",
@@ -119871,7 +120135,9 @@
       "layer_thickness_mm": 286.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRrM",
@@ -119881,7 +120147,9 @@
       "layer_thickness_mm": 19.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "1hOSvn6df7F8_7GcBWlRrM",
@@ -119891,7 +120159,9 @@
       "layer_thickness_mm": 286.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Residential - Wood Joist with Subflooring"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtC0",
@@ -119901,7 +120171,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtC0",
@@ -119911,7 +120183,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtDX",
@@ -119921,7 +120195,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtDX",
@@ -119931,7 +120207,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtBP",
@@ -119941,7 +120219,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtBP",
@@ -119951,7 +120231,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8F",
@@ -119961,7 +120243,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8F",
@@ -119971,7 +120255,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8s",
@@ -119981,7 +120267,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt8s",
@@ -119991,7 +120279,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt5W",
@@ -120001,7 +120291,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt5W",
@@ -120011,7 +120303,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt2f",
@@ -120021,7 +120315,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt2f",
@@ -120031,7 +120327,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt0F",
@@ -120041,7 +120339,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUt0F",
@@ -120051,7 +120351,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtxr",
@@ -120061,7 +120363,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtxr",
@@ -120071,7 +120375,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtoa",
@@ -120081,7 +120387,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtoa",
@@ -120091,7 +120399,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtjR",
@@ -120101,7 +120411,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtjR",
@@ -120111,7 +120423,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtju",
@@ -120121,7 +120435,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtju",
@@ -120131,7 +120447,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtgP",
@@ -120141,7 +120459,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUtgP",
@@ -120151,7 +120471,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Wood"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUten",
@@ -120161,7 +120483,9 @@
       "layer_thickness_mm": 10.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "2OBrcmyk58NupXoVOHUten",
@@ -120171,7 +120495,9 @@
       "layer_thickness_mm": 3.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:Finish Floor - Ceramic Tile"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120181,7 +120507,9 @@
       "layer_thickness_mm": 64.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120191,7 +120519,9 @@
       "layer_thickness_mm": 6.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120201,7 +120531,9 @@
       "layer_thickness_mm": 6.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120211,7 +120543,9 @@
       "layer_thickness_mm": 76.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120221,7 +120555,9 @@
       "layer_thickness_mm": 19.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmxl",
@@ -120231,7 +120567,9 @@
       "layer_thickness_mm": 286.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Roof:Live Roof over Wood Joist Flat Roof"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120241,7 +120579,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120251,7 +120591,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120261,7 +120603,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120271,7 +120615,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120281,7 +120627,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmmy",
@@ -120291,7 +120639,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120301,7 +120651,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120311,7 +120663,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120321,7 +120675,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120331,7 +120687,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120341,7 +120699,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmpw",
@@ -120351,7 +120711,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120361,7 +120723,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120371,7 +120735,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120381,7 +120747,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120391,7 +120759,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120401,7 +120771,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmoa",
@@ -120411,7 +120783,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120421,7 +120795,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120431,7 +120807,9 @@
       "layer_thickness_mm": 25.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120441,7 +120819,9 @@
       "layer_thickness_mm": 50.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120451,7 +120831,9 @@
       "layer_thickness_mm": 193.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120461,7 +120843,9 @@
       "layer_thickness_mm": 41.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "0jf0rYHfX3RAB3bSIRjmr1",
@@ -120471,7 +120855,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Exterior - Brick on Block"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc5T8",
@@ -120481,7 +120867,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc5T8",
@@ -120491,7 +120879,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc503",
@@ -120501,7 +120891,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc503",
@@ -120511,7 +120903,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50B",
@@ -120521,7 +120915,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50B",
@@ -120531,7 +120927,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50U",
@@ -120541,7 +120939,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50U",
@@ -120551,7 +120951,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50n",
@@ -120561,7 +120963,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc50n",
@@ -120571,7 +120975,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc52o",
@@ -120581,7 +120987,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc52o",
@@ -120591,7 +120999,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc554",
@@ -120601,7 +121011,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc554",
@@ -120611,7 +121023,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55E",
@@ -120621,7 +121035,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55E",
@@ -120631,7 +121047,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55M",
@@ -120641,7 +121059,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55M",
@@ -120651,7 +121071,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55U",
@@ -120661,7 +121083,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55U",
@@ -120671,7 +121095,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55c",
@@ -120681,7 +121107,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55c",
@@ -120691,7 +121119,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55k",
@@ -120701,7 +121131,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55k",
@@ -120711,7 +121143,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55m",
@@ -120721,7 +121155,9 @@
       "layer_thickness_mm": 45.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "3bXiCStxP6Fgxdej$yc55m",
@@ -120731,7 +121167,9 @@
       "layer_thickness_mm": 12.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Compound Ceiling:Gypsum Board"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jZ1",
@@ -120741,7 +121179,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jZ1",
@@ -120751,7 +121191,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4j_U",
@@ -120761,7 +121203,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4j_U",
@@ -120771,7 +121215,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jpl",
@@ -120781,7 +121227,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jpl",
@@ -120791,7 +121239,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jpl",
@@ -120801,7 +121251,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jDb",
@@ -120811,7 +121263,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jDb",
@@ -120821,7 +121275,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jE6",
@@ -120831,7 +121287,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0iEHWY1$XA8eQeeULq4jE6",
@@ -120841,7 +121299,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMNiA",
@@ -120851,7 +121311,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMNiA",
@@ -120861,7 +121323,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMN_Z",
@@ -120871,7 +121335,9 @@
       "layer_thickness_mm": 136.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "0dxE1Sy6nDqfpDb5vIMN_Z",
@@ -120881,7 +121347,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (152 mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpvt",
@@ -120891,7 +121359,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpvt",
@@ -120901,7 +121371,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpvt",
@@ -120911,7 +121383,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpZw",
@@ -120921,7 +121395,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpZw",
@@ -120931,7 +121407,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpZw",
@@ -120941,7 +121419,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpee",
@@ -120951,7 +121431,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpee",
@@ -120961,7 +121443,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKpee",
@@ -120971,7 +121455,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKphf",
@@ -120981,7 +121467,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKphf",
@@ -120991,7 +121479,9 @@
       "layer_thickness_mm": 92.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1aj$VJZFn2TxepZUBcKphf",
@@ -121001,7 +121491,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Partition (92mm Stud)"
     },
     {
       "guid": "1CZILmCaHETO8tf3SgGEWh",
@@ -121011,7 +121503,9 @@
       "layer_thickness_mm": 150.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:150mm Exterior Slab on Grade"
     },
     {
       "guid": "1CZILmCaHETO8tf3SgGEXu",
@@ -121021,7 +121515,9 @@
       "layer_thickness_mm": 150.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Floor:150mm Exterior Slab on Grade"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVS",
@@ -121031,7 +121527,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVS",
@@ -121041,7 +121539,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVT",
@@ -121051,7 +121551,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVT",
@@ -121061,7 +121563,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVI",
@@ -121071,7 +121575,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVI",
@@ -121081,7 +121587,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVJ",
@@ -121091,7 +121599,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5IVJ",
@@ -121101,7 +121611,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITp",
@@ -121111,7 +121623,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITp",
@@ -121121,7 +121635,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITm",
@@ -121131,7 +121647,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITm",
@@ -121141,7 +121659,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITn",
@@ -121151,7 +121671,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITn",
@@ -121161,7 +121683,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITs",
@@ -121171,7 +121695,9 @@
       "layer_thickness_mm": 38.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "3Y4YRln2r91vflHcHE5ITs",
@@ -121181,7 +121707,9 @@
       "layer_thickness_mm": 16.0,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": "Basic Wall:Interior - Furring (38 mm Stud)"
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK_l8",
@@ -121191,7 +121719,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$8W",
@@ -121201,7 +121731,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Bq",
@@ -121211,7 +121743,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$CR",
@@ -121221,7 +121755,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dv",
@@ -121231,7 +121767,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Du",
@@ -121241,7 +121779,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dx",
@@ -121251,7 +121791,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     },
     {
       "guid": "2OrWItJ6zAwBNp0OUxK$Dw",
@@ -121261,7 +121803,9 @@
       "layer_thickness_mm": null,
       "category": null,
       "fraction": null,
-      "source": "instance"
+      "source": "instance",
+      "item_name": null,
+      "set_name": null
     }
   ],
   "classifications": [],
@@ -121272,48 +121816,13 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1218,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
+      "step_id": 3013,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
       "entity": "IfcSpace"
     },
     {
-      "step_id": 819,
-      "guid": "0BTBFw6f90Nfh9rP1dlXri",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3586,
-      "guid": "10mjSDZJj9gPS2PrQaxa4o",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3325,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 1782,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3197,
-      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 355,
-      "guid": "0BTBFw6f90Nfh9rP1dlXru",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 67,
-      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 514,
-      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "step_id": 3707,
+      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
       "entity": "IfcSpace"
     },
     {
@@ -121322,8 +121831,58 @@
       "entity": "IfcSpace"
     },
     {
+      "step_id": 67,
+      "guid": "0BTBFw6f90Nfh9rP1dlXr2",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3197,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FV",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 514,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrr",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 3586,
+      "guid": "10mjSDZJj9gPS2PrQaxa4o",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 819,
+      "guid": "0BTBFw6f90Nfh9rP1dlXri",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2412,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1782,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3S",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1059,
+      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "entity": "IfcSpace"
+    },
+    {
       "step_id": 3456,
       "guid": "10mjSDZJj9gPS2PrQaxa3z",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 2637,
+      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 355,
+      "guid": "0BTBFw6f90Nfh9rP1dlXru",
       "entity": "IfcSpace"
     },
     {
@@ -121337,28 +121896,8 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1627,
-      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2637,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3C",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 2412,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3G",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3707,
-      "guid": "0pNy6pOyf7JPmXRLgxs3sW",
-      "entity": "IfcSpace"
-    },
-    {
-      "step_id": 3013,
-      "guid": "0BTBFw6f90Nfh9rP1dl_3A",
+      "step_id": 1218,
+      "guid": "0BTBFw6f90Nfh9rP1dlXrb",
       "entity": "IfcSpace"
     },
     {
@@ -121367,8 +121906,13 @@
       "entity": "IfcSpace"
     },
     {
-      "step_id": 1059,
-      "guid": "0BTBFw6f90Nfh9rP1dlXre",
+      "step_id": 3325,
+      "guid": "2gRXFgjRn2HPE$YoDLX3FC",
+      "entity": "IfcSpace"
+    },
+    {
+      "step_id": 1627,
+      "guid": "0BTBFw6f90Nfh9rP1dl_CZ",
       "entity": "IfcSpace"
     }
   ],
@@ -122615,7 +123159,7 @@
     }
   ],
   "provenance": {
-    "ifcfast_version": "0.6.2",
+    "ifcfast_version": "0.4.39",
     "typedness_source": "ifcfast"
   }
 }
